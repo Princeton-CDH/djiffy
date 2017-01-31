@@ -1,0 +1,101 @@
+# djiffy
+
+Django application to index and display IIIF Manifests for books
+
+
+**djiffy** is intended to be a reusable `Django`_ application for
+working with digitized book content provided via `IIIF Presentation`_
+manifests.
+
+
+.. _Django: https://www.djangoproject.com/
+.. _IIIF Presentation: http://iiif.io/api/presentation/2.1/
+
+
+Installation
+------------
+
+Use pip to install from GitHub::
+
+    pip install git+https://github.com/Princeton-CDH/djiffy.git#egg=pucas
+
+Use branch or tag name, e.g. ``@develop`` or ``@1.0``, to install a specific
+tagged release or branch::
+
+    pip install git+https://github.com/Princeton-CDH/djiffy.git@develop#egg=pucas
+
+Configuration
+-------------
+
+Add djiffy and pucas to installed applications, run migrations, and
+include urls::
+
+    INSTALLED_APPS = (
+        ...
+        'djiffy',
+        ...
+    )
+
+
+Include the default djiffy urls at the desired base url::
+
+    urlpatterns = [
+        ...
+        url(r'^iiif-books/', include('djiffy.urls', namespace='djiffy')),
+        ...
+    ]
+
+Run migrations to create database tables::
+
+    python manage.py migrate
+
+
+Usage
+-----
+
+Import IIIF content using the `import_manifest` manage command.  This
+command can take an IIIF Collection or single Manifest, via local file
+or URL.  Imported content can be reviewed in Django admin.
+
+
+Development instructions
+------------------------
+
+This git repository uses `git flow`_ branching conventions.
+
+.. _git flow: https://github.com/nvie/gitflow
+
+Initial setup and installation:
+
+- recommended: create and activate a python 3.5 virtualenv::
+
+    virtualenv djiffy -p python3.5
+    source djiffy/bin/activate
+
+- pip install the package with its python dependencies::
+
+    pip install -e .
+
+
+Unit Testing
+^^^^^^^^^^^^
+
+Unit tests are written with [py.test](http://doc.pytest.org/) but use some
+Django test classes for convenience and compatibility with django test suites.
+Running the tests requires a minimal settings file for Django required
+configurations.
+
+- Copy sample test settings and add a **SECRET_KEY**::
+
+    cp ci/testsettings.py testsettings.py
+
+- To run the tests, either use the configured setup.py test command::
+
+    python setup.py test
+
+- Or install test requirements and use py.test directly::
+
+    pip install -e '.[test]'
+    py.test
+
+
