@@ -19,7 +19,12 @@ setup(
     description='Django app for IIIF Presentation book content',
     long_description=README,
     url='https://github.com/Princeton-CDH/djiffy',
-    install_requires=['django', 'requests', 'piffle', 'attrdict'],
+    install_requires=[
+        'django',
+        'requests',
+        'piffle',
+        'attrdict',
+    ],
     setup_requires=['pytest-runner'],
     tests_require=test_requirements,
     extras_require={

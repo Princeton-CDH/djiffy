@@ -24,7 +24,15 @@ tagged release or branch::
 
     pip install git+https://github.com/Princeton-CDH/djiffy.git@develop#egg=pucas
 
-Configuration
+.. NOTE::
+
+    Running on Python 3.x currently requires an unreleased version of piffle.
+    For now, this can be installed directly from GitHub::
+
+        pip install git+https://github.com/Princeton-CDH/piffle.git@feature/python3-compatibility#egg=piffle
+
+
+configuration
 -------------
 
 Add djiffy and pucas to installed applications, run migrations, and
