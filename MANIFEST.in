@@ -1,0 +1,4 @@
+include LICENSE
+include README.rst
+recursive-include djiffy/static *
+recursive-include djiffy/templates *
