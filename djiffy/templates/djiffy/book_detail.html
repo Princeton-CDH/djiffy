@@ -1,0 +1,17 @@
+<html>
+<body>
+<h1>{{ book.label }}</h1>
+
+{{ book.short_id }}
+{{ book.uri }}
+{{ book.pages.all }}
+<p>{{ book.pages.all|length }} page{{ book.pages.all|pluralize }}</p>
+
+<ul>
+{% for page in book.pages.all %}
+<li><a href="{% url 'djiffy:page' book.short_id page.short_id %}">{{ page.label }}</a></li>
+{% endfor %}
+</ul>
+
+</body>
+</html>
