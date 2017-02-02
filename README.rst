@@ -12,6 +12,9 @@ Django application to index and display IIIF Manifests for books
 .. image:: https://landscape.io/github/Princeton-CDH/djiffy/develop/landscape.svg?style=flat
    :target: https://landscape.io/github/Princeton-CDH/djiffy/develop
    :alt: Code Health
+.. image:: https://requires.io/github/Princeton-CDH/djiffy/requirements.svg?branch=develop
+   :target: https://requires.io/github/Princeton-CDH/djiffy/requirements/?branch=develop
+   :alt: Requirements Status
 
 **djiffy** is intended to be a reusable `Django`_ application for
 working with digitized book content provided via `IIIF Presentation`_
