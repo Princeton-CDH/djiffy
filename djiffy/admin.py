@@ -7,6 +7,8 @@ class PageInline(admin.StackedInline):
 
 class BookAdmin(admin.ModelAdmin):
     inlines = [PageInline]
+    list_display= ('admin_thumbnail', 'label', 'short_id', 'created',
+        'last_modified')
 
 admin.site.register(IfBook, BookAdmin)
 admin.site.register(IfPage)

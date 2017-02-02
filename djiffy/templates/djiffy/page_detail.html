@@ -1,17 +1,37 @@
-<html>
-<body>
-<h1>{{ page.label }}</h1>
+{% extends 'djiffy/base.html' %}
 
-            <div class="text-center">
-                <div id="zoom-page"></div>
-                <div class="page">
-                    <div class="content">
-                        <section class="inner">
-                          <img class="page-image" src="{{ page.image.page_size }}"/>
-                        </section>
-                    </div>
+{% block page-subtitle %}Books | {{ page.book.label }} || {{ page.label }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1><a href="{{ page.book.get_absolute_url }}">{{ page.book.label }}</a></h1>
+    <h2>{{ page.label }}</h2>
+</div>
+
+    <article class="carousel page">
+        <div class="carousel-inner">
+
+        <div class="text-center">
+            <div class="page">
+                <div class="content">
+                    <section class="inner">
+                      <img class="page-image" src="{{ page.image.page_size }}"/>
+                    </section>
                 </div>
             </div>
+        </div>
 
-</body>
-</html>
+        {% if page.prev %}
+        <a class="left carousel-control" href="{{ page.prev.get_absolute_url }}" role="button" data-slide="prev" title="Prev: {{ page.prev.label }}" rel="prev">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+        </a>
+        {% endif %}
+        {% if page.next %}
+        <a class="right carousel-control" href="{{ page.next.get_absolute_url }}" role="button" data-slide="next" title="Next: {{ next.label }}" rel="next">
+            <span class="glyphicon glyphicon-chevron-right"></span>
+        </a>
+        {% endif %}
+    </article>
+
+</div>
+{% endblock %}

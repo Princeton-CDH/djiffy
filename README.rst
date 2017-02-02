@@ -44,17 +44,19 @@ tagged release or branch::
 configuration
 -------------
 
-Add djiffy and pucas to installed applications, run migrations, and
-include urls::
+Add `djiffy` to installed applications and make sure that `django.contrib.humanize`
+is also enabled::
 
     INSTALLED_APPS = (
         ...
+        'django.contrib.humanize',
         'djiffy',
         ...
     )
 
 
-Include the default djiffy urls at the desired base url::
+Include the default djiffy urls at the desired base url with the namespace
+`djiffy`::
 
     urlpatterns = [
         ...

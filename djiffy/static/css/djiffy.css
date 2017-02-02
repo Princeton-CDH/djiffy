@@ -1,0 +1,54 @@
+body {
+    padding-top: 50px;
+}
+.djifbooks .media a.pull-left {
+    border: 1px solid #CFCFCF;
+    border-bottom-width: 2px;
+    transition:border-color 0.2s ease;
+    padding-right: 0;
+    margin-right: 10px;
+}
+
+.djifbooks .media a.pull-left:hover,
+.djifbooks .media a.pull-left:focus{
+    border-color: #7A95E9;
+}
+
+.djifbooks .media a.pull-left img {
+    width: 75px;
+}
+
+.djifbooks .media .btn {
+    margin-bottom: 5px;
+}
+
+.media>.pull-right {
+    min-width: 50px;
+}
+
+.djifbook .media-body p {
+    margin-bottom: 2px;
+}
+
+
+.page-thumbnail {
+    margin: 5px;
+    float: left;
+    position: relative;
+}
+
+.page-thumbnail a {
+    color: black;
+}
+
+.page-thumbnail .page-label {
+    text-align: center;
+}
+
+.carousel-control {
+    width: 10%;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+}
+

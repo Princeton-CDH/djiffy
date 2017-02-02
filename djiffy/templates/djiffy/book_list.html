@@ -1,14 +1,12 @@
-<html>
-<body>
+{% extends 'djiffy/base.html' %}
 
-<h1>books</h1>
+{% block page-subtitle %}Books{% endblock %}
+
+{% block content %}
+<div class="container djifbooks">
+<h1>Books</h1>
 {% for book in books %}
-    <h2><a href="{% url 'djiffy:book' book.short_id %}">{{ book.label }}</a></h2>
-    {{ book.short_id }}
-    {{ book.uri }}
-    <p>{{ book.pages.all|length }} page{{ book.pages.all|pluralize }}</p>
-
+    {% include 'djiffy/snippets/book_card.html' %}
 {% endfor %}
-
-</body>
-</html>
+</div>
+{% endblock %}

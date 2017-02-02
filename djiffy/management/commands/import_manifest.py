@@ -1,6 +1,5 @@
-import os.path
-from django.core.management.base import BaseCommand, CommandError
-import requests
+from collections import OrderedDict
+from django.core.management.base import BaseCommand
 
 from djiffy.models import IfBook, IfPage, IIIFPresentation
 
@@ -61,12 +60,15 @@ class Command(BaseCommand):
             ifbk.label = '; '.join(manifest.label)
         ifbk.uri = manifest.id
         ifbk.short_id = self.short_id(manifest.id)
+        # convert metadata into a more usable format
+        metadata = OrderedDict([(item['label'], item['value'])
+             for item in manifest.metadata])
+        ifbk.metadata = metadata
         ifbk.save()
 
         thumbnail_id = None
         if hasattr(manifest, 'thumbnail'):
             thumbnail_id = manifest.thumbnail.service.id
-            print('thumbnail id = %s ' % thumbnail_id)
 
         # for now, only worry about the first sequence
         order = 0
@@ -74,21 +76,18 @@ class Command(BaseCommand):
         for canvas in manifest.sequences[0].canvases:
             ifpage = IfPage(book=ifbk, order=order)
             ifpage.label = canvas.label
+            # this is canvas id, is that meaningful? do we want image id?
             ifpage.uri = canvas.id
             ifpage.short_id = self.short_id(canvas.id)
             # only support single image per canvas for now
             ifpage.iiif_image_id = canvas.images[0].resource.service.id
             # check if this page is the thumbnail image
-            if thumbnail_id is not None and ifpage.uri == thumbnail_id:
+            if thumbnail_id is not None and ifpage.iiif_image_id == thumbnail_id:
                 ifpage.thumbnail = True
             ifpage.save()
 
             order += 1
 
-        # NOTE: IIIF metadata is meant for display to end users
-        # convert metadata into a more useful format ?
-        # metadata = {item['label'].lower(): item['value'] for item in manifest.metadata}
-        # return manifest.sequences[0].canvases[int(self.kwargs['id'])]
 
     def short_id(self, uri):
         # generate a short id from full manifest/canvas uri identifiers

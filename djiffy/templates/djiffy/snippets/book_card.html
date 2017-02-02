@@ -1,0 +1,23 @@
+{% load static humanize %}
+<div class="media">
+  <a class="pull-left" href="{{ book.get_absolute_url }}">
+    {% if book.thumbnail %}
+      <img class="media-object cover-mini-thumb" src="{{ book.thumbnail.image.mini_thumbnail }}"/>
+    {% else %}
+        <img class="media-object" src="{% static 'img/cover_unavailable_minithumb.png' %}"/>
+    {% endif %}
+  </a>
+
+  <div class="media-body">
+    <h4 class="media-heading">
+        <a href="{{ book.get_absolute_url }}">{{ book.label|truncatechars:100 }}</a>
+    </h4>
+
+    <p class="small text-muted">{{ book.pages.all|length }} page{{ book.pages.all|pluralize }}.
+    Added {{ book.created|naturalday }}</p>
+  </div>
+</div>
+
+
+
+

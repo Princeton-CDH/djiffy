@@ -1,17 +1,38 @@
-<html>
-<body>
-<h1>{{ book.label }}</h1>
+{% extends 'djiffy/base.html' %}
 
-{{ book.short_id }}
-{{ book.uri }}
-{{ book.pages.all }}
-<p>{{ book.pages.all|length }} page{{ book.pages.all|pluralize }}</p>
+{% block page-subtitle %}Books | {{ book.label }}{% endblock %}
 
-<ul>
-{% for page in book.pages.all %}
-<li><a href="{% url 'djiffy:page' book.short_id page.short_id %}">{{ page.label }}</a></li>
-{% endfor %}
-</ul>
+{% block content %}
+<div class="container djifbook">
+    <h1>{{ book.label }}</h1>
 
-</body>
-</html>
+    <article class="djifbook">
+        <div class="media">
+            {% if book.thumbnail %}
+                <div class="pull-left">
+                    <a href="{{ book.pages.first.get_absolute_url }}">
+                    <img class="thumbnail media-object"
+                        src="{{ book.thumbnail.image.thumbnail }}"/>
+                    </a>
+                </div>
+            {% endif %}
+
+            <div class="media-body">
+                {% for field, value in book.metadata.items %}
+                <p><strong>{{ field }}:</strong> {{ value|join:'; ' }}</p>
+                {% endfor %}
+                {#  metadata ? #}
+                {% if vol.has_pages %}
+                 <meta property="schema:numberOfPages" content="{{ book.pages.all.count }}"/>
+                {% endif %}
+            </div>
+        </div>
+
+    <div class="pages">
+    {% for page in book.pages.all %}
+        {% include "djiffy/snippets/page_card.html" %}
+    {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

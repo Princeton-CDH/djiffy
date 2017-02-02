@@ -1,8 +1,11 @@
+from collections import OrderedDict
 import json
 import os.path
 
 from attrdict import AttrMap
 from django.db import models
+from django.urls import reverse
+from jsonfield import JSONField
 from piffle import iiif
 import requests
 
@@ -12,6 +15,7 @@ class IfBook(models.Model):
     label = models.TextField()
     short_id = models.CharField(max_length=255)
     uri = models.URLField()
+    metadata = JSONField(load_kwargs={'object_pairs_hook': OrderedDict})
     created = models.DateField(auto_now_add=True)
     last_modified = models.DateField(auto_now=True)
 
@@ -22,6 +26,20 @@ class IfBook(models.Model):
 
     def __str__(self):
         return self.label or self.short_id
+
+    @property
+    def thumbnail(self):
+        print(self.pages.filter(thumbnail=True))
+        return self.pages.filter(thumbnail=True).first()
+
+    def get_absolute_url(self):
+        return reverse('djiffy:book', args=[self.short_id])
+
+    def admin_thumbnail(self):
+        if self.thumbnail:
+            return u'<img src="%s" />' % self.thumbnail.image.mini_thumbnail()
+    admin_thumbnail.short_description = 'Thumbnail'
+    admin_thumbnail.allow_tags = True
 
 
 class IIIFImage(iiif.IIIFImageClient):
@@ -67,7 +85,8 @@ class IfPage(models.Model):
         verbose_name = 'IIIF Page'
 
     def __str__(self):
-        return '%s %d %s' % (self.book, self.order, self.label)
+        return '%s %d (%s)%s' % (self.book, self.order + 1, self.label,
+            '*' if self.thumbnail else '')
 
     @property
     def image(self):
@@ -75,6 +94,17 @@ class IfPage(models.Model):
         # Should update to handle iiif image ids as provided in manifests
         # for now, split into service and image id. (is this reliable?)
         return IIIFImage(*self.iiif_image_id.rsplit('/', 1))
+
+    def get_absolute_url(self):
+        return reverse('djiffy:page', args=[self.book.short_id, self.short_id])
+
+    def next(self):
+        return IfPage.objects.filter(book=self.book, order__gt=self.order) \
+            .first()
+
+    def prev(self):
+        return IfPage.objects.filter(book=self.book, order__lt=self.order) \
+            .last()
 
 
 class IIIFPresentation(AttrMap):

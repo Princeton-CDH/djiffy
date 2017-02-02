@@ -22,7 +22,10 @@ class TestIfPage(TestCase):
     def test_str(self):
         book = IfBook(short_id='bk123', label='Book 1')
         page = IfPage(book=book, label='Image 1', short_id='pg123', order=1)
-        assert str(page) == '%s %d %s' % (str(book), page.order, page.label)
+        assert str(page) == '%s %d (%s)' % (str(book), page.order + 1, page.label)
+
+        page.thumbnail = True
+        assert str(page).endswith('*')
 
     def test_image(self):
         img_service = 'https://images.co'

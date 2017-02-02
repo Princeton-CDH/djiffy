@@ -1,0 +1,94 @@
+{% load static %} {% comment %}
+NOTE: This site uses RDFa and schema.org vocabulary.  Every page will be declared as schema:Webpage
+by default; use page_rdf_type to override with a webpage subclass.
+{% endcomment %}
+<!DOCTYPE html>
+<html lang="en" xmlns:schema="http://schema.org/" xmlns:og="http://ogp.me/ns#">
+  <head>
+    <title>{% block page-title %}{% block page-subtitle %}{% endblock %}{% endblock %}</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% block metadata %}{% endblock %}
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/djiffy.css' %}"/>
+    {% block css %}{% endblock %} {# add any local css here #}
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery.min.js"></script>
+    <!-- Latest compiled and minified Bootstrap JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    {# <!-- font awesome --> -- notactually in use? (yet)  #}
+    {#  <script src="https://use.fontawesome.com/46070f4452.js"></script> #}
+
+    {% block javascript %}{% endblock %} {# add any additional javascript here #}
+    {% block head_extras %}{% endblock %}  {# any header metadata, etc #}
+  </head>
+  <body class="{% block body_class %}{% endblock %}"{% block body_attrs %}{% endblock %}>
+
+    <div class="navbar {% block nav_class %}navbar-inverse navbar-fixed-top{% endblock %}" role="navigation">
+      <div class="navbar-header logo-container">
+          <div class="logo"></div>
+
+          {# the following is the title that appears on the top nav for XS screen sizes. it uses the xs-nav-title block #}
+          <div class="visible-xs">
+            <h1 class="site-title"><a href="{% url 'site-index' %}">
+              {% block xs-nav-title %}{% endblock %}
+            </a></h1>
+          </div>
+          {# end xs-title markup #}
+
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+        <div class="container">
+          <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+              <li><a class="site-title" href="{% url 'site-index' %}">{% block nav-title %}Home{% endblock %}</a></li>
+              {% block navlinks %}
+              <li><a href="{% url 'djiffy:list' %}">Books</a></li>
+              {% endblock %}
+              {% block admin-navlink %} {# adding block to allow override/disable #}
+                {% if user.is_staff %}
+                  <li><a class="admin-link" href="{% block admin-url %}{% url 'admin:index' %}{% endblock %}"><span>Admin</span> <i class="fa fa-cog"></i>
+</a></li>
+                {% endif %}
+              {% endblock %}
+            </ul>
+
+            {% block navbar-extra %}{% endblock %}
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+
+  {% block message %}
+    {% if messages %} {# default display of django messages, when present #}
+    <div class="messages">
+        {% for message in messages %} {# should work for success, info, warning #}
+        {% if message.level_tag %} {# since django 1.7 #}
+        <p {% if message.tags %} class="{{ message.level_tag }}"{% endif %}>{{ message|safe }}</p>
+        {% else %}
+        <p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|safe }}</p>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+  {% endblock %}
+
+  {% block content %}{% endblock %}
+
+    <div class="container footer">
+      <hr/>
+      <div class="col-xs-12 col-sm-10">
+      <p id="sw_version">{{ SW_VERSION }}</p>
+      {% block footer-content %}{% endblock %}
+    </div>
+    </div>
+  </body>
+</html>
