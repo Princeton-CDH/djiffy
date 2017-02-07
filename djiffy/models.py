@@ -33,7 +33,6 @@ class IfBook(models.Model):
 
     @property
     def thumbnail(self):
-        print(self.pages.filter(thumbnail=True))
         return self.pages.filter(thumbnail=True).first()
 
     def get_absolute_url(self):
@@ -41,7 +40,7 @@ class IfBook(models.Model):
 
     def admin_thumbnail(self):
         if self.thumbnail:
-            return u'<img src="%s" />' % self.thumbnail.image.mini_thumbnail()
+            return self.thumbnail.admin_thumbnail()
     admin_thumbnail.short_description = 'Thumbnail'
     admin_thumbnail.allow_tags = True
 
@@ -64,6 +63,8 @@ class IIIFImage(iiif.IIIFImageClient):
         'mini thumbnail: 100px on the long edge'
         return self.size(**{self.long_side: 100}).format('png')
 
+
+
     #: long edge size for single page display
     SINGLE_PAGE_SIZE = 1000
 
@@ -74,6 +75,10 @@ class IIIFImage(iiif.IIIFImageClient):
 
 class IfPage(models.Model):
     '''Minimal db model representation of a Page from an IIIF manifest'''
+    # NOTE: might make more sense / be more appropriate to think of this
+    # as a canvas, even though we're not fully modeling everything a
+    # iiif canvas can do
+
     label = models.TextField()
     short_id = models.CharField(max_length=255)
     uri = models.URLField()
@@ -109,6 +114,11 @@ class IfPage(models.Model):
     def prev(self):
         return IfPage.objects.filter(book=self.book, order__lt=self.order) \
             .last()
+
+    def admin_thumbnail(self):
+        return u'<img src="%s" />' % self.image.mini_thumbnail()
+    admin_thumbnail.short_description = 'Thumbnail'
+    admin_thumbnail.allow_tags = True
 
 
 class IIIFPresentation(AttrMap):
