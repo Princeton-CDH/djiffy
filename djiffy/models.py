@@ -143,6 +143,24 @@ class IIIFPresentation(AttrMap):
         else:
             return cls.from_url(path)
 
+    @classmethod
+    def short_id(cls, uri):
+        '''Generate a short id from full manifest/canvas uri identifiers
+        for use in local urls.'''
+
+        # shortening should work reliably for uris that follow
+        # recommended url patterns from the spec
+        # http://iiif.io/api/presentation/2.0/#a-summary-of-recommended-uri-patterns
+        #   manifest:  {scheme}://{host}/{prefix}/{identifier}/manifest
+        #   canvas: {scheme}://{host}/{prefix}/{identifier}/canvas/{name}
+
+        # remove trailing /manifest at the end of the url, if present
+        if uri.endswith('/manifest'):
+            uri = uri[:-len('/manifest')]
+        # split on slashes and return the last portion
+        return uri.split('/')[-1]
+
+
     def __getattr__(self, key):
         """
         Access an item as an attribute.

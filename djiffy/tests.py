@@ -65,6 +65,14 @@ class TestIIIFPresentation(TestCase):
             pres = IIIFPresentation.from_file_or_url('http://mani.fe/st')
             mock_from_url.assert_called_with('http://mani.fe/st')
 
+    def test_short_id(self):
+        manifest_uri = 'https://ii.if/resources/p0c484h74c/manifest'
+        assert IIIFPresentation.short_id(manifest_uri) == 'p0c484h74c'
+        canvas_uri = 'https://ii.if/resources/p0c484h74c/manifest/canvas/ps7527b878'
+        assert IIIFPresentation.short_id(canvas_uri) == 'ps7527b878'
+
+
+
     def test_toplevel_attrs(self):
         pres = IIIFPresentation.from_file(self.test_manifest)
         assert pres.context == "http://iiif.io/api/presentation/2/context.json"
