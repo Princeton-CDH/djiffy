@@ -14,19 +14,20 @@ from piffle import iiif
 import requests
 
 
-class IfBook(models.Model):
-    '''Minimal db model representation of a Book from an IIIF manifest'''
+class Manifest(models.Model):
+    '''Minimal db model representation of an IIIF presentation manifest'''
     label = models.TextField()
-    short_id = models.CharField(max_length=255)
+    short_id = models.CharField(max_length=255, unique=True)
     uri = models.URLField()
     metadata = JSONField(load_kwargs={'object_pairs_hook': OrderedDict})
     created = models.DateField(auto_now_add=True)
     last_modified = models.DateField(auto_now=True)
 
     class Meta:
-        verbose_name = 'IIIF Book'
+        verbose_name = 'IIIF Manifest'
 
     # todo: metadata? thumbnail references
+    # - should we cache the actual manifest file?
 
     def __str__(self):
         return self.label or self.short_id
@@ -36,7 +37,7 @@ class IfBook(models.Model):
         return self.pages.filter(thumbnail=True).first()
 
     def get_absolute_url(self):
-        return reverse('djiffy:book', args=[self.short_id])
+        return reverse('djiffy:manifest', args=[self.short_id])
 
     def admin_thumbnail(self):
         if self.thumbnail:
@@ -47,7 +48,7 @@ class IfBook(models.Model):
 
 class IIIFImage(iiif.IIIFImageClient):
     '''Subclass of :class:`piffle.iiif.IIIFImageClient`, for generating
-    IIIF Image URIs for book page images.'''
+    IIIF Image URIs for manifest canvas images.'''
 
     long_side = 'height'
 
@@ -73,28 +74,26 @@ class IIIFImage(iiif.IIIFImageClient):
         return self.size(**{self.long_side: self.SINGLE_PAGE_SIZE})
 
 
-class IfPage(models.Model):
-    '''Minimal db model representation of a Page from an IIIF manifest'''
-    # NOTE: might make more sense / be more appropriate to think of this
-    # as a canvas, even though we're not fully modeling everything a
-    # iiif canvas can do
+class Canvas(models.Model):
+    '''Minimal db model representation of a canvas from an IIIF manifest'''
 
     label = models.TextField()
     short_id = models.CharField(max_length=255)
     uri = models.URLField()
     iiif_image_id = models.URLField()
-    book = models.ForeignKey(IfBook, related_name='pages')
+    manifest = models.ForeignKey(Manifest, related_name='pages')
     thumbnail = models.BooleanField(default=False)
     # for now only storing a single sequence, so just store order on the page
     order = models.PositiveIntegerField()
     # format? size? (ocr text eventually?)
 
     class Meta:
-        ordering = ["book", "order"]
-        verbose_name = 'IIIF Page'
+        ordering = ["manifest", "order"]
+        verbose_name = 'IIIF Canvas'
+        unique_together = ("short_id", "manifest")
 
     def __str__(self):
-        return '%s %d (%s)%s' % (self.book, self.order + 1, self.label,
+        return '%s %d (%s)%s' % (self.manifest, self.order + 1, self.label,
             '*' if self.thumbnail else '')
 
     @property
@@ -105,14 +104,14 @@ class IfPage(models.Model):
         return IIIFImage(*self.iiif_image_id.rsplit('/', 1))
 
     def get_absolute_url(self):
-        return reverse('djiffy:page', args=[self.book.short_id, self.short_id])
+        return reverse('djiffy:canvas', args=[self.manifest.short_id, self.short_id])
 
     def next(self):
-        return IfPage.objects.filter(book=self.book, order__gt=self.order) \
+        return Canvas.objects.filter(book=self.manifest, order__gt=self.order) \
             .first()
 
     def prev(self):
-        return IfPage.objects.filter(book=self.book, order__lt=self.order) \
+        return Canvas.objects.filter(book=self.manifest, order__lt=self.order) \
             .last()
 
     def admin_thumbnail(self):

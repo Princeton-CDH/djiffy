@@ -1,32 +1,32 @@
 from django.views.generic import DetailView, ListView
 
-from .models import IfBook, IfPage
+from .models import Manifest, Canvas
 
 
-class BookList(ListView):
-    model = IfBook
-    template_name = 'djiffy/book_list.html'
-    context_object_name = 'books'
+class ManifestList(ListView):
+    model = Manifest
+    template_name = 'djiffy/manifest_list.html'
+    context_object_name = 'manifests'
 
 
-class BookDetail(DetailView):
-    model = IfBook
-    template_name = 'djiffy/book_detail.html'
-    context_object_name = 'book'
+class ManifestDetail(DetailView):
+    model = Manifest
+    template_name = 'djiffy/manifest_detail.html'
+    context_object_name = 'manifest'
 
     def get_object(self, queryset=None):
         if queryset is None:
-            queryset = IfBook.objects.all()
+            queryset = Manifest.objects.all()
         return queryset.get(short_id=self.kwargs['id'])
 
 
-class PageDetail(DetailView):
-    model = IfPage
-    template_name = 'djiffy/page_detail.html'
-    context_object_name = 'page'
+class CanvasDetail(DetailView):
+    model = Canvas
+    template_name = 'djiffy/canvas_detail.html'
+    context_object_name = 'canvas'
 
     def get_object(self, queryset=None):
         if queryset is None:
-            queryset = IfPage.objects.all()
+            queryset = Canvas.objects.all()
         return queryset.get(short_id=self.kwargs['id'],
             book__short_id=self.kwargs['book_id'])
