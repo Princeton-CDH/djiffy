@@ -17,8 +17,10 @@ class Command(BaseCommand):
             # import all manifests in the collection
             for brief_manifest in manifest.manifests:
                 # check if content is supported
-                if not self.is_supported(brief_manifest):
-                    continue
+                if hasattr(brief_manifest, 'viewingHint') or \
+                  hasattr(brief_manifest, 'viewingDirection'):
+                    if not self.is_supported(brief_manifest):
+                        continue
                 print('Importing %s %s' % (brief_manifest.label, brief_manifest.id))
 
                 manifest = IIIFPresentation.from_file_or_url(brief_manifest.id)
@@ -31,10 +33,13 @@ class Command(BaseCommand):
                 self.import_book(manifest, kwargs['path'])
 
     def is_supported(self, manifest):
-        print('viewing hint, direction = %s %s' % (manifest.viewingHint, manifest.viewingDirection))
+        # print('viewing hint, direction = %s %s' % (manifest.viewingHint,
+            # getattr(manifest, 'viewingDirection', None)))
         # FIXME: individuals vs paged?
-        if manifest.viewingHint == 'paged' and \
-           manifest.viewingDirection == 'left-to-right':
+        view_hint = getattr(manifest, 'viewingHint', None)
+        view_direction = getattr(manifest, 'viewingDirection', None)
+        if (view_hint and manifest.viewingHint == 'paged') or \
+           (view_direction and manifest.viewingDirection == 'left-to-right'):
            return True
 
         self.stdout.write(self.style.ERROR('Currently import only supports paged, left-to-right manifests; skipping %s (%s, %s)' \
@@ -54,15 +59,22 @@ class Command(BaseCommand):
         # create a new book
         ifbk = IfBook()
         # TODO: how do we want to handle lists of labels?
-        if len(manifest.label) == 1:
-            ifbk.label = manifest.label[0]
+        if isinstance(manifest.label, list):
+            if len(manifest.label) == 1:
+                ifbk.label = manifest.label[0]
+            else:
+                ifbk.label = '; '.join(manifest.label)
         else:
-            ifbk.label = '; '.join(manifest.label)
+            ifbk.label = manifest.label
         ifbk.uri = manifest.id
-        ifbk.short_id = self.short_id(manifest.id)
+        ifbk.short_id = IIIFPresentation.short_id(manifest.id)
         # convert metadata into a more usable format
         metadata = OrderedDict([(item['label'], item['value'])
              for item in manifest.metadata])
+        # handle single values as well as lists
+        for key, value in metadata.items():
+            if not isinstance(value, list):
+                metadata[key] = (value, )
         ifbk.metadata = metadata
         ifbk.save()
 
@@ -78,7 +90,7 @@ class Command(BaseCommand):
             ifpage.label = canvas.label
             # this is canvas id, is that meaningful? do we want image id?
             ifpage.uri = canvas.id
-            ifpage.short_id = self.short_id(canvas.id)
+            ifpage.short_id = IIIFPresentation.short_id(canvas.id)
             # only support single image per canvas for now
             ifpage.iiif_image_id = canvas.images[0].resource.service.id
             # check if this page is the thumbnail image
@@ -87,19 +99,5 @@ class Command(BaseCommand):
             ifpage.save()
 
             order += 1
-
-
-    def short_id(self, uri):
-        # generate a short id from full manifest/canvas uri identifiers
-        # for use in urls
-
-        # NOTE: very PUL specific for now, will need to be generalized or
-        # adapted for other sources
-        # example: https://plum.princeton.edu/concern/scanned_resources/ph415q7581/manifest
-        # remove trailing /manifest at the end of the url
-        if uri.endswith('/manifest'):
-            uri = uri[:-len('/manifest')]
-        # split on slashes and return the last portion
-        return uri.split('/')[-1]
 
 
