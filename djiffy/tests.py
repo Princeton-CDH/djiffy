@@ -3,26 +3,26 @@ from django.test import TestCase
 from unittest.mock import patch
 import json
 
-from .models import IfBook, IfPage, IIIFImage, IIIFPresentation
+from .models import Manifest, Canvas, IIIFImage, IIIFPresentation
 
 FIXTURE_DIR = os.path.join(os.path.dirname(__file__), 'fixtures')
 
-class TestIfBook(TestCase):
+class TestManifest(TestCase):
 
     def test_str(self):
         # no label - short id is used
-        book = IfBook(short_id='bk123')
+        book = Manifest(short_id='bk123')
         assert str(book) == 'bk123'
         book.label = 'An item'
         assert str(book) == 'An item'
 
 
-class TestIfPage(TestCase):
+class TestCanvas(TestCase):
 
     def test_str(self):
-        book = IfBook(short_id='bk123', label='Book 1')
-        page = IfPage(book=book, label='Image 1', short_id='pg123', order=1)
-        assert str(page) == '%s %d (%s)' % (str(book), page.order + 1, page.label)
+        manif = Manifest(short_id='bk123', label='Book 1')
+        page = Canvas(manifest=manif, label='Image 1', short_id='pg123', order=1)
+        assert str(page) == '%s %d (%s)' % (str(manif), page.order + 1, page.label)
 
         page.thumbnail = True
         assert str(page).endswith('*')
@@ -31,7 +31,7 @@ class TestIfPage(TestCase):
         img_service = 'https://images.co'
         img_id = 'some-file.jp2'
 
-        page = IfPage(iiif_image_id='/'.join([img_service, img_id]))
+        page = Canvas(iiif_image_id='/'.join([img_service, img_id]))
         assert isinstance(page.image, IIIFImage)
         assert page.image.api_endpoint == img_service
         assert page.image.image_id == img_id

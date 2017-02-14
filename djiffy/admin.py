@@ -1,19 +1,19 @@
 from django.contrib import admin
 
-from .models import IfBook, IfPage
+from .models import Manifest, Canvas
 
-class PageInline(admin.StackedInline):
-    model = IfPage
+class CanvasInline(admin.StackedInline):
+    model = Canvas
 
-class BookAdmin(admin.ModelAdmin):
-    inlines = [PageInline]
+class ManifestAdmin(admin.ModelAdmin):
+    inlines = [CanvasInline]
     list_display = ('admin_thumbnail', 'label', 'short_id', 'created',
         'last_modified')
 
-class PageAdmin(admin.ModelAdmin):
-    list_display = ('admin_thumbnail', 'label', 'short_id', 'book')
+class CanvasAdmin(admin.ModelAdmin):
+    list_display = ('admin_thumbnail', 'label', 'short_id', 'manifest')
 
 
-admin.site.register(IfBook, BookAdmin)
-admin.site.register(IfPage, PageAdmin)
+admin.site.register(Manifest, ManifestAdmin)
+admin.site.register(Canvas, CanvasAdmin)
 

@@ -1,36 +1,36 @@
 {% extends 'djiffy/base.html' %}
 
-{% block page-subtitle %}Books | {{ book.label }}{% endblock %}
+{% block page-subtitle %}Manifests | {{ manifest.label }}{% endblock %}
 
 {% block content %}
 <div class="container djifbook">
-    <h1>{{ book.label }}</h1>
+    <h1>{{ manifest.label }}</h1>
 
     <article class="djifbook">
         <div class="media">
-            {% if book.thumbnail %}
+            {% if manifest.thumbnail %}
                 <div class="pull-left">
-                    <a href="{{ book.pages.first.get_absolute_url }}">
+                    <a href="{{ manifest.pages.first.get_absolute_url }}">
                     <img class="thumbnail media-object"
-                        src="{{ book.thumbnail.image.thumbnail }}"/>
+                        src="{{ manifest.thumbnail.image.thumbnail }}"/>
                     </a>
                 </div>
             {% endif %}
 
             <div class="media-body">
-                {% for field, value in book.metadata.items %}
+                {% for field, value in manifest.metadata.items %}
                 <p><strong>{{ field }}:</strong> {{ value|join:'; ' }}</p>
                 {% endfor %}
                 {#  metadata ? #}
                 {% if vol.has_pages %}
-                 <meta property="schema:numberOfPages" content="{{ book.pages.all.count }}"/>
+                 <meta property="schema:numberOfPages" content="{{ manifest.pages.all.count }}"/>
                 {% endif %}
             </div>
         </div>
 
     <div class="pages">
-    {% for page in book.pages.all %}
-        {% include "djiffy/snippets/page_card.html" %}
+    {% for page in manifest.pages.all %}
+        {% include "djiffy/snippets/canvas_card.html" %}
     {% endfor %}
     </div>
 

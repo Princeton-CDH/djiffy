@@ -1,7 +1,7 @@
 from collections import OrderedDict
 from django.core.management.base import BaseCommand
 
-from djiffy.models import IfBook, IfPage, IIIFPresentation
+from djiffy.models import Manifest, Canvas, IIIFPresentation
 
 
 class Command(BaseCommand):
@@ -21,7 +21,8 @@ class Command(BaseCommand):
                   hasattr(brief_manifest, 'viewingDirection'):
                     if not self.is_supported(brief_manifest):
                         continue
-                print('Importing %s %s' % (brief_manifest.label, brief_manifest.id))
+                self.stdout.write('Importing %s %s' % \
+                    (brief_manifest.label, brief_manifest.id))
 
                 manifest = IIIFPresentation.from_file_or_url(brief_manifest.id)
                 if manifest:
@@ -29,7 +30,8 @@ class Command(BaseCommand):
 
         if manifest.type == 'sc:Manifest':
             if self.is_supported(manifest):
-                print('Importing %s %s' % (manifest.label, manifest.id))
+                self.stdout.write('Importing %s %s' % \
+                    (manifest.label, manifest.id))
                 self.import_book(manifest, kwargs['path'])
 
     def is_supported(self, manifest):
@@ -48,7 +50,7 @@ class Command(BaseCommand):
 
     def import_book(self, manifest, path):
         # check if book with uri identifier already exists
-        if IfBook.objects.filter(uri=manifest.id).count():
+        if Manifest.objects.filter(uri=manifest.id).count():
             # NOTE: not updating for now; may want to add later
             self.stderr.write('%s has already been imported' % path)
             return
@@ -57,17 +59,17 @@ class Command(BaseCommand):
             return
 
         # create a new book
-        ifbk = IfBook()
+        manif = Manifest()
         # TODO: how do we want to handle lists of labels?
         if isinstance(manifest.label, list):
             if len(manifest.label) == 1:
-                ifbk.label = manifest.label[0]
+                manif.label = manifest.label[0]
             else:
-                ifbk.label = '; '.join(manifest.label)
+                manif.label = '; '.join(manifest.label)
         else:
-            ifbk.label = manifest.label
-        ifbk.uri = manifest.id
-        ifbk.short_id = IIIFPresentation.short_id(manifest.id)
+            manif.label = manifest.label
+        manif.uri = manifest.id
+        manif.short_id = IIIFPresentation.short_id(manifest.id)
         # convert metadata into a more usable format
         metadata = OrderedDict([(item['label'], item['value'])
              for item in manifest.metadata])
@@ -75,8 +77,8 @@ class Command(BaseCommand):
         for key, value in metadata.items():
             if not isinstance(value, list):
                 metadata[key] = (value, )
-        ifbk.metadata = metadata
-        ifbk.save()
+        manif.metadata = metadata
+        manif.save()
 
         thumbnail_id = None
         if hasattr(manifest, 'thumbnail'):
@@ -84,19 +86,19 @@ class Command(BaseCommand):
 
         # for now, only worry about the first sequence
         order = 0
-        # create a page for each canvas
+        # create a db canvas element for each canvas
         for canvas in manifest.sequences[0].canvases:
-            ifpage = IfPage(book=ifbk, order=order)
-            ifpage.label = canvas.label
+            db_canvas = Canvas(manifest=manif, order=order)
+            db_canvas.label = canvas.label
             # this is canvas id, is that meaningful? do we want image id?
-            ifpage.uri = canvas.id
-            ifpage.short_id = IIIFPresentation.short_id(canvas.id)
+            db_canvas.uri = canvas.id
+            db_canvas.short_id = IIIFPresentation.short_id(canvas.id)
             # only support single image per canvas for now
-            ifpage.iiif_image_id = canvas.images[0].resource.service.id
+            db_canvas.iiif_image_id = canvas.images[0].resource.service.id
             # check if this page is the thumbnail image
-            if thumbnail_id is not None and ifpage.iiif_image_id == thumbnail_id:
-                ifpage.thumbnail = True
-            ifpage.save()
+            if thumbnail_id is not None and db_canvas.iiif_image_id == thumbnail_id:
+                db_canvas.thumbnail = True
+            db_canvas.save()
 
             order += 1
 
