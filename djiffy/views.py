@@ -29,4 +29,4 @@ class CanvasDetail(DetailView):
         if queryset is None:
             queryset = Canvas.objects.all()
         return queryset.get(short_id=self.kwargs['id'],
-            book__short_id=self.kwargs['book_id'])
+            manifest__short_id=self.kwargs['manifest_id'])

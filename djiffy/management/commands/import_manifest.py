@@ -21,7 +21,7 @@ class Command(BaseCommand):
                   hasattr(brief_manifest, 'viewingDirection'):
                     if not self.is_supported(brief_manifest):
                         continue
-                self.stdout.writ('Importing %s %s' % \
+                self.stdout.write('Importing %s %s' % \
                     (brief_manifest.label, brief_manifest.id))
 
                 manifest = IIIFPresentation.from_file_or_url(brief_manifest.id)
@@ -88,7 +88,7 @@ class Command(BaseCommand):
         order = 0
         # create a db canvas element for each canvas
         for canvas in manifest.sequences[0].canvases:
-            db_canvas = Canvas(book=manif, order=order)
+            db_canvas = Canvas(manifest=manif, order=order)
             db_canvas.label = canvas.label
             # this is canvas id, is that meaningful? do we want image id?
             db_canvas.uri = canvas.id

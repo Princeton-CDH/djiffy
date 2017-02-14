@@ -90,6 +90,7 @@ class Canvas(models.Model):
     class Meta:
         ordering = ["manifest", "order"]
         verbose_name = 'IIIF Canvas'
+        verbose_name_plural = 'IIIF Canvases'
         unique_together = ("short_id", "manifest")
 
     def __str__(self):
@@ -107,11 +108,11 @@ class Canvas(models.Model):
         return reverse('djiffy:canvas', args=[self.manifest.short_id, self.short_id])
 
     def next(self):
-        return Canvas.objects.filter(book=self.manifest, order__gt=self.order) \
+        return Canvas.objects.filter(manifest=self.manifest, order__gt=self.order) \
             .first()
 
     def prev(self):
-        return Canvas.objects.filter(book=self.manifest, order__lt=self.order) \
+        return Canvas.objects.filter(manifest=self.manifest, order__lt=self.order) \
             .last()
 
     def admin_thumbnail(self):

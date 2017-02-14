@@ -20,9 +20,9 @@ class TestManifest(TestCase):
 class TestCanvas(TestCase):
 
     def test_str(self):
-        book = Manifest(short_id='bk123', label='Book 1')
-        page = Canvas(book=book, label='Image 1', short_id='pg123', order=1)
-        assert str(page) == '%s %d (%s)' % (str(book), page.order + 1, page.label)
+        manif = Manifest(short_id='bk123', label='Book 1')
+        page = Canvas(manifest=manif, label='Image 1', short_id='pg123', order=1)
+        assert str(page) == '%s %d (%s)' % (str(manif), page.order + 1, page.label)
 
         page.thumbnail = True
         assert str(page).endswith('*')
