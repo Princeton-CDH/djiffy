@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container djifbooks">
 <h1>Manifests</h1> {# how to override label to make more meaningful, e.g. books ? #}
-{% for manif in manifests %}
+{% for manifest in manifests %}
     {% include 'djiffy/snippets/manifest_card.html' %}
 {% endfor %}
 </div>
