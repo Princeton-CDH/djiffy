@@ -78,7 +78,7 @@ Usage
 
 Import IIIF content using the `import_manifest` manage command.  This
 command can take an IIIF Collection or single Manifest, via local file
-or URL.  Imported content can be reviewed in Django admin.
+or URL.  Imported content can be viewed in Django admin.
 
 
 Development instructions

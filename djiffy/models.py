@@ -50,28 +50,28 @@ class IIIFImage(iiif.IIIFImageClient):
     '''Subclass of :class:`piffle.iiif.IIIFImageClient`, for generating
     IIIF Image URIs for manifest canvas images.'''
 
-    long_side = 'height'
-
-    # NOTE: using long edge instead of specifying both with exact
-    # results in cleaner urls/filenams (no !), and more reliable result
-    # depending on IIIF implementation
+    #: long edge size for single page display
+    single_page_size = 1000
+    #: long edge size for thumbnail
+    thumbnail_size = 300
+    #: long edge size for mini thumbnail
+    mini_thumbnail_size = 100
 
     def thumbnail(self):
-        'default thumbnail: 300px on the long edge'
-        return self.size(**{self.long_side: 300}).format('png')
+        'thumbnail'
+        return self.size(height=self.thumbnail_size, width=self.thumbnail_size,
+                         exact=True).format('png')
 
     def mini_thumbnail(self):
-        'mini thumbnail: 100px on the long edge'
-        return self.size(**{self.long_side: 100}).format('png')
-
-
-
-    #: long edge size for single page display
-    SINGLE_PAGE_SIZE = 1000
+        'mini thumbnail'
+        return self.size(height=self.mini_thumbnail_size,
+                         width=self.mini_thumbnail_size, exact=True) \
+                   .format('png')
 
     def page_size(self):
         'page size for display: :attr:`SINGLE_PAGE_SIZE` on the long edge'
-        return self.size(**{self.long_side: self.SINGLE_PAGE_SIZE})
+        return self.size(height=self.single_page_size,
+                         width=self.single_page_size, exact=True)
 
 
 class Canvas(models.Model):
