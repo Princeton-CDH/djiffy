@@ -14,6 +14,10 @@ from piffle import iiif
 import requests
 
 
+class IIIFException(Exception):
+    pass
+
+
 class Manifest(models.Model):
     '''Minimal db model representation of an IIIF presentation manifest'''
     label = models.TextField()
@@ -134,7 +138,10 @@ class IIIFPresentation(AttrMap):
     @classmethod
     def from_url(cls, uri):
         response = requests.get(uri)
-        return cls(response.json())
+        if response.status_code == requests.codes.ok:
+            return cls(response.json())
+        raise IIIFException('Error retrieving manifest at %s: %s %s' %
+            (uri, response.status_code, response.reason))
 
     @classmethod
     def from_file_or_url(cls, path):
