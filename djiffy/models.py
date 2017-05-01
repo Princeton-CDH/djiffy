@@ -139,7 +139,17 @@ class IIIFPresentation(AttrMap):
     def from_url(cls, uri):
         response = requests.get(uri)
         if response.status_code == requests.codes.ok:
-            return cls(response.json())
+            try:
+                return cls(response.json())
+            except json.decoder.JSONDecodeError as err:
+                # if json fails, two possibilities:
+                # - we didn't actually get json (e.g. redirect for auth)
+                if 'application/json' not in response.headers['content-type']:
+                    raise IIIFException('No JSON found at %s' % uri)
+                # - there is something wrong with the json
+                raise IIIFException('Error parsing JSON for %s: %s' %
+                    (uri, err))
+
         raise IIIFException('Error retrieving manifest at %s: %s %s' %
             (uri, response.status_code, response.reason))
 
