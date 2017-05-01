@@ -1,7 +1,7 @@
 from collections import OrderedDict
 from django.core.management.base import BaseCommand
 
-from djiffy.models import Manifest, Canvas, IIIFPresentation
+from djiffy.models import Manifest, Canvas, IIIFPresentation, IIIFException
 
 
 class Command(BaseCommand):
@@ -11,8 +11,12 @@ class Command(BaseCommand):
             help='IIIF Collection or Manifest as file or URL')
 
     def handle(self, *args, **kwargs):
+        try:
+            manifest = IIIFPresentation.from_file_or_url(kwargs['path'])
+        except IIIFException as err:
+            self.stderr.write(str(err))
+            return
 
-        manifest = IIIFPresentation.from_file_or_url(kwargs['path'])
         if manifest.type == 'sc:Collection':
             # import all manifests in the collection
             for brief_manifest in manifest.manifests:
@@ -24,7 +28,12 @@ class Command(BaseCommand):
                 self.stdout.write('Importing %s %s' % \
                     (brief_manifest.label, brief_manifest.id))
 
-                manifest = IIIFPresentation.from_file_or_url(brief_manifest.id)
+                try:
+                    manifest = IIIFPresentation.from_file_or_url(brief_manifest.id)
+                except IIIFException as err:
+                    manifest = None
+                    self.stderr.write(str(err))
+
                 if manifest:
                     self.import_book(manifest, brief_manifest.id)
 
@@ -60,14 +69,17 @@ class Command(BaseCommand):
 
         # create a new book
         manif = Manifest()
-        # TODO: how do we want to handle lists of labels?
-        if isinstance(manifest.label, list):
+
+        # label can be either a list/tuple or a bare string; handle both
+        # TODO: generalize this and move into model classes
+        if isinstance(manifest.label, str):
+            manif.label = manifest.label
+        else:
             if len(manifest.label) == 1:
                 manif.label = manifest.label[0]
             else:
                 manif.label = '; '.join(manifest.label)
-        else:
-            manif.label = manifest.label
+
         manif.uri = manifest.id
         manif.short_id = IIIFPresentation.short_id(manifest.id)
         # convert metadata into a more usable format
