@@ -1,9 +1,12 @@
 import os.path
 from django.test import TestCase
 from unittest.mock import patch
+import pytest
+import requests
 import json
 
-from .models import Manifest, Canvas, IIIFImage, IIIFPresentation
+from .models import Manifest, Canvas, IIIFImage, IIIFPresentation, \
+    IIIFException
 
 FIXTURE_DIR = os.path.join(os.path.dirname(__file__), 'fixtures')
 
@@ -50,11 +53,32 @@ class TestIIIFPresentation(TestCase):
         with open(self.test_manifest) as manifest:
             data = json.loads(manifest.read())
         with patch('djiffy.models.requests') as mockrequests:
-            mockrequests.get.return_value.json.return_value = data
+            mockrequests.codes = requests.codes
+            mockresponse = mockrequests.get.return_value
+            mockresponse.status_code = requests.codes.ok
+            mockresponse.json.return_value = data
             pres = IIIFPresentation.from_url(manifest_url)
             assert pres.type == 'sc:Manifest'
             mockrequests.get.assert_called_with(manifest_url)
             mockrequests.get.return_value.json.assert_called_with()
+
+            # error handling
+            # bad status code response on the url
+            with pytest.raises(IIIFException) as err:
+                mockresponse.status_code = requests.codes.forbidden
+                mockresponse.reason = 'Forbidden'
+                IIIFPresentation.from_url(manifest_url)
+
+                assert 'Error retrieving manifest' in str(err)
+                assert '401 Forbidden' in str(err)
+
+            # valid http response but no json
+            with pytest.raises(IIIFException) as err:
+                mockresponse.status_code = requests.codes.ok
+                mockresponse.json.side_effect = \
+                    json.decoder.JSONDecodeError('err', 'doc', 1)
+                IIIFPresentation.from_url(manifest_url)
+                assert 'No JSON found' in str(err)
 
     def test_from_url_or_file(self):
         with patch.object(IIIFPresentation, 'from_url') as mock_from_url:
