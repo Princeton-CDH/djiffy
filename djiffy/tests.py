@@ -68,17 +68,28 @@ class TestIIIFPresentation(TestCase):
                 mockresponse.status_code = requests.codes.forbidden
                 mockresponse.reason = 'Forbidden'
                 IIIFPresentation.from_url(manifest_url)
-
                 assert 'Error retrieving manifest' in str(err)
                 assert '401 Forbidden' in str(err)
 
-            # valid http response but no json
+            # valid http response but not a json response
             with pytest.raises(IIIFException) as err:
                 mockresponse.status_code = requests.codes.ok
+                # content type header does not indicate json
+                mockresponse.headers = {'content-type': 'text/html'}
                 mockresponse.json.side_effect = \
                     json.decoder.JSONDecodeError('err', 'doc', 1)
                 IIIFPresentation.from_url(manifest_url)
                 assert 'No JSON found' in str(err)
+
+            # json parsing error
+            with pytest.raises(IIIFException) as err:
+                # content type header indicates json, but parsing failed
+                mockresponse.headers = {'content-type': 'application/json'}
+                mockresponse.json.side_effect = \
+                    json.decoder.JSONDecodeError('err', 'doc', 1)
+                IIIFPresentation.from_url(manifest_url)
+                assert 'Error parsing JSON' in str(err)
+
 
     def test_from_url_or_file(self):
         with patch.object(IIIFPresentation, 'from_url') as mock_from_url:
