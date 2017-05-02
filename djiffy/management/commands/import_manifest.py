@@ -83,13 +83,15 @@ class Command(BaseCommand):
         manif.uri = manifest.id
         manif.short_id = IIIFPresentation.short_id(manifest.id)
         # convert metadata into a more usable format
-        metadata = OrderedDict([(item['label'], item['value'])
-             for item in manifest.metadata])
-        # handle single values as well as lists
-        for key, value in metadata.items():
-            if not isinstance(value, list):
-                metadata[key] = (value, )
-        manif.metadata = metadata
+        if hasattr(manifest, 'metadata'):
+            metadata = OrderedDict([(item['label'], item['value'])
+                 for item in manifest.metadata])
+            # handle single values as well as lists
+            for key, value in metadata.items():
+                if not isinstance(value, list):
+                    metadata[key] = (value, )
+            manif.metadata = metadata
+
         manif.save()
 
         thumbnail_id = None
