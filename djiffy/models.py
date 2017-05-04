@@ -12,6 +12,7 @@ except ImportError:
 from jsonfield import JSONField
 from piffle import iiif
 import requests
+import urllib
 
 
 class IIIFException(Exception):
@@ -154,11 +155,17 @@ class IIIFPresentation(AttrMap):
             (uri, response.status_code, response.reason))
 
     @classmethod
+    def is_url(cls, url):
+        return urllib.parse.urlparse(url).scheme != ""
+
+    @classmethod
     def from_file_or_url(cls, path):
         if os.path.isfile(path):
             return cls.from_file(path)
-        else:
+        elif cls.is_url(path):
             return cls.from_url(path)
+        else:
+            raise IIIFException('File not found: %s' % path)
 
     @classmethod
     def short_id(cls, uri):
