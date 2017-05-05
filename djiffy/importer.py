@@ -3,7 +3,7 @@ from collections import OrderedDict
 from djiffy.models import Manifest, Canvas, IIIFPresentation, IIIFException
 
 
-class Importer(object):
+class ManifestImporter(object):
     '''Manifest importer.  Intended for use with Django manage commands.
 
     :param stdout: optional stdout, if status output is desired
@@ -43,7 +43,7 @@ class Importer(object):
                 self.import_collection(manifest)
 
             if manifest.type == 'sc:Manifest':
-                self.import_book(manifest)
+                self.import_book(manifest, path)
 
     def import_supported(self, manifest):
         # FIXME: individuals vs paged?
@@ -54,19 +54,19 @@ class Importer(object):
             return True
 
         else:
-            self.error_msg('Currently import only supports paged, left-to-right manifests; skipping %s (%s, %s)' \
-            % (manifest.id, manifest.viewingHint, manifest.viewingDirection))
+            self.error_msg('Currently import only supports paged, left-to-right manifests; skipping %s (hint: %s, direction: %s)' \
+            % (manifest.id, view_hint, view_direction))
             return False
 
     def import_book(self, manifest, path):
-        # check if manifestwith uri identifier has already been imported
+        # check if manifest with uri identifier has already been imported
         if Manifest.objects.filter(uri=manifest.id).count():
             # NOTE: not updating for now; may want to add later
             self.error_msg('%s has already been imported' % path)
-            return False
+            return
         # check if the type of manifest is supported
         if not self.import_supported(manifest):
-            return False
+            return
 
         # create a new book
         manif = Manifest()
@@ -117,9 +117,13 @@ class Importer(object):
 
             order += 1
 
+        # return the manifest db object that was created
+        return manif
+
     def import_collection(self, manifest):
         if manifest.type == 'sc:Collection':
             # import all manifests in the collection
+            imported = []
             for brief_manifest in manifest.manifests:
                 # check if content is supported
                 if hasattr(brief_manifest, 'viewingHint') or \
@@ -136,7 +140,10 @@ class Importer(object):
                     self.error_msg(str(err))
 
                 if manifest:
-                    self.import_book(manifest, brief_manifest.id)
+                    db_manifest = self.import_book(manifest, brief_manifest.id)
+                    imported.append(db_manifest)
+
+            return imported
 
 
 

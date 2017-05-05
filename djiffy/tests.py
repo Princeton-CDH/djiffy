@@ -7,6 +7,7 @@ import json
 
 from .models import Manifest, Canvas, IIIFImage, IIIFPresentation, \
     IIIFException
+from .importer import ManifestImporter
 
 FIXTURE_DIR = os.path.join(os.path.dirname(__file__), 'fixtures')
 
@@ -90,7 +91,6 @@ class TestIIIFPresentation(TestCase):
                 IIIFPresentation.from_url(manifest_url)
                 assert 'Error parsing JSON' in str(err)
 
-
     def test_from_url_or_file(self):
         with patch.object(IIIFPresentation, 'from_url') as mock_from_url:
             pres = IIIFPresentation.from_file_or_url(self.test_manifest)
@@ -105,8 +105,6 @@ class TestIIIFPresentation(TestCase):
         assert IIIFPresentation.short_id(manifest_uri) == 'p0c484h74c'
         canvas_uri = 'https://ii.if/resources/p0c484h74c/manifest/canvas/ps7527b878'
         assert IIIFPresentation.short_id(canvas_uri) == 'ps7527b878'
-
-
 
     def test_toplevel_attrs(self):
         pres = IIIFPresentation.from_file(self.test_manifest)
@@ -141,3 +139,59 @@ class TestIIIFPresentation(TestCase):
         assert not hasattr(pres, 'label')
         assert not hasattr(pres, 'type')
 
+
+class TestManifestImporter(TestCase):
+    test_manifest = os.path.join(FIXTURE_DIR, 'chto-manifest.json')
+    test_coll_manifest = os.path.join(FIXTURE_DIR,
+        'cotsen-collection-manifest.json')
+
+    def setUp(self):
+        self.importer = ManifestImporter()
+
+    def test_import_supported(self):
+        # currently only supports paged/left-to-right
+        pres = IIIFPresentation.from_file(self.test_manifest)
+        assert self.importer.import_supported(pres) == True
+
+        # non paged
+        pres.viewingHint = 'non-paged'
+        pres.viewingDirection = None
+        assert self.importer.import_supported(pres) == False
+
+        # no viewing hint or direction
+        pres.viewingHint = None
+        assert self.importer.import_supported(pres) == False
+
+    def test_import_book(self):
+        pres = IIIFPresentation.from_file(self.test_manifest)
+        manif = self.importer.import_book(pres, self.test_manifest)
+        assert isinstance(manif, Manifest)
+
+        assert manif.label == "Chto my stroim : Tetrad\u02b9 s kartinkami"
+        assert manif.short_id == 'ph415q7581'
+        assert manif.metadata['Creator'] == ["Savel\u02b9ev, L. (Leonid), 1904-1941"]
+        assert manif.metadata['Format'] == ["Book"]
+
+        assert len(manif.canvases.all()) == len(pres.sequences[0].canvases)
+        assert manif.thumbnail.iiif_image_id == \
+             'https://libimages1.princeton.edu/loris/plum_prod/p0%2F28%2F71%2Fv9%2F8d-intermediate_file.jp2'
+
+        # won't import if already in db
+        assert self.importer.import_book(pres, self.test_manifest) == None
+
+        # unsupported type won't import
+        pres.id = 'http://some.other/uri'
+        pres.viewingHint = 'non-paged'
+        pres.viewingDirection = None
+        assert self.importer.import_book(pres, self.test_manifest) == None
+
+    def test_import_collection(self):
+        pres = IIIFPresentation.from_file(self.test_manifest)
+        assert self.importer.import_collection(pres) == None
+
+        coll = IIIFPresentation.from_file(self.test_coll_manifest)
+        imported = self.importer.import_collection(coll)
+        assert len(imported) == 4
+        assert isinstance(imported[0], Manifest)
+
+    # TODO: test output reporting

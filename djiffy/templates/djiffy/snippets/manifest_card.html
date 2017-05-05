@@ -13,7 +13,7 @@
         <a href="{{ manifest.get_absolute_url }}">{{ manifest.label|truncatechars:100 }}</a>
     </h4>
 
-    <p class="small text-muted">{{ manifest.pages.all|length }} page{{ manifest.pages.all|pluralize }}.
+    <p class="small text-muted">{{ manifest.canvases.all|length }} page{{ manifest.canvases.all|pluralize }}.
     Added {{ manifest.created|naturalday }}</p>
   </div>
 </div>

@@ -1,0 +1,75 @@
+{
+   "@context":"http://iiif.io/api/presentation/2/context.json",
+   "@id":"https://plum.princeton.edu/collections/pqb98np484/manifest",
+   "@type":"sc:Collection",
+   "label":[
+      "Treasures of the Cotsen Collection"
+   ],
+   "viewingHint":"individuals",
+   "manifests":[
+      {
+         "@id":"https://plum.princeton.edu/concern/scanned_resources/pnp194784q/manifest",
+         "@type":"sc:Manifest",
+         "label":[
+            "扇辻うら : 西郷隆盛",
+            "Ogi tsujiura : Saigō Takamori"
+         ],
+         "viewingHint":"paged",
+         "viewingDirection":"left-to-right"
+      },
+      {
+         "@id":"https://plum.princeton.edu/concern/scanned_resources/pnc581j63v/manifest",
+         "@type":"sc:Manifest",
+         "label":[
+            "泰平樂語笑種福萬金雙六",
+            "Taihei rakugo warai no tane fukumaki sugoroku"
+         ],
+         "viewingHint":"paged",
+         "viewingDirection":"left-to-right"
+      },
+      {
+         "@id":"https://plum.princeton.edu/concern/scanned_resources/pns065357q/manifest",
+         "@type":"sc:Manifest",
+         "label":[
+            "Nijūshi-kō mawari sugoroku"
+         ],
+         "viewingHint":"paged",
+         "viewingDirection":"left-to-right"
+      },
+      {
+         "@id":"https://plum.princeton.edu/concern/scanned_resources/ptd96n891h/manifest",
+         "@type":"sc:Manifest",
+         "label":[
+            "The second Sing-a-song playerbook is now ready to meet a waiting demand"
+         ],
+         "description":[
+            "\"Sales office: 200 Fifth Avenue, New York, N.Y ; Canadian Agents: Somerville, London, Ontario\" --After imprint at foot of page 4.",
+            "Most titles listed accompanied by illustrations of covers.",
+            "\"Sold over 400,000 copies of companion book in 9 months\" --Page 1.",
+            "Page 2 refers to \"sales so far in 1939\"; the first Sing-a-song playerbook was copyrighted 1938.",
+            "Publisher information from foot of page 4.",
+            "In addition to the featured Sing-a-song playerbooks (both the original and second), the flyer includes information on \"Jolly Jump-Ups\" (pop-up books), \"1.25 [dollar] Picture Story Books,\" \"60 cent Picture Story Books,\" and \"Cut-out and Construction Portfolios and Coloring Sets,\" and \"Seeing the World's Fair.\"",
+            "Meant to folded over twice (to 10 x 22 cm size) for mailing.",
+            "1 sheet folded to form 4 pages."
+         ],
+         "viewingHint":"individuals",
+         "viewingDirection":"left-to-right"
+      },
+      {
+         "@id":"https://plum.princeton.edu/concern/scanned_resources/pns065357qA/manifest",
+         "@type":"sc:Manifest",
+         "label":[
+            "Test unsupported manifest"
+         ],
+         "viewingHint":"non-paged"
+      }
+   ],
+   "metadata":[
+      {
+         "label":"Exhibit",
+         "value":[
+            "cotsen"
+         ]
+      }
+   ]
+}

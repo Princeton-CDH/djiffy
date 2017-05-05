@@ -50,7 +50,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='canvas',
             name='manifest',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='pages', to='djiffy.Manifest'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='canvases', to='djiffy.Manifest'),
         ),
         migrations.AlterUniqueTogether(
             name='canvas',

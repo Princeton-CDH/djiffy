@@ -39,7 +39,7 @@ class Manifest(models.Model):
 
     @property
     def thumbnail(self):
-        return self.pages.filter(thumbnail=True).first()
+        return self.canvases.filter(thumbnail=True).first()
 
     def get_absolute_url(self):
         return reverse('djiffy:manifest', args=[self.short_id])
@@ -86,7 +86,7 @@ class Canvas(models.Model):
     short_id = models.CharField(max_length=255)
     uri = models.URLField()
     iiif_image_id = models.URLField()
-    manifest = models.ForeignKey(Manifest, related_name='pages')
+    manifest = models.ForeignKey(Manifest, related_name='canvases')
     thumbnail = models.BooleanField(default=False)
     # for now only storing a single sequence, so just store order on the page
     order = models.PositiveIntegerField()

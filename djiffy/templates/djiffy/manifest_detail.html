@@ -10,7 +10,7 @@
         <div class="media">
             {% if manifest.thumbnail %}
                 <div class="pull-left">
-                    <a href="{{ manifest.pages.first.get_absolute_url }}">
+                    <a href="{{ manifest.canvases.first.get_absolute_url }}">
                     <img class="thumbnail media-object"
                         src="{{ manifest.thumbnail.image.thumbnail }}"/>
                     </a>
@@ -18,18 +18,18 @@
             {% endif %}
 
             <div class="media-body">
+                {#  metadata #}
                 {% for field, value in manifest.metadata.items %}
                 <p><strong>{{ field }}:</strong> {{ value|join:'; ' }}</p>
                 {% endfor %}
-                {#  metadata ? #}
-                {% if vol.has_pages %}
-                 <meta property="schema:numberOfPages" content="{{ manifest.pages.all.count }}"/>
+                {% if manifest.canvases.exists %}  {# only relevant if a book ? #}
+                 <meta property="schema:numberOfPages" content="{{ manifest.canvases.all.count }}"/>
                 {% endif %}
             </div>
         </div>
 
     <div class="pages">
-    {% for canvas in manifest.pages.all %}
+    {% for canvas in manifest.canvases.all %}
         {% include "djiffy/snippets/canvas_card.html" %}
     {% endfor %}
     </div>
