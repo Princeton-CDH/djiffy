@@ -1,5 +1,7 @@
 import os.path
 from django.test import TestCase
+from django.test.utils import override_settings
+from django.url import reverse
 from unittest.mock import patch
 import pytest
 import requests
@@ -69,8 +71,8 @@ class TestIIIFPresentation(TestCase):
                 mockresponse.status_code = requests.codes.forbidden
                 mockresponse.reason = 'Forbidden'
                 IIIFPresentation.from_url(manifest_url)
-                assert 'Error retrieving manifest' in str(err)
-                assert '401 Forbidden' in str(err)
+            assert 'Error retrieving manifest' in str(err)
+            assert '403 Forbidden' in str(err)
 
             # valid http response but not a json response
             with pytest.raises(IIIFException) as err:
@@ -80,7 +82,7 @@ class TestIIIFPresentation(TestCase):
                 mockresponse.json.side_effect = \
                     json.decoder.JSONDecodeError('err', 'doc', 1)
                 IIIFPresentation.from_url(manifest_url)
-                assert 'No JSON found' in str(err)
+            assert 'No JSON found' in str(err)
 
             # json parsing error
             with pytest.raises(IIIFException) as err:
@@ -89,7 +91,7 @@ class TestIIIFPresentation(TestCase):
                 mockresponse.json.side_effect = \
                     json.decoder.JSONDecodeError('err', 'doc', 1)
                 IIIFPresentation.from_url(manifest_url)
-                assert 'Error parsing JSON' in str(err)
+            assert 'Error parsing JSON' in str(err)
 
     def test_from_url_or_file(self):
         with patch.object(IIIFPresentation, 'from_url') as mock_from_url:
