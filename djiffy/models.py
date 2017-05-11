@@ -24,9 +24,13 @@ class Manifest(models.Model):
     label = models.TextField()
     short_id = models.CharField(max_length=255, unique=True)
     uri = models.URLField()
+    #: iiif presentation metadata for display
     metadata = JSONField(load_kwargs={'object_pairs_hook': OrderedDict})
     created = models.DateField(auto_now_add=True)
     last_modified = models.DateField(auto_now=True)
+    #: extra data provided via a 'seeAlso' reference
+    extra_data = JSONField(load_kwargs={'object_pairs_hook': OrderedDict},
+        default=dict)
 
     class Meta:
         verbose_name = 'IIIF Manifest'

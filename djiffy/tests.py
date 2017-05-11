@@ -162,8 +162,18 @@ class TestManifestImporter(TestCase):
         pres.viewingHint = None
         assert self.importer.import_supported(pres) == False
 
-    def test_import_book(self):
+    @patch('djiffy.importer.requests')
+    def test_import_book(self, mockrequests):
         pres = IIIFPresentation.from_file(self.test_manifest)
+
+        mock_extra_data = {
+            'title': {
+                '@value': 'Sample extra metadata',
+                '@language': 'eng'
+            },
+            'identifier': ['ark:/88435/tm70mz058']
+        }
+        mockrequests.get.return_value.json.return_value = mock_extra_data
         manif = self.importer.import_book(pres, self.test_manifest)
         assert isinstance(manif, Manifest)
 
@@ -171,6 +181,10 @@ class TestManifestImporter(TestCase):
         assert manif.short_id == 'ph415q7581'
         assert manif.metadata['Creator'] == ["Savel\u02b9ev, L. (Leonid), 1904-1941"]
         assert manif.metadata['Format'] == ["Book"]
+        # extra data requested and saved from seeAlso when present
+        assert manif.extra_data == mock_extra_data
+        assert mockrequests.get.called_with(pres.seeAlso.id)
+        assert mockrequests.get.return_value.json.called_with()
 
         assert len(manif.canvases.all()) == len(pres.sequences[0].canvases)
         assert manif.thumbnail.iiif_image_id == \
@@ -178,6 +192,12 @@ class TestManifestImporter(TestCase):
 
         # won't import if already in db
         assert self.importer.import_book(pres, self.test_manifest) == None
+
+        # no error if seeAlso is not present
+        manif.delete()
+        del pres.seeAlso
+        manif = self.importer.import_book(pres, self.test_manifest)
+        assert manif.extra_data == {}
 
         # unsupported type won't import
         pres.id = 'http://some.other/uri'

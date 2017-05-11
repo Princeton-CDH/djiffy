@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand
 from djiffy.importer import ManifestImporter
 
 class Command(BaseCommand):
+    '''Import IIIF Collections or Manifests into the local database.'''
 
     def add_arguments(self, parser):
         parser.add_argument('path', nargs='+',

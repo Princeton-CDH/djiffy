@@ -1,4 +1,5 @@
 from collections import OrderedDict
+import requests
 
 from djiffy.models import Manifest, Canvas, IIIFPresentation, IIIFException
 
@@ -92,6 +93,12 @@ class ManifestImporter(object):
                 if not isinstance(value, list):
                     metadata[key] = (value, )
             manif.metadata = metadata
+
+        # if manifest has a seeAlso link with JSON format,
+        # fetch it and store as extra data
+        if hasattr(manifest, 'seeAlso') and manifest.seeAlso.format == 'application/ld+json':
+            response = requests.get(manifest.seeAlso.id)
+            manif.extra_data = response.json()
 
         manif.save()
 
