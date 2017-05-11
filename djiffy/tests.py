@@ -1,11 +1,10 @@
 import os.path
 from django.test import TestCase
-from django.test.utils import override_settings
-from django.url import reverse
-from unittest.mock import patch
+from io import StringIO
+import json
 import pytest
 import requests
-import json
+from unittest.mock import patch, Mock
 
 from .models import Manifest, Canvas, IIIFImage, IIIFPresentation, \
     IIIFException
@@ -216,4 +215,33 @@ class TestManifestImporter(TestCase):
         assert len(imported) == 4
         assert isinstance(imported[0], Manifest)
 
-    # TODO: test output reporting
+    def test_output(self):
+        # with no stdout defined, no error
+        self.importer.output('test')
+
+        # if stdout is defined, writes message
+        self.importer.stdout = StringIO()
+        self.importer.output('test')
+        self.importer.stdout.seek(0)
+        assert self.importer.stdout.read() == 'test'
+
+    def test_error_msg(self):
+        # no stderr
+        self.importer.error_msg('oops')
+
+        # stderr but no style
+        self.importer.stderr = StringIO()
+        self.importer.error_msg('oops')
+        self.importer.stderr.seek(0)
+        assert self.importer.stderr.read() == 'oops'
+
+        # both stderr and style
+        self.importer.stderr = StringIO()
+        def err_style(msg):
+            return '<i>%s</i>' % msg
+
+        self.importer.style = Mock()
+        self.importer.style.ERROR = err_style
+        self.importer.error_msg('oops')
+        self.importer.stderr.seek(0)
+        assert self.importer.stderr.read() == '<i>oops</i>'
