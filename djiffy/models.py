@@ -4,11 +4,7 @@ import os.path
 
 from attrdict import AttrMap
 from django.db import models
-try:
-    # django 1.10
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
+from django.urls import reverse
 from jsonfield import JSONField
 from piffle import iiif
 import requests
