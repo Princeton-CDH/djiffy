@@ -4,11 +4,7 @@ import os.path
 
 from attrdict import AttrMap
 from django.db import models
-try:
-    # django 1.10
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
+from django.urls import reverse
 from jsonfield import JSONField
 from piffle import iiif
 import requests
@@ -16,17 +12,23 @@ import urllib
 
 
 class IIIFException(Exception):
+    '''Custom exception for IIIF/djiffy specific errors'''
     pass
 
 
 class Manifest(models.Model):
     '''Minimal db model representation of an IIIF presentation manifest'''
+    #: label
     label = models.TextField()
+    #: short id extracted from URI
     short_id = models.CharField(max_length=255, unique=True)
+    #: URI
     uri = models.URLField()
     #: iiif presentation metadata for display
     metadata = JSONField(load_kwargs={'object_pairs_hook': OrderedDict})
+    #: date local manifest cache was created
     created = models.DateField(auto_now_add=True)
+    #: date local manifest cache was last modified
     last_modified = models.DateField(auto_now=True)
     #: extra data provided via a 'seeAlso' reference
     extra_data = JSONField(load_kwargs={'object_pairs_hook': OrderedDict},
@@ -43,12 +45,15 @@ class Manifest(models.Model):
 
     @property
     def thumbnail(self):
+        '''thumbnail url for associated canvas'''
         return self.canvases.filter(thumbnail=True).first()
 
     def get_absolute_url(self):
+        ''''url for this manifest within the django site'''
         return reverse('djiffy:manifest', args=[self.short_id])
 
     def admin_thumbnail(self):
+        '''thumbnail for convenience display in admin interface'''
         if self.thumbnail:
             return self.thumbnail.admin_thumbnail()
     admin_thumbnail.short_description = 'Thumbnail'
@@ -67,18 +72,18 @@ class IIIFImage(iiif.IIIFImageClient):
     mini_thumbnail_size = 100
 
     def thumbnail(self):
-        'thumbnail'
+        '''thumbnail'''
         return self.size(height=self.thumbnail_size, width=self.thumbnail_size,
                          exact=True).format('png')
 
     def mini_thumbnail(self):
-        'mini thumbnail'
+        '''mini thumbnail'''
         return self.size(height=self.mini_thumbnail_size,
                          width=self.mini_thumbnail_size, exact=True) \
                    .format('png')
 
     def page_size(self):
-        'page size for display: :attr:`SINGLE_PAGE_SIZE` on the long edge'
+        '''page size for display: :attr:`SINGLE_PAGE_SIZE` on the long edge'''
         return self.size(height=self.single_page_size,
                          width=self.single_page_size, exact=True)
 
@@ -86,14 +91,21 @@ class IIIFImage(iiif.IIIFImageClient):
 class Canvas(models.Model):
     '''Minimal db model representation of a canvas from an IIIF manifest'''
 
+    #: label
     label = models.TextField()
+    #: short id extracted from URI
     short_id = models.CharField(max_length=255)
+    #: URI
     uri = models.URLField()
+    #: URL of IIIF image for this canvas
     iiif_image_id = models.URLField()
+    #: :class:`Manifest` this canvas vbelongs to
     manifest = models.ForeignKey(Manifest, related_name='canvases')
+    #: boolean flag to indicate if this canvas shoudl be used as thumbnail
     thumbnail = models.BooleanField(default=False)
-    # for now only storing a single sequence, so just store order on the page
+    #: order of this canvas within associated manifest primary sequence
     order = models.PositiveIntegerField()
+    # (for now only stores a single sequence, so just store order on the page    )
     # format? size? (ocr text eventually?)
 
     class Meta:
@@ -108,40 +120,59 @@ class Canvas(models.Model):
 
     @property
     def image(self):
+        '''Associated IIIF image for this canvas as :class:`IIIFImage`'''
         # NOTE: piffle iiif image wants service & id split out.
         # Should update to handle iiif image ids as provided in manifests
         # for now, split into service and image id. (is this reliable?)
         return IIIFImage(*self.iiif_image_id.rsplit('/', 1))
 
     def get_absolute_url(self):
+        ''''url for this canvas within the django site'''
         return reverse('djiffy:canvas', args=[self.manifest.short_id, self.short_id])
 
     def next(self):
+        '''Next canvas after this one in sequence (within manifest
+        primary sequence).  Returns an empty queryset if there is no next
+        canvas.'''
         return Canvas.objects.filter(manifest=self.manifest, order__gt=self.order) \
             .first()
 
     def prev(self):
+        '''Previous canvas before this one in sequence
+        (within manifest primary sequence).  Returns an empty queryset
+        if there is no next canvas.'''
         return Canvas.objects.filter(manifest=self.manifest, order__lt=self.order) \
             .last()
 
     def admin_thumbnail(self):
+        '''thumbnail for convenience display in admin interface'''
         return u'<img src="%s" />' % self.image.mini_thumbnail()
     admin_thumbnail.short_description = 'Thumbnail'
     admin_thumbnail.allow_tags = True
 
 
 class IIIFPresentation(AttrMap):
+    ''':class:`attrdict.AttrMap` subclass for read access to IIIF Presentation
+    content'''
+
+    # TODO: document sample use, e.g. @ fields
 
     at_fields = ['type', 'id', 'context']
 
     @classmethod
     def from_file(cls, path):
+        '''Iniitialize :class:`IIIFPresentation` from a file.'''
         with open(path) as manifest:
             data = json.loads(manifest.read())
         return cls(data)
 
     @classmethod
     def from_url(cls, uri):
+        '''Iniitialize :class:`IIIFPresentation` from a URL.
+
+        :raises: :class:`IIIFException` if URL is not retrieved successfully,
+            if the response is not JSON content, or if the JSON cannot be parsed.
+        '''
         response = requests.get(uri)
         if response.status_code == requests.codes.ok:
             try:
@@ -160,10 +191,12 @@ class IIIFPresentation(AttrMap):
 
     @classmethod
     def is_url(cls, url):
+        '''Utility method to check if a path is a url or file'''
         return urllib.parse.urlparse(url).scheme != ""
 
     @classmethod
     def from_file_or_url(cls, path):
+        '''Iniitialize :class:`IIIFPresentation` from a file or a url.'''
         if os.path.isfile(path):
             return cls.from_file(path)
         elif cls.is_url(path):
@@ -174,7 +207,8 @@ class IIIFPresentation(AttrMap):
     @classmethod
     def short_id(cls, uri):
         '''Generate a short id from full manifest/canvas uri identifiers
-        for use in local urls.'''
+        for use in local urls.  Logic is based on the recommended
+        url pattern from the IIIF Presentation 2.0 specification.'''
 
         # shortening should work reliably for uris that follow
         # recommended url patterns from the spec

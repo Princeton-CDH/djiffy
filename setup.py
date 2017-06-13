@@ -20,7 +20,7 @@ setup(
     long_description=README,
     url='https://github.com/Princeton-CDH/djiffy',
     install_requires=[
-        'django',
+        'django>=1.10',
         'requests',
         'piffle',
         'attrdict',
@@ -30,10 +30,12 @@ setup(
     tests_require=test_requirements,
     extras_require={
         'test': test_requirements,
+        'docs': ['sphinx']
     },
     author='CDH @ Princeton',
     author_email='digitalhumanities@princeton.edu',
     classifiers=[
+        'Development Status :: 3 - Alpha'
         'Environment :: Web Environment',
         'Framework :: Django',
         'Framework :: Django :: 1.10',
@@ -42,7 +44,6 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        # 'Programming Language :: Python :: 3.4', ?
         'Programming Language :: Python :: 3.5',
     ],
 )

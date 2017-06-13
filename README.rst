@@ -1,24 +1,27 @@
 djiffy
 ======
 
+.. sphinx-start-marker-do-not-remove
+
 Django application to index and display IIIF Manifests for books
 
-.. image:: https://travis-ci.org/Princeton-CDH/djiffy.svg?branch=develop
+.. image:: https://travis-ci.org/Princeton-CDH/djiffy.svg?branch=master
    :target: https://travis-ci.org/Princeton-CDH/djiffy
    :alt: Build Status
-.. image:: https://codecov.io/gh/Princeton-CDH/djiffy/branch/develop/graph/badge.svg
+.. image:: https://codecov.io/gh/Princeton-CDH/djiffy/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/Princeton-CDH/djiffy
    :alt: Code Coverage
-.. image:: https://landscape.io/github/Princeton-CDH/djiffy/develop/landscape.svg?style=flat
-   :target: https://landscape.io/github/Princeton-CDH/djiffy/develop
+.. image:: https://landscape.io/github/Princeton-CDH/djiffy/master/landscape.svg?style=flat
+   :target: https://landscape.io/github/Princeton-CDH/djiffy/master
    :alt: Code Health
-.. image:: https://requires.io/github/Princeton-CDH/djiffy/requirements.svg?branch=develop
-   :target: https://requires.io/github/Princeton-CDH/djiffy/requirements/?branch=develop
+.. image:: https://requires.io/github/Princeton-CDH/djiffy/requirements.svg?branch=master
+   :target: https://requires.io/github/Princeton-CDH/djiffy/requirements/?branch=master
    :alt: Requirements Status
 
 **djiffy** is intended to be a reusable `Django`_ application for
 working with digitized book content provided via `IIIF Presentation`_
-manifests.
+manifests.  This is an *alpha* version and it does *not* yet support
+the full IIIF Presentation specification.
 
 
 .. _Django: https://www.djangoproject.com/
@@ -45,7 +48,7 @@ tagged release or branch::
         pip install git+https://github.com/Princeton-CDH/piffle.git@feature/python3-compatibility#egg=piffle
 
 
-configuration
+Configuration
 -------------
 
 Add `djiffy` to installed applications and make sure that `django.contrib.humanize`
@@ -72,13 +75,20 @@ Run migrations to create database tables::
 
     python manage.py migrate
 
+.. NOTE::
+
+    The templates included require that you have a url configured with
+    the name ``site-index``.
 
 Usage
 -----
 
 Import IIIF content using the `import_manifest` manage command.  This
 command can take an IIIF Collection or single Manifest, via local file
-or URL.  Imported content can be viewed in Django admin.
+or URL.  Imported content can be viewed in Django admin.::
+
+    python manage.py import_manifest http://url.for/iiif/manifest
+    python manage.py import_manifest /path/to/local/collection
 
 
 Development instructions
