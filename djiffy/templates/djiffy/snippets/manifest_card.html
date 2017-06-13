@@ -1,0 +1,23 @@
+{% load static humanize %}
+<div class="media">
+  <a class="pull-left" href="{{ manifest.get_absolute_url }}">
+    {% if manifest.thumbnail %}
+      <img class="media-object cover-mini-thumb" src="{{ manifest.thumbnail.image.mini_thumbnail }}"/>
+    {% else %}
+        <img class="media-object" src="{% static 'img/cover_unavailable_minithumb.png' %}"/>
+    {% endif %}
+  </a>
+
+  <div class="media-body">
+    <h4 class="media-heading">
+        <a href="{{ manifest.get_absolute_url }}">{{ manifest.label|truncatechars:100 }}</a>
+    </h4>
+
+    <p class="small text-muted">{{ manifest.canvases.all|length }} page{{ manifest.canvases.all|pluralize }}.
+    Added {{ manifest.created|naturalday }}</p>
+  </div>
+</div>
+
+
+
+

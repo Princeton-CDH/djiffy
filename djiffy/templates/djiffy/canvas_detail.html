@@ -1,0 +1,85 @@
+{% extends 'djiffy/base.html' %}
+{% load static %}
+
+{% block page-subtitle %}Canvas | {{ canvas.manifest.label }} || {{ canvas.label }}{% endblock %}
+
+{% block javascript %}
+  <script type="text/javascript" src="{% static 'js/openseadragon/openseadragon.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/deepzoom.js' %}"></script>
+  <script>
+     $(document).ready(function () {
+      // set up seadragon configuration (not loaded unless triggered by user)
+      set_seadragon_opts({
+          id: "zoom-page",
+          prefixUrl: "{% static 'js/openseadragon/images/' %}",
+          tileSources: "{{ canvas.image.info }}",
+          toolbar: 'deepzoom-controls',
+          showNavigator: true,
+          navigatorPosition: 'TOP_LEFT',
+          zoomInButton: 'dz-zoom-in',
+          zoomOutButton: 'dz-zoom-out',
+          homeButton: 'dz-home',
+          fullPageButton: 'dz-fs',
+      });
+    });
+  </script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1><a href="{{ canvas.manifest.get_absolute_url }}">{{ canvas.manifest.label }}</a></h1>
+    <h2>{{ canvas.label }}</h2>
+</div>
+
+    <article class="carousel page">
+        <div class="carousel-inner">
+
+                <div class="container in-page-controls">
+                <div id="view-toggle" class="col-sm-4 pull-right" style="margin-right: 10%">
+                    <div class="btn-group pull-right">
+                        <a id="enable-zoom" href="#" class="btn" alt="Deep Zoom Mode" title="Deep Zoom Mode"><span class="glyphicon glyphicon-fullscreen"></span></a>
+
+                        <a id="covers" href="#" class="btn active" alt="Single Page" title="Single Page"><span class="glyphicon glyphicon-file"></span></a>
+
+                        <a id="list" alt="Gallery" title="Gallery" href="{{ canvas.manifest.get_absolute_url }}" class="btn"><span class="glyphicon glyphicon-th"></span></a>
+                    </div>
+
+                    <div id="deepzoom-controls" class="hidden">
+                        <div class="btn-group">
+                            <a id="dz-zoom-in" alt="Zoom In" title="Zoom In" href="#" class="btn"><span class="glyphicon glyphicon-plus"></span></a>
+
+                            <a id="dz-zoom-out" alt="Zoom Out" title="Zoom Out" href="#" class="btn"><span class="glyphicon glyphicon-minus"></span></a>
+
+                            <a id="dz-home" alt="Back to Start Position" title="Back to Start Position" href="#" class="btn"><span class="glyphicon glyphicon-home"></span></a>
+
+                            <a id="dz-fs" alt="Fullscreen Mode" title="Fullscreen Mode" href="#" class="btn"><span class="glyphicon glyphicon-fullscreen"></span></a>
+                        </div>
+                    </div>
+                </div>
+
+
+        <div class="text-center">
+            <div id="zoom-page"></div>
+            <div class="page">
+                <div class="content">
+                    <section class="inner">
+                      <img class="page-image" src="{{ canvas.image.page_size }}"/>
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        {% if canvas.prev %}
+        <a class="left carousel-control" href="{{ canvas.prev.get_absolute_url }}" role="button" data-slide="prev" title="Prev: {{ canvas.prev.label }}" rel="prev">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+        </a>
+        {% endif %}
+        {% if canvas.next %}
+        <a class="right carousel-control" href="{{ canvas.next.get_absolute_url }}" role="button" data-slide="next" title="Next: {{ next.label }}" rel="next">
+            <span class="glyphicon glyphicon-chevron-right"></span>
+        </a>
+        {% endif %}
+    </article>
+
+</div>
+{% endblock %}
