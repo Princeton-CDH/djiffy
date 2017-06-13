@@ -1,6 +1,8 @@
 djiffy
 ======
 
+.. sphinx-start-marker-do-not-remove
+
 Django application to index and display IIIF Manifests for books
 
 .. image:: https://travis-ci.org/Princeton-CDH/djiffy.svg?branch=master
@@ -18,7 +20,8 @@ Django application to index and display IIIF Manifests for books
 
 **djiffy** is intended to be a reusable `Django`_ application for
 working with digitized book content provided via `IIIF Presentation`_
-manifests.
+manifests.  This is an *alpha* version and it does *not* yet support
+the full IIIF Presentation specification.
 
 
 .. _Django: https://www.djangoproject.com/
@@ -45,7 +48,7 @@ tagged release or branch::
         pip install git+https://github.com/Princeton-CDH/piffle.git@feature/python3-compatibility#egg=piffle
 
 
-configuration
+Configuration
 -------------
 
 Add `djiffy` to installed applications and make sure that `django.contrib.humanize`
@@ -78,7 +81,10 @@ Usage
 
 Import IIIF content using the `import_manifest` manage command.  This
 command can take an IIIF Collection or single Manifest, via local file
-or URL.  Imported content can be viewed in Django admin.
+or URL.  Imported content can be viewed in Django admin.::
+
+    python manage.py import_manifest http://url.for/iiif/manifest
+    python manage.py import_manifest /path/to/local/collection
 
 
 Development instructions

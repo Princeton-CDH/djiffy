@@ -30,6 +30,7 @@ setup(
     tests_require=test_requirements,
     extras_require={
         'test': test_requirements,
+        'docs': ['sphinx']
     },
     author='CDH @ Princeton',
     author_email='digitalhumanities@princeton.edu',
