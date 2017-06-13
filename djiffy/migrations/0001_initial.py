@@ -52,6 +52,11 @@ class Migration(migrations.Migration):
             name='manifest',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='canvases', to='djiffy.Manifest'),
         ),
+        migrations.AddField(
+            model_name='manifest',
+            name='extra_data',
+            field=jsonfield.fields.JSONField(default=dict),
+        ),
         migrations.AlterUniqueTogether(
             name='canvas',
             unique_together=set([('short_id', 'manifest')]),
