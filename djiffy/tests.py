@@ -1,16 +1,21 @@
 import os.path
-from django.test import TestCase
 from io import StringIO
 import json
-import pytest
-import requests
 from unittest.mock import patch, Mock
 
+from django.core.management import call_command
+from django.test import TestCase
+from django.urls import reverse
+import pytest
+import requests
+
+from .admin import ManifestSelectWidget
 from .models import Manifest, Canvas, IIIFImage, IIIFPresentation, \
     IIIFException
 from .importer import ManifestImporter
 
 FIXTURE_DIR = os.path.join(os.path.dirname(__file__), 'fixtures')
+
 
 class TestManifest(TestCase):
 
@@ -20,6 +25,20 @@ class TestManifest(TestCase):
         assert str(book) == 'bk123'
         book.label = 'An item'
         assert str(book) == 'An item'
+
+    def test_absolute_url(self):
+        book = Manifest(short_id='bk123')
+        assert book.short_id in book.get_absolute_url()
+        # FIXME: is this a useful test or too specific
+        assert book.get_absolute_url() == '/iiif/%s/' % book.short_id
+
+    def test_admin_thumbnail(self):
+        book = Manifest.objects.create(short_id='bk123')
+        assert book.admin_thumbnail() is None
+
+        canv = Canvas.objects.create(short_id='pg12', thumbnail=True,
+            manifest=book, order=1)
+        assert book.admin_thumbnail() == canv.admin_thumbnail()
 
 
 class TestCanvas(TestCase):
@@ -40,6 +59,83 @@ class TestCanvas(TestCase):
         assert isinstance(page.image, IIIFImage)
         assert page.image.api_endpoint == img_service
         assert page.image.image_id == img_id
+
+    def test_absolute_url(self):
+        manif = Manifest(short_id='bk123', label='Book 1')
+        page = Canvas(manifest=manif, label='Image 1', short_id='pg123', order=1)
+        assert manif.short_id in page.get_absolute_url()
+        assert page.short_id in page.get_absolute_url()
+        # FIXME: is this a useful test or too specific
+        assert page.get_absolute_url() == \
+            '/iiif/%s/canvases/%s/' % (manif.short_id, page.short_id)
+
+    def test_admin_thumb(self):
+        img_service = 'https://images.co'
+        img_id = 'some-file.jp2'
+
+        page = Canvas(iiif_image_id='/'.join([img_service, img_id]))
+        admin_thumb = page.admin_thumbnail()
+        assert '<img src="' in admin_thumb
+        assert str(page.image.mini_thumbnail()) in admin_thumb
+
+
+    def test_next(self):
+        manif = Manifest.objects.create(short_id='bk123', label='Book 1')
+        page1, page2, page3 = Canvas.objects.bulk_create([
+            Canvas(label='P1', short_id='pg1', order=0, manifest=manif),
+            Canvas(label='P2', short_id='pg2', order=1, manifest=manif),
+            Canvas(label='P3', short_id='pg3', order=2, manifest=manif)
+        ])
+
+        assert page1.next().short_id == page2.short_id
+        assert page2.next().short_id == page3.short_id
+        assert not page3.next()
+
+    def test_prev(self):
+        manif = Manifest.objects.create(short_id='bk123', label='Book 1')
+        page1, page2, page3 = Canvas.objects.bulk_create([
+            Canvas(label='P1', short_id='pg1', order=0, manifest=manif),
+            Canvas(label='P2', short_id='pg2', order=1, manifest=manif),
+            Canvas(label='P3', short_id='pg3', order=2, manifest=manif)
+        ])
+
+        assert not page1.prev()
+        assert page2.prev().short_id == page1.short_id
+        assert page3.prev().short_id == page2.short_id
+
+
+class TestIIIFImage(TestCase):
+
+    def setUp(self):
+        self.img_id = 'testimage.png'
+        self.img_service = 'https://ima.ge/loris/'
+        self.iiif_img = IIIFImage(self.img_service, self.img_id)
+
+    def test_thumbnail(self):
+        thumb_img = self.iiif_img.thumbnail()
+        size_info = thumb_img.size.as_dict()
+
+        assert size_info['width'] == self.iiif_img.thumbnail_size
+        assert size_info['height'] == self.iiif_img.thumbnail_size
+        assert size_info['exact'] is True
+        assert thumb_img.image_options['fmt'] == 'png'
+
+    def test_mini_thumbnail(self):
+        thumb_img = self.iiif_img.mini_thumbnail()
+        size_info = thumb_img.size.as_dict()
+
+        assert size_info['width'] == self.iiif_img.mini_thumbnail_size
+        assert size_info['height'] == self.iiif_img.mini_thumbnail_size
+        assert size_info['exact'] is True
+        assert thumb_img.image_options['fmt'] == 'png'
+
+    def test_page_size(self):
+        thumb_img = self.iiif_img.page_size()
+        size_info = thumb_img.size.as_dict()
+
+        assert size_info['width'] == self.iiif_img.single_page_size
+        assert size_info['height'] == self.iiif_img.single_page_size
+        assert size_info['exact'] is True
 
 
 class TestIIIFPresentation(TestCase):
@@ -94,12 +190,18 @@ class TestIIIFPresentation(TestCase):
 
     def test_from_url_or_file(self):
         with patch.object(IIIFPresentation, 'from_url') as mock_from_url:
+            # local fixture file
             pres = IIIFPresentation.from_file_or_url(self.test_manifest)
             assert pres.type == 'sc:Manifest'
             mock_from_url.assert_not_called()
 
             pres = IIIFPresentation.from_file_or_url('http://mani.fe/st')
             mock_from_url.assert_called_with('http://mani.fe/st')
+
+            # nonexistent file path
+            with pytest.raises(IIIFException) as err:
+                IIIFPresentation.from_file_or_url('/manifest/not/found')
+            assert 'File not found: ' in str(err)
 
     def test_short_id(self):
         manifest_uri = 'https://ii.if/resources/p0c484h74c/manifest'
@@ -206,6 +308,8 @@ class TestManifestImporter(TestCase):
         pres.viewingDirection = None
         assert self.importer.import_manifest(pres, self.test_manifest) == None
 
+        # TODO: test import handling for fields that could be string or list
+
     def test_import_collection(self):
         pres = IIIFPresentation.from_file(self.test_manifest)
         assert self.importer.import_collection(pres) == None
@@ -214,6 +318,28 @@ class TestManifestImporter(TestCase):
         imported = self.importer.import_collection(coll)
         assert len(imported) == 4
         assert isinstance(imported[0], Manifest)
+
+        # error handling
+        with patch('djiffy.importer.IIIFPresentation') as mockiiifpres:
+            mockiiifpres.from_file_or_url.side_effect = IIIFException
+            imported = IIIFPresentation.from_file(self.test_manifest)
+            assert self.test_manifest not in imported
+
+    @patch('djiffy.importer.IIIFPresentation')
+    def test_import_paths(self, mockiiifpres):
+        iiifmanifest = mockiiifpres.from_file_or_url.return_value
+        with patch.object(self.importer, 'import_collection') as mock_coll_import:
+            iiifmanifest.type = 'sc:Collection'
+            self.importer.import_paths([self.test_coll_manifest])
+            mockiiifpres.from_file_or_url.assert_called_with(self.test_coll_manifest)
+            mock_coll_import.assert_called_with(iiifmanifest)
+
+        with patch.object(self.importer, 'import_manifest') as mock_manif_import:
+            iiifmanifest.type = 'sc:Manifest'
+            self.importer.import_paths([self.test_manifest])
+            mockiiifpres.from_file_or_url.assert_called_with(self.test_manifest)
+            mock_manif_import.assert_called_with(iiifmanifest,
+                self.test_manifest)
 
     def test_output(self):
         # with no stdout defined, no error
@@ -245,3 +371,40 @@ class TestManifestImporter(TestCase):
         self.importer.error_msg('oops')
         self.importer.stderr.seek(0)
         assert self.importer.stderr.read() == '<i>oops</i>'
+
+
+# @pytest.mark.django_db
+class TestManifestSelectWidget(TestCase):
+
+    def test_render(self):
+        widget = ManifestSelectWidget()
+        # no value set - should not error
+        assert widget.render('manifest', None, {'id': 123})
+
+        # create test manifest to render
+        manif = Manifest.objects.create(label='test manifest', short_id='abc3')
+        rendered = widget.render('person', manif.id, {'id': 1234})
+        # no thumbnail - should not display text 'none'
+        assert 'None' not in rendered
+        assert manif.get_absolute_url() in rendered
+        assert reverse('admin:djiffy_manifest_change', args=[manif.id]) in \
+            rendered
+
+        # associate canvas for thumbnail
+        canv = Canvas.objects.create(short_id='def4', thumbnail=True,
+            manifest=manif, order=1)
+        rendered = widget.render('person', manif.id, {'id': 1234})
+        # no thumbnail - should not display text 'none'
+        assert canv.admin_thumbnail() in rendered
+
+
+
+class TestImportManifest(TestCase):
+
+    def test_command(self):
+        # the real import logic is tested elsewhere, this is
+        # just a test to ensure the manage command runs
+        call_command('import_manifest',
+            os.path.join(FIXTURE_DIR, 'chto-manifest.json'))
+        assert Manifest.objects.filter(short_id='ph415q7581').exists()
+

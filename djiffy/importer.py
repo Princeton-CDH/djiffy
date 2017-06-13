@@ -49,7 +49,7 @@ class ManifestImporter(object):
                 self.import_collection(manifest)
 
             if manifest.type == 'sc:Manifest':
-                self.import_book(manifest, path)
+                self.import_manifest(manifest, path)
 
     def import_supported(self, manifest):
         '''Check if import is supported (currently limited to paged,

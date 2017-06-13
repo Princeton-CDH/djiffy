@@ -19,10 +19,9 @@ class ManifestSelectWidget(Select):
             # FIXME: formatting / layout issues
             return mark_safe(
                 '<div>%s</div><br/> <div style="float:left">%s <a href="%s">view</a> | <a href="%s">edit</a></div>' % \
-                    (widget, manifest.admin_thumbnail(),
+                    (widget, manifest.admin_thumbnail() or '',
                      manifest.get_absolute_url(),
-                     reverse('admin:djiffy_manifest_change',
-                     args=[manifest.id]))
+                     reverse('admin:djiffy_manifest_change', args=[manifest.id]))
                 )
 
         return widget

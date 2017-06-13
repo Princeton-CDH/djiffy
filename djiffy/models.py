@@ -131,14 +131,16 @@ class Canvas(models.Model):
         return reverse('djiffy:canvas', args=[self.manifest.short_id, self.short_id])
 
     def next(self):
-        '''next canvas after this one in sequence (within manifest
-        primary sequence)'''
+        '''Next canvas after this one in sequence (within manifest
+        primary sequence).  Returns an empty queryset if there is no next
+        canvas.'''
         return Canvas.objects.filter(manifest=self.manifest, order__gt=self.order) \
             .first()
 
     def prev(self):
-        '''previous canvas before this one in sequence
-        (within manifest primary sequence)'''
+        '''Previous canvas before this one in sequence
+        (within manifest primary sequence).  Returns an empty queryset
+        if there is no next canvas.'''
         return Canvas.objects.filter(manifest=self.manifest, order__lt=self.order) \
             .last()
 
