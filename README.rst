@@ -75,6 +75,10 @@ Run migrations to create database tables::
 
     python manage.py migrate
 
+.. NOTE::
+
+    The templates included require that you have a url configured with
+    the name ``site-index``.
 
 Usage
 -----

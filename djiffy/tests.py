@@ -373,8 +373,9 @@ class TestManifestImporter(TestCase):
         assert self.importer.stderr.read() == '<i>oops</i>'
 
 
-# @pytest.mark.django_db
+
 class TestManifestSelectWidget(TestCase):
+    # test admin select widget
 
     def test_render(self):
         widget = ManifestSelectWidget()
@@ -398,8 +399,65 @@ class TestManifestSelectWidget(TestCase):
         assert canv.admin_thumbnail() in rendered
 
 
+class TestViews(TestCase):
+
+    def setUp(self):
+        self.manif1 = Manifest.objects.create(short_id='bk123', label='Book 1')
+        self.pages = Canvas.objects.bulk_create([
+            Canvas(label='P1', short_id='pg1', order=0, manifest=self.manif1),
+            Canvas(label='P2', short_id='pg2', order=1, manifest=self.manif1),
+            Canvas(label='P3', short_id='pg3', order=2, manifest=self.manif1)
+        ])
+        self.manif2 = Manifest.objects.create(short_id='bk456', label='Book 2')
+
+    def test_manifest_list(self):
+        manifest_list_url = reverse('djiffy:list')
+        response = self.client.get(manifest_list_url)
+        assert self.manif1 in response.context['object_list']
+        assert self.manif2 in response.context['object_list']
+        self.assertTemplateUsed(template_name='djiffy/manifest_list.html')
+
+    def test_manifest_detail(self):
+        manifest_url = reverse('djiffy:manifest',
+            kwargs={'id': self.manif1.short_id})
+        response = self.client.get(manifest_url)
+        assert response.context['manifest'] == self.manif1
+        self.assertTemplateUsed(template_name='djiffy/manifest_detail.html')
+
+        # bad id
+        bad_manifest_url = reverse('djiffy:manifest', kwargs={'id': 'bogus'})
+        response = self.client.get(bad_manifest_url)
+        assert response.status_code == 404
+
+    def test_canvas_detail(self):
+        canvas_url = reverse('djiffy:canvas',
+            kwargs={'id': self.pages[0].short_id,
+                    'manifest_id': self.manif1.short_id})
+        response = self.client.get(canvas_url)
+        assert response.context['canvas'].short_id == self.pages[0].short_id
+        self.assertTemplateUsed(template_name='djiffy/canvas_detail.html')
+
+        # bogus canvas id
+        bad_canvas_url = reverse('djiffy:canvas',
+            kwargs={'id': 'bogus', 'manifest_id': self.manif1.short_id})
+        response = self.client.get(bad_canvas_url)
+        assert response.status_code == 404
+
+        # bogus manifest id
+        bad_canvas_url = reverse('djiffy:canvas',
+            kwargs={'id': self.pages[0].short_id, 'manifest_id': 'bogus'})
+        response = self.client.get(bad_canvas_url)
+        assert response.status_code == 404
+
+        # existing manifest and canvas ids that don't belong together
+        bad_canvas_url = reverse('djiffy:canvas',
+            kwargs={'id': self.pages[0].short_id, 'manifest_id': self.manif2.short_id})
+        response = self.client.get(bad_canvas_url)
+        assert response.status_code == 404
+
 
 class TestImportManifest(TestCase):
+    # test manage command
 
     def test_command(self):
         # the real import logic is tested elsewhere, this is
