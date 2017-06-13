@@ -1,6 +1,6 @@
 '''
 Generic manage command for importing IIIF Collections or manifests
-nto the database. Supports collections and individual manifests,
+into the database. Supports collections and individual manifests,
 and local file paths as well as URLs.
 '''
 
@@ -9,6 +9,8 @@ from django.core.management.base import BaseCommand
 from djiffy.importer import ManifestImporter
 
 class Command(BaseCommand):
+    '''Import IIIF Collections or Manifests into the local database.'''
+    help = __doc__
 
     def add_arguments(self, parser):
         parser.add_argument('path', nargs='+',

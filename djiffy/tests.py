@@ -164,7 +164,7 @@ class TestManifestImporter(TestCase):
         assert self.importer.import_supported(pres) == False
 
     @patch('djiffy.importer.requests')
-    def test_import_book(self, mockrequests):
+    def test_import_manifest(self, mockrequests):
         pres = IIIFPresentation.from_file(self.test_manifest)
 
         mock_extra_data = {
@@ -175,7 +175,7 @@ class TestManifestImporter(TestCase):
             'identifier': ['ark:/88435/tm70mz058']
         }
         mockrequests.get.return_value.json.return_value = mock_extra_data
-        manif = self.importer.import_book(pres, self.test_manifest)
+        manif = self.importer.import_manifest(pres, self.test_manifest)
         assert isinstance(manif, Manifest)
 
         assert manif.label == "Chto my stroim : Tetrad\u02b9 s kartinkami"
@@ -192,19 +192,19 @@ class TestManifestImporter(TestCase):
              'https://libimages1.princeton.edu/loris/plum_prod/p0%2F28%2F71%2Fv9%2F8d-intermediate_file.jp2'
 
         # won't import if already in db
-        assert self.importer.import_book(pres, self.test_manifest) == None
+        assert self.importer.import_manifest(pres, self.test_manifest) == None
 
         # no error if seeAlso is not present
         manif.delete()
         del pres.seeAlso
-        manif = self.importer.import_book(pres, self.test_manifest)
+        manif = self.importer.import_manifest(pres, self.test_manifest)
         assert manif.extra_data == {}
 
         # unsupported type won't import
         pres.id = 'http://some.other/uri'
         pres.viewingHint = 'non-paged'
         pres.viewingDirection = None
-        assert self.importer.import_book(pres, self.test_manifest) == None
+        assert self.importer.import_manifest(pres, self.test_manifest) == None
 
     def test_import_collection(self):
         pres = IIIFPresentation.from_file(self.test_manifest)

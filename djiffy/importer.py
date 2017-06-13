@@ -23,16 +23,21 @@ class ManifestImporter(object):
         self.style = style
 
     def output(self, msg):
+        '''Output a message if stdout is configured (used to support output
+        via manage command)'''
         if self.stdout:
             self.stdout.write(msg)
 
     def error_msg(self, msg):
+        '''Output an error message if stderr is configured (used to support output
+        via manage command).  '''
         if self.stderr:
             if self.style:
                 msg = self.style.ERROR(msg)
             self.stderr.write(msg)
 
     def import_paths(self, paths):
+        '''Import a list of paths - file or url, collection or manifest.'''
         for path in paths:
             try:
                 manifest = IIIFPresentation.from_file_or_url(path)
@@ -47,6 +52,8 @@ class ManifestImporter(object):
                 self.import_book(manifest, path)
 
     def import_supported(self, manifest):
+        '''Check if import is supported (currently limited to paged,
+        left-to-right content).'''
         # FIXME: individuals vs paged?
         view_hint = getattr(manifest, 'viewingHint', None)
         view_direction = getattr(manifest, 'viewingDirection', None)
@@ -59,7 +66,15 @@ class ManifestImporter(object):
             % (manifest.id, view_hint, view_direction))
             return False
 
-    def import_book(self, manifest, path):
+    def import_manifest(self, manifest, path):
+        '''Process a single IIIF manifest and create
+        :class:`~djiffy.models.Manifest` and
+        :class:`~djiffy.models.Canvas` objects.
+
+        :param manifest: :class:`~djiffy.models.IIIFPresentation`
+        :param path: file or url import path
+        '''
+
         # check if manifest with uri identifier has already been imported
         if Manifest.objects.filter(uri=manifest.id).count():
             # NOTE: not updating for now; may want to add later
@@ -128,6 +143,12 @@ class ManifestImporter(object):
         return manif
 
     def import_collection(self, manifest):
+        '''Process a single IIIF collection and import
+        all supported manifests referenced in the collection.
+
+        :param manifest: :class:`~djiffy.models.IIIFPresentation`
+        '''
+
         if manifest.type == 'sc:Collection':
             # import all manifests in the collection
             imported = []
@@ -147,7 +168,7 @@ class ManifestImporter(object):
                     self.error_msg(str(err))
 
                 if manifest:
-                    db_manifest = self.import_book(manifest, brief_manifest.id)
+                    db_manifest = self.import_manifest(manifest, brief_manifest.id)
                     imported.append(db_manifest)
 
             return imported

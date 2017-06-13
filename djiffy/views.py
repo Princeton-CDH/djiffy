@@ -4,12 +4,18 @@ from .models import Manifest, Canvas
 
 
 class ManifestList(ListView):
+    '''List view for :class:`~djiffy.models.Manifest`.  Rendered with
+    djiffy/manifest_list.html template.
+    '''
     model = Manifest
     template_name = 'djiffy/manifest_list.html'
     context_object_name = 'manifests'
 
 
 class ManifestDetail(DetailView):
+    '''Detail view for a single :class:`~djiffy.models.Manifest`.
+    Rendered with  djiffy/manifest_detail.html template.
+    '''
     model = Manifest
     template_name = 'djiffy/manifest_detail.html'
     context_object_name = 'manifest'
@@ -21,6 +27,9 @@ class ManifestDetail(DetailView):
 
 
 class CanvasDetail(DetailView):
+    '''Detail view for a single :class:`~djiffy.models.Canvas`.
+    Rendered with  djiffy/canvast_detail.html template.
+    '''
     model = Canvas
     template_name = 'djiffy/canvas_detail.html'
     context_object_name = 'canvas'
