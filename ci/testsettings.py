@@ -6,6 +6,11 @@ DATABASES = {
     }
 }
 
-INSTALLED_APPS = ('djiffy',)
+INSTALLED_APPS = (
+    'django.contrib.contenttypes',
+    'djiffy',
+)
+
+ROOT_URLCONF = 'djiffy.test_urls'
 
 # SECRET_KEY = ''
