@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.2
+---
+
+* Support for optional configurable per-domain auth tokens, to
+  allow retrieving restricted IIIF manifests.
+
 0.1 Initial release
 --------------------
 

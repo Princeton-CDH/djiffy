@@ -1,7 +1,7 @@
 from collections import OrderedDict
-import requests
 
-from djiffy.models import Manifest, Canvas, IIIFPresentation, IIIFException
+from djiffy.models import Manifest, Canvas, IIIFPresentation, IIIFException, \
+    get_iiif_url
 
 
 class ManifestImporter(object):
@@ -112,7 +112,7 @@ class ManifestImporter(object):
         # if manifest has a seeAlso link with JSON format,
         # fetch it and store as extra data
         if hasattr(manifest, 'seeAlso') and manifest.seeAlso.format == 'application/ld+json':
-            response = requests.get(manifest.seeAlso.id)
+            response = get_iiif_url(manifest.seeAlso.id)
             manif.extra_data = response.json()
 
         manif.save()
