@@ -25,6 +25,7 @@ setup(
         'piffle',
         'attrdict',
         'jsonfield',
+        'django-autocomplete-light',
     ],
     setup_requires=['pytest-runner'],
     tests_require=test_requirements,
