@@ -52,6 +52,10 @@ class Manifest(models.Model):
 
     class Meta:
         verbose_name = 'IIIF Manifest'
+        # add custom permissions; change and delete provided by django
+        permissions = (
+            ('view_canvas', 'Can view %s' % verbose_name),
+        )
 
     # todo: metadata? thumbnail references
     # - should we cache the actual manifest file?
@@ -129,6 +133,10 @@ class Canvas(models.Model):
         verbose_name = 'IIIF Canvas'
         verbose_name_plural = 'IIIF Canvases'
         unique_together = ("short_id", "manifest")
+        # add custom permissions; change and delete provided by django
+        permissions = (
+            ('view_manifest', 'Can view %s' % verbose_name),
+        )
 
     def __str__(self):
         return '%s %d (%s)%s' % (self.manifest, self.order + 1, self.label,
