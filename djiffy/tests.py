@@ -486,6 +486,15 @@ class TestViews(TestCase):
         response = self.client.get(bad_canvas_url)
         assert response.status_code == 404
 
+    def test_canvas_autocomplete(self):
+        canvas_autocomplete_url = reverse('djiffy:canvas-autocomplete')
+        response = self.client.get(canvas_autocomplete_url, params={'q': 'pg1'})
+        assert response.status_code == 200
+        data = json.loads(response.content.decode('utf-8'))
+        assert 'results' in data
+        assert data['results'][0]['text'] == str(self.pages[0])
+
+
 @patch('djiffy.management.commands.import_manifest.ManifestImporter')
 class TestImportManifest(TestCase):
     # test manage command
