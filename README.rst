@@ -57,6 +57,8 @@ is also enabled::
     INSTALLED_APPS = (
         ...
         'django.contrib.humanize',
+        'dal',
+        'dal_select2',
         'djiffy',
         ...
     )
