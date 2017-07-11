@@ -58,5 +58,6 @@ class CanvasAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         return Canvas.objects.filter(
             Q(label__icontains=self.q) |
-            Q(uri__contains=self.q)
+            Q(uri__contains=self.q) |
+            Q(manifest__label__icontains=self.q)
         )

@@ -493,7 +493,13 @@ class TestViews(TestCase):
         data = json.loads(response.content.decode('utf-8'))
         assert 'results' in data
         assert data['results'][0]['text'] == str(self.pages[0])
-
+        # check the manifest label functionality -- all pages for a manifest
+        response = self.client.get(canvas_autocomplete_url, params={'q': 'Book'})
+        assert response.status_code == 200
+        data = json.loads(response.content.decode('utf-8'))
+        assert 'results' in data
+        # should bring back all three since the manifest label is Book 1
+        assert len(data['results']) == 3
 
 @patch('djiffy.management.commands.import_manifest.ManifestImporter')
 class TestImportManifest(TestCase):
@@ -510,5 +516,3 @@ class TestImportManifest(TestCase):
             assert expected_arg in importer_call_kwargs
 
         mockmanifestimporter.return_value.import_paths.assert_called_with(uris)
-
-
