@@ -304,7 +304,8 @@ class TestManifestImporter(TestCase):
         assert manif.metadata['Creator'] == ["Savel\u02b9ev, L. (Leonid), 1904-1941"]
         assert manif.metadata['Format'] == ["Book"]
         # extra data requested and saved from seeAlso when present
-        assert manif.extra_data == mock_extra_data
+        assert pres.seeAlso.id in manif.extra_data
+        assert manif.extra_data[pres.seeAlso.id] == mock_extra_data
         assert mock_getiiifurl.called_with(pres.seeAlso.id)
         assert mock_getiiifurl.return_value.json.called_with()
 

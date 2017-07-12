@@ -112,8 +112,11 @@ class ManifestImporter(object):
         # if manifest has a seeAlso link with JSON format,
         # fetch it and store as extra data
         if hasattr(manifest, 'seeAlso') and manifest.seeAlso.format == 'application/ld+json':
+            # TODO: error handling on the request?
             response = get_iiif_url(manifest.seeAlso.id)
-            manif.extra_data = response.json()
+            manif.extra_data = {
+                manifest.seeAlso.id: response.json()
+            }
 
         manif.save()
 
