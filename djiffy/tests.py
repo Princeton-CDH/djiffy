@@ -316,6 +316,26 @@ class TestManifestImporter(TestCase):
         # won't import if already in db
         assert self.importer.import_manifest(pres, self.test_manifest) == None
 
+        # non-json seeAlso data should store the url
+        manif.delete()
+        pres.seeAlso.format = 'text/xml'
+        manif = self.importer.import_manifest(pres, self.test_manifest)
+        assert pres.seeAlso.id in manif.extra_data
+        assert manif.extra_data[pres.seeAlso.id] == {}
+
+        # handle multiple seeAlso links
+        manif.delete()
+        link1 = 'https://bibdata.princeton.edu/bibliographic/4765261/jsonld'
+        link2 = 'https://findingaids.princeton.edu/collections/RBD1.1/c8193.xml?scope=record'
+        pres.seeAlso = [{'@id': link1, 'format': 'application/ld+json'},
+                        {'@id': link2, 'format': 'text/xml'}
+        ]
+        manif = self.importer.import_manifest(pres, self.test_manifest)
+        assert link1 in manif.extra_data
+        assert link2 in manif.extra_data
+        assert manif.extra_data[link1] == mock_extra_data
+        assert manif.extra_data[link2] == {}
+
         # no error if seeAlso is not present
         manif.delete()
         del pres.seeAlso

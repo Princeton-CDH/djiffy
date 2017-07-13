@@ -109,14 +109,32 @@ class ManifestImporter(object):
                     metadata[key] = (value, )
             manif.metadata = metadata
 
-        # if manifest has a seeAlso link with JSON format,
-        # fetch it and store as extra data
-        if hasattr(manifest, 'seeAlso') and manifest.seeAlso.format == 'application/ld+json':
-            # TODO: error handling on the request?
-            response = get_iiif_url(manifest.seeAlso.id)
-            manif.extra_data = {
-                manifest.seeAlso.id: response.json()
-            }
+        # if manifest has any seeAlso links, store the urls;
+        # if format is JSON, fetch it and store in the extra data
+        # NOTE: primary reason for this is to store the ARK identifier
+        # if there is one, since that will be more permanent than
+        # the manifest id
+        if hasattr(manifest, 'seeAlso'):
+            links = []
+            manif.extra_data = OrderedDict()
+            # collect seeAlso links and formats, whether they
+            # appear as a single element or a list
+
+            # single link, not in a list
+            if hasattr(manifest.seeAlso, 'format'):
+                links.append((manifest.seeAlso.id, manifest.seeAlso.format))
+            # list of seeAlso links
+            else:
+                for see_also in manifest.seeAlso:
+                    links.append((see_also.id, see_also.format))
+
+            # process all the seeAlso links and add to extra data
+            for url, fmt in links:
+                manif.extra_data[url] = {}
+                if fmt == 'application/ld+json':
+                    # TODO: error handling on the request?
+                    response = get_iiif_url(url)
+                    manif.extra_data[url] = response.json()
 
         manif.save()
 
