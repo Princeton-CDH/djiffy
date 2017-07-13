@@ -113,7 +113,8 @@ class ManifestImporter(object):
         # if format is JSON, fetch it and store in the extra data
         # NOTE: primary reason for this is to store the ARK identifier
         # if there is one, since that will be more permanent than
-        # the manifest id
+        # the manifest id; extra data may also include important
+        # rights information
         if hasattr(manifest, 'seeAlso'):
             links = []
             manif.extra_data = OrderedDict()
