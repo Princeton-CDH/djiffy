@@ -30,10 +30,13 @@ class ManifestSelectWidget(Select):
 class CanvasInline(admin.StackedInline):
     model = Canvas
 
+
 class ManifestAdmin(admin.ModelAdmin):
     inlines = [CanvasInline]
     list_display = ('admin_thumbnail', 'label', 'short_id', 'created',
         'last_modified')
+    search_fields = ('label', 'short_id', 'uri', 'metadata', 'extra_data')
+
 
 class CanvasAdmin(admin.ModelAdmin):
     list_display = ('admin_thumbnail', 'label', 'short_id', 'manifest')
