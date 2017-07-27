@@ -1,0 +1,21 @@
+@import "alabaster.css";
+
+img.logo {
+    float: left;
+}
+
+.powered_by {
+    margin-top: 3em;
+    border-top: 1px solid #efefef;
+    width: 85%;
+    color: #000;
+    opacity: 0.6;
+    max-width: 200px;
+    padding-bottom: 24px;
+}
+
+.powered_by a {
+    text-decoration: none;
+    border-bottom: none !important;
+}
+
