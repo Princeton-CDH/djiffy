@@ -36,7 +36,7 @@ setup(
     author='CDH @ Princeton',
     author_email='digitalhumanities@princeton.edu',
     classifiers=[
-        'Development Status :: 3 - Alpha'
+        'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
         'Framework :: Django',
         'Framework :: Django :: 1.10',
