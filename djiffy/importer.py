@@ -190,8 +190,8 @@ class ManifestImporter(object):
                   hasattr(brief_manifest, 'viewingDirection'):
                     if not self.import_supported(brief_manifest):
                         continue
-                self.output('Importing %s %s' % \
-                    (brief_manifest.label, brief_manifest.id))
+                self.output('Importing "%s" %s' % \
+                    (brief_manifest.first_label, brief_manifest.id))
 
                 try:
                     manifest = IIIFPresentation.from_file_or_url(brief_manifest.id)
