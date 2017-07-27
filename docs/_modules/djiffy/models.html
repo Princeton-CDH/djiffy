@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>djiffy.models &#8212; Djiffy 0.1.0 documentation</title>
+    <title>djiffy.models &#8212; Djiffy 0.2.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.0',
+        VERSION:     '0.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -45,14 +45,30 @@
 <span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">import</span> <span class="nn">urllib</span>
 
 <span class="kn">from</span> <span class="nn">attrdict</span> <span class="k">import</span> <span class="n">AttrMap</span>
+<span class="kn">from</span> <span class="nn">django.conf</span> <span class="k">import</span> <span class="n">settings</span>
 <span class="kn">from</span> <span class="nn">django.db</span> <span class="k">import</span> <span class="n">models</span>
 <span class="kn">from</span> <span class="nn">django.urls</span> <span class="k">import</span> <span class="n">reverse</span>
 <span class="kn">from</span> <span class="nn">jsonfield</span> <span class="k">import</span> <span class="n">JSONField</span>
 <span class="kn">from</span> <span class="nn">piffle</span> <span class="k">import</span> <span class="n">iiif</span>
 <span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">import</span> <span class="nn">urllib</span>
+
+
+<div class="viewcode-block" id="get_iiif_url"><a class="viewcode-back" href="../../codedocs.html#djiffy.models.get_iiif_url">[docs]</a><span class="k">def</span> <span class="nf">get_iiif_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Wrapper around :meth:`requests.get` to support conditionally</span>
+<span class="sd">    adding an auth token based on the domain of the request url and</span>
+<span class="sd">    any **AUTH_TOKENS** configured in django settings.&#39;&#39;&#39;</span>
+    <span class="n">request_options</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">AUTH_TOKENS</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="s1">&#39;DJIFFY_AUTH_TOKENS&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">AUTH_TOKENS</span><span class="p">:</span>
+        <span class="n">domain</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">netloc</span>
+        <span class="k">if</span> <span class="n">domain</span> <span class="ow">in</span> <span class="n">AUTH_TOKENS</span><span class="p">:</span>
+            <span class="n">request_options</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;auth_token&#39;</span><span class="p">:</span> <span class="n">AUTH_TOKENS</span><span class="p">[</span><span class="n">domain</span><span class="p">]}</span>
+
+    <span class="k">return</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="n">request_options</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="IIIFException"><a class="viewcode-back" href="../../codedocs.html#djiffy.models.IIIFException">[docs]</a><span class="k">class</span> <span class="nc">IIIFException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
@@ -80,6 +96,10 @@
 
     <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
         <span class="n">verbose_name</span> <span class="o">=</span> <span class="s1">&#39;IIIF Manifest&#39;</span>
+        <span class="c1"># add custom permissions; change and delete provided by django</span>
+        <span class="n">permissions</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="s1">&#39;view_canvas&#39;</span><span class="p">,</span> <span class="s1">&#39;Can view </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">verbose_name</span><span class="p">),</span>
+        <span class="p">)</span>
 
     <span class="c1"># todo: metadata? thumbnail references</span>
     <span class="c1"># - should we cache the actual manifest file?</span>
@@ -157,6 +177,10 @@
         <span class="n">verbose_name</span> <span class="o">=</span> <span class="s1">&#39;IIIF Canvas&#39;</span>
         <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="s1">&#39;IIIF Canvases&#39;</span>
         <span class="n">unique_together</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;short_id&quot;</span><span class="p">,</span> <span class="s2">&quot;manifest&quot;</span><span class="p">)</span>
+        <span class="c1"># add custom permissions; change and delete provided by django</span>
+        <span class="n">permissions</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="s1">&#39;view_manifest&#39;</span><span class="p">,</span> <span class="s1">&#39;Can view </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">verbose_name</span><span class="p">),</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%d</span><span class="s1"> (</span><span class="si">%s</span><span class="s1">)</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">manifest</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">,</span>
@@ -217,7 +241,7 @@
 <span class="sd">        :raises: :class:`IIIFException` if URL is not retrieved successfully,</span>
 <span class="sd">            if the response is not JSON content, or if the JSON cannot be parsed.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">get_iiif_url</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">requests</span><span class="o">.</span><span class="n">codes</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>

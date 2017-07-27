@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Djiffy Documentation &#8212; Djiffy 0.1.0 documentation</title>
+    <title>Djiffy Documentation &#8212; Djiffy 0.2.0 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.0',
+        VERSION:     '0.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -55,6 +55,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id1">0.2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#initial-release">0.1 Initial release</a></li>
 </ul>
 </li>
@@ -96,6 +97,8 @@ is also enabled:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">(</span>
     <span class="o">...</span>
     <span class="s1">&#39;django.contrib.humanize&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;dal&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;dal_select2&#39;</span><span class="p">,</span>
     <span class="s1">&#39;djiffy&#39;</span><span class="p">,</span>
     <span class="o">...</span>
 <span class="p">)</span>
@@ -118,6 +121,15 @@ is also enabled:</p>
 <p class="first admonition-title">Note</p>
 <p class="last">The templates included require that you have a url configured with
 the name <code class="docutils literal"><span class="pre">site-index</span></code>.</p>
+</div>
+<p>If you are need to use djiffy to access manifests that require an
+authorization token, use <strong>DJIFFY_AUTH_TOKENS</strong> in your project settings
+to configure each domain that requires an auth token.  The configuration
+should be formatted like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">DJIFFY_AUTH_TOKENS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;example.com&#39;</span><span class="p">:</span> <span class="s1">&#39;myauthtoken&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
 </div>
 </div>
 <div class="section" id="usage">

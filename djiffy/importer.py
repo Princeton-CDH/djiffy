@@ -1,7 +1,7 @@
 from collections import OrderedDict
-import requests
 
-from djiffy.models import Manifest, Canvas, IIIFPresentation, IIIFException
+from djiffy.models import Manifest, Canvas, IIIFPresentation, IIIFException, \
+    get_iiif_url
 
 
 class ManifestImporter(object):
@@ -16,6 +16,8 @@ class ManifestImporter(object):
     stderr = None
     style = None
     # verbosity level?
+
+    # TODO: should have better reporting on what was done
 
     def __init__(self, stdout=None, stderr=None, style=None):
         self.stdout = stdout
@@ -84,6 +86,14 @@ class ManifestImporter(object):
         if not self.import_supported(manifest):
             return
 
+        # make sure the manifest has sequences defined
+        # (workaround for a bug in Plum)
+        try:
+            getattr(manifest, 'sequences')
+        except AttributeError:
+            self.error_msg('%s has no sequences; skipping' % path)
+            return
+
         # create a new book
         manif = Manifest()
 
@@ -109,11 +119,33 @@ class ManifestImporter(object):
                     metadata[key] = (value, )
             manif.metadata = metadata
 
-        # if manifest has a seeAlso link with JSON format,
-        # fetch it and store as extra data
-        if hasattr(manifest, 'seeAlso') and manifest.seeAlso.format == 'application/ld+json':
-            response = requests.get(manifest.seeAlso.id)
-            manif.extra_data = response.json()
+        # if manifest has any seeAlso links, store the urls;
+        # if format is JSON, fetch it and store in the extra data
+        # NOTE: primary reason for this is to store the ARK identifier
+        # if there is one, since that will be more permanent than
+        # the manifest id; extra data may also include important
+        # rights information
+        if hasattr(manifest, 'seeAlso'):
+            links = []
+            manif.extra_data = OrderedDict()
+            # collect seeAlso links and formats, whether they
+            # appear as a single element or a list
+
+            # single link, not in a list
+            if hasattr(manifest.seeAlso, 'format'):
+                links.append((manifest.seeAlso.id, manifest.seeAlso.format))
+            # list of seeAlso links
+            else:
+                for see_also in manifest.seeAlso:
+                    links.append((see_also.id, see_also.format))
+
+            # process all the seeAlso links and add to extra data
+            for url, fmt in links:
+                manif.extra_data[url] = {}
+                if fmt == 'application/ld+json':
+                    # TODO: error handling on the request?
+                    response = get_iiif_url(url)
+                    manif.extra_data[url] = response.json()
 
         manif.save()
 
@@ -158,8 +190,8 @@ class ManifestImporter(object):
                   hasattr(brief_manifest, 'viewingDirection'):
                     if not self.import_supported(brief_manifest):
                         continue
-                self.output('Importing %s %s' % \
-                    (brief_manifest.label, brief_manifest.id))
+                self.output('Importing "%s" %s' % \
+                    (brief_manifest.first_label, brief_manifest.id))
 
                 try:
                     manifest = IIIFPresentation.from_file_or_url(brief_manifest.id)

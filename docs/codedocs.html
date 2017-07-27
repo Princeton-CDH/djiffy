@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Code Documentation &#8212; Djiffy 0.1.0 documentation</title>
+    <title>Code Documentation &#8212; Djiffy 0.2.0 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.0',
+        VERSION:     '0.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -293,9 +293,23 @@ url pattern from the IIIF Presentation 2.0 specification.</p>
 
 </dd></dl>
 
+<dl class="function">
+<dt id="djiffy.models.get_iiif_url">
+<code class="descclassname">djiffy.models.</code><code class="descname">get_iiif_url</code><span class="sig-paren">(</span><em>url</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#get_iiif_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.get_iiif_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around <code class="xref py py-meth docutils literal"><span class="pre">requests.get()</span></code> to support conditionally
+adding an auth token based on the domain of the request url and
+any <strong>AUTH_TOKENS</strong> configured in django settings.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="module-djiffy.views">
 <span id="views"></span><h2>Views<a class="headerlink" href="#module-djiffy.views" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="djiffy.views.CanvasAutocomplete">
+<em class="property">class </em><code class="descclassname">djiffy.views.</code><code class="descname">CanvasAutocomplete</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/views.html#CanvasAutocomplete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.views.CanvasAutocomplete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Canvas autocomplete view, e.g. for admin interface lookup</p>
+</dd></dl>
+
 <dl class="class">
 <dt id="djiffy.views.CanvasDetail">
 <em class="property">class </em><code class="descclassname">djiffy.views.</code><code class="descname">CanvasDetail</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/views.html#CanvasDetail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.views.CanvasDetail" title="Permalink to this definition">¶</a></dt>

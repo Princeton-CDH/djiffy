@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>djiffy.views &#8212; Djiffy 0.1.0 documentation</title>
+    <title>djiffy.views &#8212; Djiffy 0.2.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.0',
+        VERSION:     '0.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -42,7 +42,9 @@
           <div class="body" role="main">
             
   <h1>Source code for djiffy.views</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">django.http</span> <span class="k">import</span> <span class="n">Http404</span>
+<span></span><span class="kn">from</span> <span class="nn">dal</span> <span class="k">import</span> <span class="n">autocomplete</span>
+<span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">Q</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="k">import</span> <span class="n">Http404</span>
 <span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">DetailView</span><span class="p">,</span> <span class="n">ListView</span>
 
 <span class="kn">from</span> <span class="nn">.models</span> <span class="k">import</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">Canvas</span>
@@ -94,6 +96,15 @@
             <span class="k">raise</span> <span class="n">Http404</span><span class="p">(</span><span class="s2">&quot;No canvas found with id </span><span class="si">%(id)s</span><span class="s2"> and manifest </span><span class="si">%(manifest_id)s</span><span class="s2">&quot;</span> <span class="o">%</span> \
                 <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="CanvasAutocomplete"><a class="viewcode-back" href="../../codedocs.html#djiffy.views.CanvasAutocomplete">[docs]</a><span class="k">class</span> <span class="nc">CanvasAutocomplete</span><span class="p">(</span><span class="n">autocomplete</span><span class="o">.</span><span class="n">Select2QuerySetView</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Canvas autocomplete view, e.g. for admin interface lookup&#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Canvas</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">Q</span><span class="p">(</span><span class="n">label__icontains</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">)</span> <span class="o">|</span>
+            <span class="n">Q</span><span class="p">(</span><span class="n">uri__contains</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">)</span> <span class="o">|</span>
+            <span class="n">Q</span><span class="p">(</span><span class="n">manifest__label__icontains</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">)</span>
+        <span class="p">)</span></div>
 </pre></div>
 
           </div>

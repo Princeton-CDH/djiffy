@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>djiffy.importer &#8212; Djiffy 0.1.0 documentation</title>
+    <title>djiffy.importer &#8212; Djiffy 0.2.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.0',
+        VERSION:     '0.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -43,9 +43,9 @@
             
   <h1>Source code for djiffy.importer</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
-<span class="kn">import</span> <span class="nn">requests</span>
 
-<span class="kn">from</span> <span class="nn">djiffy.models</span> <span class="k">import</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">Canvas</span><span class="p">,</span> <span class="n">IIIFPresentation</span><span class="p">,</span> <span class="n">IIIFException</span>
+<span class="kn">from</span> <span class="nn">djiffy.models</span> <span class="k">import</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">Canvas</span><span class="p">,</span> <span class="n">IIIFPresentation</span><span class="p">,</span> <span class="n">IIIFException</span><span class="p">,</span> \
+    <span class="n">get_iiif_url</span>
 
 
 <div class="viewcode-block" id="ManifestImporter"><a class="viewcode-back" href="../../codedocs.html#djiffy.importer.ManifestImporter">[docs]</a><span class="k">class</span> <span class="nc">ManifestImporter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -60,6 +60,8 @@
     <span class="n">stderr</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">style</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="c1"># verbosity level?</span>
+
+    <span class="c1"># TODO: should have better reporting on what was done</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">stdout</span>
@@ -128,6 +130,14 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">import_supported</span><span class="p">(</span><span class="n">manifest</span><span class="p">):</span>
             <span class="k">return</span>
 
+        <span class="c1"># make sure the manifest has sequences defined</span>
+        <span class="c1"># (workaround for a bug in Plum)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="n">manifest</span><span class="p">,</span> <span class="s1">&#39;sequences&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error_msg</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> has no sequences; skipping&#39;</span> <span class="o">%</span> <span class="n">path</span><span class="p">)</span>
+            <span class="k">return</span>
+
         <span class="c1"># create a new book</span>
         <span class="n">manif</span> <span class="o">=</span> <span class="n">Manifest</span><span class="p">()</span>
 
@@ -153,11 +163,33 @@
                     <span class="n">metadata</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">)</span>
             <span class="n">manif</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span>
 
-        <span class="c1"># if manifest has a seeAlso link with JSON format,</span>
-        <span class="c1"># fetch it and store as extra data</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">manifest</span><span class="p">,</span> <span class="s1">&#39;seeAlso&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">manifest</span><span class="o">.</span><span class="n">seeAlso</span><span class="o">.</span><span class="n">format</span> <span class="o">==</span> <span class="s1">&#39;application/ld+json&#39;</span><span class="p">:</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">seeAlso</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-            <span class="n">manif</span><span class="o">.</span><span class="n">extra_data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="c1"># if manifest has any seeAlso links, store the urls;</span>
+        <span class="c1"># if format is JSON, fetch it and store in the extra data</span>
+        <span class="c1"># NOTE: primary reason for this is to store the ARK identifier</span>
+        <span class="c1"># if there is one, since that will be more permanent than</span>
+        <span class="c1"># the manifest id; extra data may also include important</span>
+        <span class="c1"># rights information</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">manifest</span><span class="p">,</span> <span class="s1">&#39;seeAlso&#39;</span><span class="p">):</span>
+            <span class="n">links</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">manif</span><span class="o">.</span><span class="n">extra_data</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="c1"># collect seeAlso links and formats, whether they</span>
+            <span class="c1"># appear as a single element or a list</span>
+
+            <span class="c1"># single link, not in a list</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">seeAlso</span><span class="p">,</span> <span class="s1">&#39;format&#39;</span><span class="p">):</span>
+                <span class="n">links</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">manifest</span><span class="o">.</span><span class="n">seeAlso</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">manifest</span><span class="o">.</span><span class="n">seeAlso</span><span class="o">.</span><span class="n">format</span><span class="p">))</span>
+            <span class="c1"># list of seeAlso links</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">see_also</span> <span class="ow">in</span> <span class="n">manifest</span><span class="o">.</span><span class="n">seeAlso</span><span class="p">:</span>
+                    <span class="n">links</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">see_also</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">see_also</span><span class="o">.</span><span class="n">format</span><span class="p">))</span>
+
+            <span class="c1"># process all the seeAlso links and add to extra data</span>
+            <span class="k">for</span> <span class="n">url</span><span class="p">,</span> <span class="n">fmt</span> <span class="ow">in</span> <span class="n">links</span><span class="p">:</span>
+                <span class="n">manif</span><span class="o">.</span><span class="n">extra_data</span><span class="p">[</span><span class="n">url</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s1">&#39;application/ld+json&#39;</span><span class="p">:</span>
+                    <span class="c1"># TODO: error handling on the request?</span>
+                    <span class="n">response</span> <span class="o">=</span> <span class="n">get_iiif_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+                    <span class="n">manif</span><span class="o">.</span><span class="n">extra_data</span><span class="p">[</span><span class="n">url</span><span class="p">]</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 
         <span class="n">manif</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 

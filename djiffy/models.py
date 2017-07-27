@@ -1,14 +1,30 @@
 from collections import OrderedDict
 import json
 import os.path
+import urllib
 
 from attrdict import AttrMap
+from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from jsonfield import JSONField
 from piffle import iiif
 import requests
-import urllib
+
+
+def get_iiif_url(url):
+    '''Wrapper around :meth:`requests.get` to support conditionally
+    adding an auth token based on the domain of the request url and
+    any **AUTH_TOKENS** configured in django settings.'''
+    request_options = {}
+
+    AUTH_TOKENS = getattr(settings, 'DJIFFY_AUTH_TOKENS', None)
+    if AUTH_TOKENS:
+        domain = urllib.parse.urlparse(url).netloc
+        if domain in AUTH_TOKENS:
+            request_options['params'] = {'auth_token': AUTH_TOKENS[domain]}
+
+    return requests.get(url, **request_options)
 
 
 class IIIFException(Exception):
@@ -36,6 +52,10 @@ class Manifest(models.Model):
 
     class Meta:
         verbose_name = 'IIIF Manifest'
+        # add custom permissions; change and delete provided by django
+        permissions = (
+            ('view_canvas', 'Can view %s' % verbose_name),
+        )
 
     # todo: metadata? thumbnail references
     # - should we cache the actual manifest file?
@@ -113,6 +133,10 @@ class Canvas(models.Model):
         verbose_name = 'IIIF Canvas'
         verbose_name_plural = 'IIIF Canvases'
         unique_together = ("short_id", "manifest")
+        # add custom permissions; change and delete provided by django
+        permissions = (
+            ('view_manifest', 'Can view %s' % verbose_name),
+        )
 
     def __str__(self):
         return '%s %d (%s)%s' % (self.manifest, self.order + 1, self.label,
@@ -173,7 +197,7 @@ class IIIFPresentation(AttrMap):
         :raises: :class:`IIIFException` if URL is not retrieved successfully,
             if the response is not JSON content, or if the JSON cannot be parsed.
         '''
-        response = requests.get(uri)
+        response = get_iiif_url(uri)
         if response.status_code == requests.codes.ok:
             try:
                 return cls(response.json())
@@ -262,4 +286,12 @@ class IIIFPresentation(AttrMap):
         Delete a key-value pair
         """
         del self._mapping[self._handle_at_keys(key)]
+
+    @property
+    def first_label(self):
+        # label can be a string or list of strings
+        if isinstance(self.label, str):
+            return self.label
+        else:
+            return self.label[0]
 

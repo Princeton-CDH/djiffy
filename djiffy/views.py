@@ -1,3 +1,5 @@
+from dal import autocomplete
+from django.db.models import Q
 from django.http import Http404
 from django.views.generic import DetailView, ListView
 
@@ -50,3 +52,12 @@ class CanvasDetail(DetailView):
             raise Http404("No canvas found with id %(id)s and manifest %(manifest_id)s" % \
                 self.kwargs)
 
+
+class CanvasAutocomplete(autocomplete.Select2QuerySetView):
+    '''Canvas autocomplete view, e.g. for admin interface lookup'''
+    def get_queryset(self):
+        return Canvas.objects.filter(
+            Q(label__icontains=self.q) |
+            Q(uri__contains=self.q) |
+            Q(manifest__label__icontains=self.q)
+        )

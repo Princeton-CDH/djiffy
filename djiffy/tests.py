@@ -4,17 +4,36 @@ import json
 from unittest.mock import patch, Mock
 
 from django.core.management import call_command
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 import pytest
 import requests
 
 from .admin import ManifestSelectWidget
 from .models import Manifest, Canvas, IIIFImage, IIIFPresentation, \
-    IIIFException
+    IIIFException, get_iiif_url
 from .importer import ManifestImporter
 
 FIXTURE_DIR = os.path.join(os.path.dirname(__file__), 'fixtures')
+
+
+@patch('djiffy.models.requests')
+def test_get_iiif_url(mockrequests):
+    # by default, no auth token
+    test_url = 'http://example.com/id1/manifest'
+    get_iiif_url(test_url)
+    mockrequests.get.assert_called_with(test_url)
+
+    # token specified, domain matches
+    with override_settings(DJIFFY_AUTH_TOKENS={'example.com': 'testauth'}):
+        get_iiif_url(test_url)
+        mockrequests.get.assert_called_with(test_url,
+            params={'auth_token': 'testauth'})
+
+    # token specified, domain doesn't match
+    with override_settings(DJIFFY_AUTH_TOKENS={'not.me': 'testauth'}):
+        get_iiif_url(test_url)
+        mockrequests.get.assert_called_with(test_url)
 
 
 class TestManifest(TestCase):
@@ -242,11 +261,18 @@ class TestIIIFPresentation(TestCase):
         assert not hasattr(pres, 'label')
         assert not hasattr(pres, 'type')
 
+    def test_first_label(self):
+        pres = IIIFPresentation.from_file(self.test_manifest)
+        assert pres.first_label == pres.label[0]
+        pres.label = 'unlisted single title'
+        assert pres.first_label == pres.label
+
 
 class TestManifestImporter(TestCase):
     test_manifest = os.path.join(FIXTURE_DIR, 'chto-manifest.json')
     test_coll_manifest = os.path.join(FIXTURE_DIR,
         'cotsen-collection-manifest.json')
+    test_manifest_noseq = os.path.join(FIXTURE_DIR, 'manifest-noseq.json')
 
     def setUp(self):
         self.importer = ManifestImporter()
@@ -265,8 +291,8 @@ class TestManifestImporter(TestCase):
         pres.viewingHint = None
         assert self.importer.import_supported(pres) == False
 
-    @patch('djiffy.importer.requests')
-    def test_import_manifest(self, mockrequests):
+    @patch('djiffy.importer.get_iiif_url')
+    def test_import_manifest(self, mock_getiiifurl):
         pres = IIIFPresentation.from_file(self.test_manifest)
 
         mock_extra_data = {
@@ -276,7 +302,7 @@ class TestManifestImporter(TestCase):
             },
             'identifier': ['ark:/88435/tm70mz058']
         }
-        mockrequests.get.return_value.json.return_value = mock_extra_data
+        mock_getiiifurl.return_value.json.return_value = mock_extra_data
         manif = self.importer.import_manifest(pres, self.test_manifest)
         assert isinstance(manif, Manifest)
 
@@ -285,9 +311,10 @@ class TestManifestImporter(TestCase):
         assert manif.metadata['Creator'] == ["Savel\u02b9ev, L. (Leonid), 1904-1941"]
         assert manif.metadata['Format'] == ["Book"]
         # extra data requested and saved from seeAlso when present
-        assert manif.extra_data == mock_extra_data
-        assert mockrequests.get.called_with(pres.seeAlso.id)
-        assert mockrequests.get.return_value.json.called_with()
+        assert pres.seeAlso.id in manif.extra_data
+        assert manif.extra_data[pres.seeAlso.id] == mock_extra_data
+        assert mock_getiiifurl.called_with(pres.seeAlso.id)
+        assert mock_getiiifurl.return_value.json.called_with()
 
         assert len(manif.canvases.all()) == len(pres.sequences[0].canvases)
         assert manif.thumbnail.iiif_image_id == \
@@ -295,6 +322,26 @@ class TestManifestImporter(TestCase):
 
         # won't import if already in db
         assert self.importer.import_manifest(pres, self.test_manifest) == None
+
+        # non-json seeAlso data should store the url
+        manif.delete()
+        pres.seeAlso.format = 'text/xml'
+        manif = self.importer.import_manifest(pres, self.test_manifest)
+        assert pres.seeAlso.id in manif.extra_data
+        assert manif.extra_data[pres.seeAlso.id] == {}
+
+        # handle multiple seeAlso links
+        manif.delete()
+        link1 = 'https://bibdata.princeton.edu/bibliographic/4765261/jsonld'
+        link2 = 'https://findingaids.princeton.edu/collections/RBD1.1/c8193.xml?scope=record'
+        pres.seeAlso = [{'@id': link1, 'format': 'application/ld+json'},
+                        {'@id': link2, 'format': 'text/xml'}
+        ]
+        manif = self.importer.import_manifest(pres, self.test_manifest)
+        assert link1 in manif.extra_data
+        assert link2 in manif.extra_data
+        assert manif.extra_data[link1] == mock_extra_data
+        assert manif.extra_data[link2] == {}
 
         # no error if seeAlso is not present
         manif.delete()
@@ -308,16 +355,32 @@ class TestManifestImporter(TestCase):
         pres.viewingDirection = None
         assert self.importer.import_manifest(pres, self.test_manifest) == None
 
+        # manifest with no sequence (not valid IIIF, but shouldn't chocke)
+        pres = IIIFPresentation.from_file(self.test_manifest_noseq)
+        assert self.importer.import_manifest(pres, self.test_manifest) == None
+
         # TODO: test import handling for fields that could be string or list
 
-    def test_import_collection(self):
+    @patch('djiffy.models.get_iiif_url')
+    def test_import_collection(self, mock_getiiifurl):
         pres = IIIFPresentation.from_file(self.test_manifest)
         assert self.importer.import_collection(pres) == None
 
+        # mock actual request to avoid hitting real urls when
+        # importing the collection
+        mock_getiiifurl.return_value.status_code = requests.codes.ok
+        # needs to return a non-empty dict for import to happen
+        test_json_result = {"@type": "sc:Manifest"}
+        mock_getiiifurl.return_value.json.return_value = test_json_result
         coll = IIIFPresentation.from_file(self.test_coll_manifest)
-        imported = self.importer.import_collection(coll)
+        with patch.object(self.importer, 'import_manifest') as mock_import_manifest:
+            imported = self.importer.import_collection(coll)
+
+            mockpres = IIIFPresentation(test_json_result)
+            for i in range(3):
+                mock_import_manifest.assert_any_call(mockpres, coll.manifests[i].id)
+
         assert len(imported) == 4
-        assert isinstance(imported[0], Manifest)
 
         # error handling
         with patch('djiffy.importer.IIIFPresentation') as mockiiifpres:
@@ -455,14 +518,33 @@ class TestViews(TestCase):
         response = self.client.get(bad_canvas_url)
         assert response.status_code == 404
 
+    def test_canvas_autocomplete(self):
+        canvas_autocomplete_url = reverse('djiffy:canvas-autocomplete')
+        response = self.client.get(canvas_autocomplete_url, params={'q': 'pg1'})
+        assert response.status_code == 200
+        data = json.loads(response.content.decode('utf-8'))
+        assert 'results' in data
+        assert data['results'][0]['text'] == str(self.pages[0])
+        # check the manifest label functionality -- all pages for a manifest
+        response = self.client.get(canvas_autocomplete_url, params={'q': 'Book'})
+        assert response.status_code == 200
+        data = json.loads(response.content.decode('utf-8'))
+        assert 'results' in data
+        # should bring back all three since the manifest label is Book 1
+        assert len(data['results']) == 3
 
+@patch('djiffy.management.commands.import_manifest.ManifestImporter')
 class TestImportManifest(TestCase):
     # test manage command
 
-    def test_command(self):
+    def test_command(self, mockmanifestimporter):
         # the real import logic is tested elsewhere, this is
         # just a test to ensure the manage command runs
-        call_command('import_manifest',
-            os.path.join(FIXTURE_DIR, 'chto-manifest.json'))
-        assert Manifest.objects.filter(short_id='ph415q7581').exists()
+        uris = ['manifest1.json', 'manifest2.json', 'http://so.me/manifest']
+        call_command('import_manifest', *uris)
 
+        importer_call_kwargs = mockmanifestimporter.call_args[1]
+        for expected_arg in ['stdout', 'stderr', 'style']:
+            assert expected_arg in importer_call_kwargs
+
+        mockmanifestimporter.return_value.import_paths.assert_called_with(uris)

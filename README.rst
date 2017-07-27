@@ -57,6 +57,8 @@ is also enabled::
     INSTALLED_APPS = (
         ...
         'django.contrib.humanize',
+        'dal',
+        'dal_select2',
         'djiffy',
         ...
     )
@@ -79,6 +81,16 @@ Run migrations to create database tables::
 
     The templates included require that you have a url configured with
     the name ``site-index``.
+
+
+If you are need to use djiffy to access manifests that require an
+authorization token, use **DJIFFY_AUTH_TOKENS** in your project settings
+to configure each domain that requires an auth token.  The configuration
+should be formatted like this::
+
+    DJIFFY_AUTH_TOKENS = {
+        'example.com': 'myauthtoken',
+    }
 
 Usage
 -----

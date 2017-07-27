@@ -8,6 +8,8 @@ DATABASES = {
 
 INSTALLED_APPS = (
     'django.contrib.contenttypes',
+    'dal',
+    'dal_select2',
     'djiffy',
 )
 
