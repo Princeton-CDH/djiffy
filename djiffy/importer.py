@@ -17,6 +17,8 @@ class ManifestImporter(object):
     style = None
     # verbosity level?
 
+    # TODO: should have better reporting on what was done
+
     def __init__(self, stdout=None, stderr=None, style=None):
         self.stdout = stdout
         self.stderr = stderr
@@ -82,6 +84,14 @@ class ManifestImporter(object):
             return
         # check if the type of manifest is supported
         if not self.import_supported(manifest):
+            return
+
+        # make sure the manifest has sequences defined
+        # (workaround for a bug in Plum)
+        try:
+            getattr(manifest, 'sequences')
+        except AttributeError:
+            self.error_msg('%s has no sequences; skipping' % path)
             return
 
         # create a new book

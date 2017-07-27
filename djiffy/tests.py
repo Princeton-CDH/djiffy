@@ -266,6 +266,7 @@ class TestManifestImporter(TestCase):
     test_manifest = os.path.join(FIXTURE_DIR, 'chto-manifest.json')
     test_coll_manifest = os.path.join(FIXTURE_DIR,
         'cotsen-collection-manifest.json')
+    test_manifest_noseq = os.path.join(FIXTURE_DIR, 'manifest-noseq.json')
 
     def setUp(self):
         self.importer = ManifestImporter()
@@ -346,6 +347,10 @@ class TestManifestImporter(TestCase):
         pres.id = 'http://some.other/uri'
         pres.viewingHint = 'non-paged'
         pres.viewingDirection = None
+        assert self.importer.import_manifest(pres, self.test_manifest) == None
+
+        # manifest with no sequence (not valid IIIF, but shouldn't chocke)
+        pres = IIIFPresentation.from_file(self.test_manifest_noseq)
         assert self.importer.import_manifest(pres, self.test_manifest) == None
 
         # TODO: test import handling for fields that could be string or list
