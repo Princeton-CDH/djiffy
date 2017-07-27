@@ -31,12 +31,13 @@ the full IIIF Presentation specification.
 Installation
 ------------
 
-Use pip to install from GitHub::
+Use pip to install::
 
-    pip install git+https://github.com/Princeton-CDH/djiffy.git#egg=djiffy
+    pip install djiffy
 
-Use branch or tag name, e.g. ``@develop`` or ``@1.0``, to install a specific
-tagged release or branch::
+
+You can also install from GitHub.  Use a branch or tag name, e.g.
+``@develop`` or ``@1.0``, to install a specific tagged release or branch::
 
     pip install git+https://github.com/Princeton-CDH/djiffy.git@develop#egg=djiffy
 
