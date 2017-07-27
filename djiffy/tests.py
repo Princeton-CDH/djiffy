@@ -261,6 +261,12 @@ class TestIIIFPresentation(TestCase):
         assert not hasattr(pres, 'label')
         assert not hasattr(pres, 'type')
 
+    def test_first_label(self):
+        pres = IIIFPresentation.from_file(self.test_manifest)
+        assert pres.first_label == pres.label[0]
+        pres.label = 'unlisted single title'
+        assert pres.first_label == pres.label
+
 
 class TestManifestImporter(TestCase):
     test_manifest = os.path.join(FIXTURE_DIR, 'chto-manifest.json')

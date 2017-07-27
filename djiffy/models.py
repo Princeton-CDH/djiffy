@@ -287,3 +287,11 @@ class IIIFPresentation(AttrMap):
         """
         del self._mapping[self._handle_at_keys(key)]
 
+    @property
+    def first_label(self):
+        # label can be a string or list of strings
+        if isinstance(self.label, str):
+            return self.label
+        else:
+            return self.label[0]
+
