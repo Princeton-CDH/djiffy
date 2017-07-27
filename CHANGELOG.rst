@@ -6,6 +6,13 @@ Changelog
 
 * Support for optional configurable per-domain auth tokens, to
   allow retrieving restricted IIIF manifests.
+* New custom Django view permissions for manifests and canvases.
+* Now supports Django 1.11.
+* Manifest extra data is restructured and includes seeAlso URLs even
+  if content is not included locally.
+* Canvas autocomplete view powered by django-autocomplete-light, to support
+  selecting canvases in admin forms without loading all canvases in
+  the database.
 
 0.1 Initial release
 --------------------
