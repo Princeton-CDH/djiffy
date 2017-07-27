@@ -5,7 +5,8 @@ Changelog
 ---
 
 * Support for optional configurable per-domain auth tokens, to
-  allow retrieving restricted IIIF manifests.
+  allow retrieving restricted IIIF manifests.  (See documentation
+  in the README for **DJIFFY_AUTH_TOKENS** format.)
 * New custom Django view permissions for manifests and canvases.
 * Now supports Django 1.11.
 * Manifest extra data is restructured and includes seeAlso URLs even
