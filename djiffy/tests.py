@@ -59,6 +59,27 @@ class TestManifest(TestCase):
             manifest=book, order=1)
         assert book.admin_thumbnail() == canv.admin_thumbnail()
 
+    def test_logo(self):
+        book = Manifest(short_id='bk123')
+        assert book.logo is None
+
+        book.extra_data['logo'] = 'http://so.me/logo.img'
+        assert book.logo == book.extra_data['logo']
+
+    def test_license(self):
+        book = Manifest(short_id='bk123')
+        assert book.license is None
+
+        book.extra_data['license'] = 'http://rightsstatements.org/page/InC/1.0/'
+        assert book.license == book.extra_data['license']
+
+    def test_rights_statement_id(self):
+        book = Manifest(short_id='bk123')
+        assert book.rights_statement_id is None
+
+        book.extra_data['license'] = 'http://rightsstatements.org/page/InC/1.0/'
+        assert book.rights_statement_id == 'InC'
+
 
 class TestCanvas(TestCase):
 

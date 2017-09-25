@@ -79,6 +79,22 @@ class Manifest(models.Model):
     admin_thumbnail.short_description = 'Thumbnail'
     admin_thumbnail.allow_tags = True
 
+    @property
+    def logo(self):
+        '''manifest logo, if there is one'''
+        return self.extra_data.get('logo', None)
+
+    @property
+    def license(self):
+        '''manifest license, if there is one'''
+        return self.extra_data.get('license', None)
+
+    @property
+    def rights_statement_id(self):
+        '''short id for rightstatement.org license'''
+        if self.license and 'rightsstatements.org' in self.license:
+            return self.license.rstrip(' /').split('/')[-2]
+
 
 class IIIFImage(iiif.IIIFImageClient):
     '''Subclass of :class:`piffle.iiif.IIIFImageClient`, for generating
