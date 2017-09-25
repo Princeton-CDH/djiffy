@@ -19,10 +19,11 @@ class ManifestImporter(object):
 
     # TODO: should have better reporting on what was done
 
-    def __init__(self, stdout=None, stderr=None, style=None):
+    def __init__(self, stdout=None, stderr=None, style=None, update=False):
         self.stdout = stdout
         self.stderr = stderr
         self.style = style
+        self.update = update
 
     def output(self, msg):
         '''Output a message if stdout is configured (used to support output
@@ -77,11 +78,20 @@ class ManifestImporter(object):
         :param path: file or url import path
         '''
 
+        # flag to indicate if we are updating an existing record
+        update_existing = False
+
         # check if manifest with uri identifier has already been imported
-        if Manifest.objects.filter(uri=manifest.id).count():
+        db_manifest = Manifest.objects.filter(uri=manifest.id).first()
+        if db_manifest:
+            # TODO: would be nice to compare last-modified or etag
+            # and see if we actually need to update..
             # NOTE: not updating for now; may want to add later
-            self.error_msg('%s has already been imported' % path)
-            return
+            if self.update:
+                update_existing = True
+            else:
+                self.error_msg('%s has already been imported; use --update to request update' % path)
+                return
         # check if the type of manifest is supported
         if not self.import_supported(manifest):
             return
@@ -94,21 +104,24 @@ class ManifestImporter(object):
             self.error_msg('%s has no sequences; skipping' % path)
             return
 
-        # create a new book
-        manif = Manifest()
+        # create a new manifest if not updating a previous import
+        if not update_existing:
+            db_manifest = Manifest()
 
         # label can be either a list/tuple or a bare string; handle both
         # TODO: generalize this and move into model classes
         if isinstance(manifest.label, str):
-            manif.label = manifest.label
+            db_manifest.label = manifest.label
         else:
             if len(manifest.label) == 1:
-                manif.label = manifest.label[0]
+                db_manifest.label = manifest.label[0]
             else:
-                manif.label = '; '.join(manifest.label)
+                db_manifest.label = '; '.join(manifest.label)
 
-        manif.uri = manifest.id
-        manif.short_id = IIIFPresentation.short_id(manifest.id)
+        # set uri & short id if creating a new record
+        if not update_existing:
+            db_manifest.uri = manifest.id
+            db_manifest.short_id = IIIFPresentation.short_id(manifest.id)
         # convert metadata into a more usable format
         if hasattr(manifest, 'metadata'):
             metadata = OrderedDict([(item['label'], item['value'])
@@ -117,7 +130,7 @@ class ManifestImporter(object):
             for key, value in metadata.items():
                 if not isinstance(value, list):
                     metadata[key] = (value, )
-            manif.metadata = metadata
+            db_manifest.metadata = metadata
 
         # if manifest has any seeAlso links, store the urls;
         # if format is JSON, fetch it and store in the extra data
@@ -127,7 +140,7 @@ class ManifestImporter(object):
         # rights information
         if hasattr(manifest, 'seeAlso'):
             links = []
-            manif.extra_data = OrderedDict()
+            db_manifest.extra_data = OrderedDict()
             # collect seeAlso links and formats, whether they
             # appear as a single element or a list
 
@@ -141,13 +154,18 @@ class ManifestImporter(object):
 
             # process all the seeAlso links and add to extra data
             for url, fmt in links:
-                manif.extra_data[url] = {}
+                db_manifest.extra_data[url] = {}
                 if fmt == 'application/ld+json':
                     # TODO: error handling on the request?
                     response = get_iiif_url(url)
-                    manif.extra_data[url] = response.json()
+                    db_manifest.extra_data[url] = response.json()
 
-        manif.save()
+        # also check for logo and license and add to extra data
+        for field in ['logo', 'license']:
+            if hasattr(manifest, field):
+                db_manifest.extra_data[field] = getattr(manifest, field)
+
+        db_manifest.save()
 
         thumbnail_id = None
         if hasattr(manifest, 'thumbnail'):
@@ -157,9 +175,16 @@ class ManifestImporter(object):
         order = 0
         # create a db canvas element for each canvas
         for canvas in manifest.sequences[0].canvases:
-            db_canvas = Canvas(manifest=manif, order=order)
+            if update_existing:
+                db_canvas = db_manifest.canvases.filter(uri=canvas.id).first()
+            else:
+                # new canvas from last import
+                db_canvas = Canvas(manifest=db_manifest)
+
+            # set order and label
+            db_canvas.order = order
             db_canvas.label = canvas.label
-            # this is canvas id, is that meaningful? do we want image id?
+            # keep canvas id to obscure image id if necessary for security
             db_canvas.uri = canvas.id
             db_canvas.short_id = IIIFPresentation.short_id(canvas.id)
             # only support single image per canvas for now
@@ -171,8 +196,10 @@ class ManifestImporter(object):
 
             order += 1
 
+            # TODO: check for any outdated images that should be removed
+
         # return the manifest db object that was created
-        return manif
+        return db_manifest
 
     def import_collection(self, manifest):
         '''Process a single IIIF collection and import
