@@ -175,10 +175,12 @@ class ManifestImporter(object):
         order = 0
         # create a db canvas element for each canvas
         for canvas in manifest.sequences[0].canvases:
+            # when updating an existing manifest, look for existing canvas
             if update_existing:
                 db_canvas = db_manifest.canvases.filter(uri=canvas.id).first()
-            else:
-                # new canvas from last import
+            if not update_existing or not db_canvas:
+                # otherwise, create a new canvas (new import or updating
+                # a manifest where this canvas did not previously exist)
                 db_canvas = Canvas(manifest=db_manifest)
 
             # set order and label
@@ -196,7 +198,13 @@ class ManifestImporter(object):
 
             order += 1
 
-            # TODO: check for any outdated images that should be removed
+        # check for any previously imported canvases that are no longer included
+        uris = [canvas.id for canvas in manifest.sequences[0].canvases]
+        outdated_canvases = db_manifest.canvases.exclude(uri__in=uris)
+        if outdated_canvases:
+            self.output('Updating %s; removing %d canvases no longer included' % \
+                (manifest.id, len(outdated_canvases)))
+            outdated_canvases.delete()
 
         # return the manifest db object that was created
         return db_manifest

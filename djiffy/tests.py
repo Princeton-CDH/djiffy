@@ -342,7 +342,7 @@ class TestManifestImporter(TestCase):
              'https://libimages1.princeton.edu/loris/plum_prod/p0%2F28%2F71%2Fv9%2F8d-intermediate_file.jp2'
 
         # won't import if already in db
-        assert self.importer.import_manifest(pres, self.test_manifest) == None
+        assert self.importer.import_manifest(pres, self.test_manifest) is None
 
         # non-json seeAlso data should store the url
         manif.delete()
@@ -374,13 +374,47 @@ class TestManifestImporter(TestCase):
         pres.id = 'http://some.other/uri'
         pres.viewingHint = 'non-paged'
         pres.viewingDirection = None
-        assert self.importer.import_manifest(pres, self.test_manifest) == None
+        assert self.importer.import_manifest(pres, self.test_manifest) is None
 
         # manifest with no sequence (not valid IIIF, but shouldn't chocke)
         pres = IIIFPresentation.from_file(self.test_manifest_noseq)
-        assert self.importer.import_manifest(pres, self.test_manifest) == None
+        assert self.importer.import_manifest(pres, self.test_manifest) is None
 
         # TODO: test import handling for fields that could be string or list
+
+    @patch('djiffy.importer.get_iiif_url')
+    def test_import_manifest_update(self, mock_getiiifurl):
+        # test updating a previously imported manifest
+        pres = IIIFPresentation.from_file(self.test_manifest)
+        # simulate no extra data
+        mock_getiiifurl.return_value.json.return_value = {}
+        # remove a canvas before first import to test adding it in update
+        orig_canvases = list(pres.sequences[0].canvases)
+        pres.sequences[0].canvases = orig_canvases[:-1]
+
+        # import once
+        db_manifest = self.importer.import_manifest(pres, self.test_manifest)
+        assert db_manifest.canvases.count() == len(pres.sequences[0].canvases)
+
+        # modify manifest and update - new label, new canvas
+        pres.sequences[0].canvases[0].label = 'New label'
+        pres.sequences[0].canvases = orig_canvases
+
+        self.importer.update = True
+        db_manifest = self.importer.import_manifest(pres, self.test_manifest)
+        assert isinstance(db_manifest, Manifest)
+        # new canvas was added
+        assert db_manifest.canvases.count() == len(orig_canvases)
+        # label updated
+        assert db_manifest.canvases.first().label == 'New label'
+
+        # modify manifest to remove canvases and update
+        pres.sequences[0].canvases = orig_canvases[:5]
+        self.importer.stdout = StringIO()
+        db_manifest = self.importer.import_manifest(pres, self.test_manifest)
+        assert db_manifest.canvases.count() == len(pres.sequences[0].canvases)
+        output = self.importer.stdout.getvalue()
+        assert 'removing %d canvases' % (len(orig_canvases) - 5, ) in output
 
     @patch('djiffy.models.get_iiif_url')
     def test_import_collection(self, mock_getiiifurl):
