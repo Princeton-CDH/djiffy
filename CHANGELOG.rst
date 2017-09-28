@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.3
+---
+
+* Import script now supports updating previously imported manifests.
+
+
 0.2
 ---
 
