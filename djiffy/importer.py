@@ -198,13 +198,21 @@ class ManifestImporter(object):
 
             order += 1
 
-        # check for any previously imported canvases that are no longer included
-        uris = [canvas.id for canvas in manifest.sequences[0].canvases]
-        outdated_canvases = db_manifest.canvases.exclude(uri__in=uris)
-        if outdated_canvases:
-            self.output('Updating %s; removing %d canvases no longer included' % \
-                (manifest.id, len(outdated_canvases)))
-            outdated_canvases.delete()
+        # if updating, check for previously imported canvases that are no
+        # longer preseent
+        if update_existing:
+            # get a list of all ids in the db
+            all_ids = db_manifest.canvases.all().values_list('uri', flat=True)
+            # get all ids in the current manifest
+            current_ids = [canvas.id for canvas in manifest.sequences[0].canvases]
+            # identify outdated ids in the database but not the manifest
+            outdated_ids = set(all_ids).difference(set(current_ids))
+            if outdated_ids:
+                outdated_canvases = db_manifest.canvases.filter(uri__in=outdated_ids)
+                if outdated_canvases:
+                    self.output('Updating %s; removing %d canvases no longer included' % \
+                        (manifest.id, len(outdated_canvases)))
+                    outdated_canvases.delete()
 
         # return the manifest db object that was created
         return db_manifest
