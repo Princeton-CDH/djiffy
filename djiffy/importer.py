@@ -186,7 +186,8 @@ class ManifestImporter(object):
             db_canvas.label = canvas.label
             # keep canvas id to obscure image id if necessary for security
             db_canvas.uri = canvas.id
-            db_canvas.short_id = IIIFPresentation.short_id(canvas.id)
+            # get short id (extensible for subclasses)
+            db_canvas.short_id = self.canvas_short_id(canvas)
             # only support single image per canvas for now
             db_canvas.iiif_image_id = canvas.images[0].resource.service.id
             # check if this page is the thumbnail image
@@ -244,5 +245,10 @@ class ManifestImporter(object):
 
             return imported
 
+    def canvas_short_id(self, canvas):
+        '''Method for generating short id from canvas; default is
+        :meth:`djiffy.models.IIIFPresentation.short_id`.
+        '''
+        return IIIFPresentation.short_id(canvas.id)
 
 
