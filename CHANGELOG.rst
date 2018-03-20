@@ -5,6 +5,8 @@ Changelog
 ---
 
 * Import script now supports updating previously imported manifests.
+* Import script now allows manifests with viewing hint 'individuals'
+  as well as paged.
 
 
 0.2

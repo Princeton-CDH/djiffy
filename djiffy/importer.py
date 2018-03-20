@@ -55,17 +55,16 @@ class ManifestImporter(object):
                 self.import_manifest(manifest, path)
 
     def import_supported(self, manifest):
-        '''Check if import is supported (currently limited to paged,
+        '''Check if import is supported (currently limited to paged or individuals,
         left-to-right content).'''
-        # FIXME: individuals vs paged?
         view_hint = getattr(manifest, 'viewingHint', None)
         view_direction = getattr(manifest, 'viewingDirection', None)
-        if (view_hint and manifest.viewingHint == 'paged') or \
+        if (view_hint and manifest.viewingHint in ['paged', 'individuals']) or \
           (view_direction and manifest.viewingDirection == 'left-to-right'):
             return True
 
         else:
-            self.error_msg('Currently import only supports paged, left-to-right manifests; skipping %s (hint: %s, direction: %s)' \
+            self.error_msg('Currently import only supports paged or individuals, left-to-right manifests; skipping %s (hint: %s, direction: %s)' \
             % (manifest.id, view_hint, view_direction))
             return False
 
@@ -172,9 +171,8 @@ class ManifestImporter(object):
             thumbnail_id = manifest.thumbnail.service.id
 
         # for now, only worry about the first sequence
-        order = 0
         # create a db canvas element for each canvas
-        for canvas in manifest.sequences[0].canvases:
+        for order, canvas in enumerate(manifest.sequences[0].canvases):
             # when updating an existing manifest, look for existing canvas
             if update_existing:
                 db_canvas = db_manifest.canvases.filter(uri=canvas.id).first()
@@ -195,8 +193,6 @@ class ManifestImporter(object):
             if thumbnail_id is not None and db_canvas.iiif_image_id == thumbnail_id:
                 db_canvas.thumbnail = True
             db_canvas.save()
-
-            order += 1
 
         # if updating, check for previously imported canvases that are no
         # longer preseent
@@ -221,7 +217,7 @@ class ManifestImporter(object):
         '''Process a single IIIF collection and import
         all supported manifests referenced in the collection.
 
-        :param manifest: :class:`~djiffy.models.IIIFPresentation`
+        :gedram manifest: :class:`~djiffy.models.IIIFPresentation`
         '''
 
         if manifest.type == 'sc:Collection':
