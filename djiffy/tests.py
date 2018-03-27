@@ -499,6 +499,9 @@ class TestManifestSelectWidget(TestCase):
         widget = ManifestSelectWidget()
         # no value set - should not error
         assert widget.render('manifest', None, {'id': 123})
+        # empty string - shoudl not error
+        assert widget.render('manifest', '', {'id': 123})
+
 
         # create test manifest to render
         manif = Manifest.objects.create(label='test manifest', short_id='abc3')

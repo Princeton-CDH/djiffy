@@ -12,7 +12,7 @@ class ManifestSelectWidget(Select):
 
     def render(self, name, value, attrs=None):
         widget = super(ManifestSelectWidget, self).render(name, value, attrs)
-        if value is not None:
+        if value:
             manifest = Manifest.objects.get(pk=value)
             # NOTE: should really only display edit link if user has
             # the change permission on manifests
