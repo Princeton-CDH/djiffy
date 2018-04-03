@@ -33,7 +33,7 @@
     <article class="carousel page">
         <div class="carousel-inner">
 
-                <div class="container in-page-controls">
+              <div class="container in-page-controls">
                 <div id="view-toggle" class="col-sm-4 pull-right" style="margin-right: 10%">
                     <div class="btn-group pull-right">
                         <a id="enable-zoom" href="#" class="btn" alt="Deep Zoom Mode" title="Deep Zoom Mode"><span class="glyphicon glyphicon-fullscreen"></span></a>
@@ -55,6 +55,7 @@
                         </div>
                     </div>
                 </div>
+              </div>
 
 
         <div class="text-center">
@@ -67,6 +68,8 @@
                 </div>
             </div>
         </div>
+
+      </div> {# end inner carousel #}
 
         {% if canvas.prev %}
         <a class="left carousel-control" href="{{ canvas.prev.get_absolute_url }}" role="button" data-slide="prev" title="Prev: {{ canvas.prev.label }}" rel="prev">
