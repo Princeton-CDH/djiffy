@@ -5,17 +5,17 @@ djiffy
 
 Django application to index and display IIIF Manifests for books
 
-.. image:: https://travis-ci.org/Princeton-CDH/djiffy.svg?branch=develop
+.. image:: https://travis-ci.org/Princeton-CDH/djiffy.svg?branch=master
    :target: https://travis-ci.org/Princeton-CDH/djiffy
    :alt: Build Status
-.. image:: https://codecov.io/gh/Princeton-CDH/djiffy/branch/develop/graph/badge.svg
+.. image:: https://codecov.io/gh/Princeton-CDH/djiffy/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/Princeton-CDH/djiffy
    :alt: Code Coverage
-.. image:: https://landscape.io/github/Princeton-CDH/djiffy/develop/landscape.svg?style=flat
-   :target: https://landscape.io/github/Princeton-CDH/djiffy/develop
+.. image:: https://landscape.io/github/Princeton-CDH/djiffy/master/landscape.svg?style=flat
+   :target: https://landscape.io/github/Princeton-CDH/djiffy/master
    :alt: Code Health
-.. image:: https://requires.io/github/Princeton-CDH/djiffy/requirements.svg?branch=develop
-   :target: https://requires.io/github/Princeton-CDH/djiffy/requirements/?branch=develop
+.. image:: https://requires.io/github/Princeton-CDH/djiffy/requirements.svg?branch=master
+   :target: https://requires.io/github/Princeton-CDH/djiffy/requirements/?branch=master
    :alt: Requirements Status
 
 **djiffy** is intended to be a reusable `Django`_ application for
