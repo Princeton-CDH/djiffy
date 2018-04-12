@@ -848,9 +848,7 @@
     },
     {
       "label": "Format",
-      "value": [
-        "Book"
-      ]
+      "value": "Book"
     },
     {
       "label": "Extent",
@@ -895,5 +893,7 @@
   "seeAlso": {
     "@id": "https://bibdata.princeton.edu/bibliographic/4765261/jsonld",
     "format": "application/ld+json"
-  }
+  },
+  "license": "http://rightsstatements.org/vocab/NKC/1.0/",
+  "logo": "https://example.com/logo.png"
 }

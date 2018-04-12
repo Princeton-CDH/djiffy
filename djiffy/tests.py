@@ -336,6 +336,9 @@ class TestManifestImporter(TestCase):
         assert manif.extra_data[pres.seeAlso.id] == mock_extra_data
         assert mock_getiiifurl.called_with(pres.seeAlso.id)
         assert mock_getiiifurl.return_value.json.called_with()
+        # license & logo available
+        assert manif.license == "http://rightsstatements.org/vocab/NKC/1.0/"
+        assert manif.logo == "https://example.com/logo.png"
 
         assert len(manif.canvases.all()) == len(pres.sequences[0].canvases)
         assert manif.thumbnail.iiif_image_id == \
@@ -368,7 +371,7 @@ class TestManifestImporter(TestCase):
         manif.delete()
         del pres.seeAlso
         manif = self.importer.import_manifest(pres, self.test_manifest)
-        assert manif.extra_data == {}
+        assert set(manif.extra_data.keys()) == set(['logo', 'license'])
 
         # unsupported type won't import
         pres.id = 'http://some.other/uri'
