@@ -128,7 +128,7 @@ class ManifestImporter(object):
             # handle single values as well as lists
             for key, value in metadata.items():
                 if not isinstance(value, list):
-                    metadata[key] = (value, )
+                    metadata[key] = [value]
             db_manifest.metadata = metadata
 
         # if manifest has any seeAlso links, store the urls;

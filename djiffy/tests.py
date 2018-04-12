@@ -336,6 +336,9 @@ class TestManifestImporter(TestCase):
         assert manif.extra_data[pres.seeAlso.id] == mock_extra_data
         assert mock_getiiifurl.called_with(pres.seeAlso.id)
         assert mock_getiiifurl.return_value.json.called_with()
+        # license & logo available
+        assert manif.license == "http://rightsstatements.org/vocab/NKC/1.0/"
+        assert manif.logo == "https://example.com/logo.png"
 
         assert len(manif.canvases.all()) == len(pres.sequences[0].canvases)
         assert manif.thumbnail.iiif_image_id == \
@@ -368,7 +371,7 @@ class TestManifestImporter(TestCase):
         manif.delete()
         del pres.seeAlso
         manif = self.importer.import_manifest(pres, self.test_manifest)
-        assert manif.extra_data == {}
+        assert set(manif.extra_data.keys()) == set(['logo', 'license'])
 
         # unsupported type won't import
         pres.id = 'http://some.other/uri'
@@ -440,7 +443,7 @@ class TestManifestImporter(TestCase):
         # error handling
         with patch('djiffy.importer.IIIFPresentation') as mockiiifpres:
             mockiiifpres.from_file_or_url.side_effect = IIIFException
-            imported = IIIFPresentation.from_file(self.test_manifest)
+            imported = IIIFPresentation.from_file(self.test_coll_manifest)
             assert self.test_manifest not in imported
 
     @patch('djiffy.importer.IIIFPresentation')
@@ -458,6 +461,15 @@ class TestManifestImporter(TestCase):
             mockiiifpres.from_file_or_url.assert_called_with(self.test_manifest)
             mock_manif_import.assert_called_with(iiifmanifest,
                 self.test_manifest)
+
+        # skips error
+        mockiiifpres.from_file_or_url.side_effect = IIIFException
+        with patch.object(self.importer, 'import_manifest') as mock_manif_import:
+            self.importer.stderr = StringIO()
+            self.importer.import_paths([self.test_manifest])
+            mockiiifpres.from_file_or_url.assert_called_with(self.test_manifest)
+            mock_manif_import.assert_not_called()
+
 
     def test_output(self):
         # with no stdout defined, no error
