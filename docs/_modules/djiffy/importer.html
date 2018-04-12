@@ -1,26 +1,15 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>djiffy.importer &#8212; Djiffy 0.2.0 documentation</title>
-    
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <title>djiffy.importer &#8212; Djiffy 0.3.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/style.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '0.2.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
@@ -32,8 +21,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body role="document">
+  </head><body>
   
 
     <div class="document">
@@ -63,10 +51,11 @@
 
     <span class="c1"># TODO: should have better reporting on what was done</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">stdout</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="n">stderr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">=</span> <span class="n">style</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span> <span class="o">=</span> <span class="n">update</span>
 
 <div class="viewcode-block" id="ManifestImporter.output"><a class="viewcode-back" href="../../codedocs.html#djiffy.importer.ManifestImporter.output">[docs]</a>    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Output a message if stdout is configured (used to support output</span>
@@ -98,17 +87,16 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">import_manifest</span><span class="p">(</span><span class="n">manifest</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ManifestImporter.import_supported"><a class="viewcode-back" href="../../codedocs.html#djiffy.importer.ManifestImporter.import_supported">[docs]</a>    <span class="k">def</span> <span class="nf">import_supported</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;Check if import is supported (currently limited to paged,</span>
+        <span class="sd">&#39;&#39;&#39;Check if import is supported (currently limited to paged or individuals,</span>
 <span class="sd">        left-to-right content).&#39;&#39;&#39;</span>
-        <span class="c1"># FIXME: individuals vs paged?</span>
         <span class="n">view_hint</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">manifest</span><span class="p">,</span> <span class="s1">&#39;viewingHint&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">view_direction</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">manifest</span><span class="p">,</span> <span class="s1">&#39;viewingDirection&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">view_hint</span> <span class="ow">and</span> <span class="n">manifest</span><span class="o">.</span><span class="n">viewingHint</span> <span class="o">==</span> <span class="s1">&#39;paged&#39;</span><span class="p">)</span> <span class="ow">or</span> \
+        <span class="k">if</span> <span class="p">(</span><span class="n">view_hint</span> <span class="ow">and</span> <span class="n">manifest</span><span class="o">.</span><span class="n">viewingHint</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;paged&#39;</span><span class="p">,</span> <span class="s1">&#39;individuals&#39;</span><span class="p">])</span> <span class="ow">or</span> \
           <span class="p">(</span><span class="n">view_direction</span> <span class="ow">and</span> <span class="n">manifest</span><span class="o">.</span><span class="n">viewingDirection</span> <span class="o">==</span> <span class="s1">&#39;left-to-right&#39;</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">error_msg</span><span class="p">(</span><span class="s1">&#39;Currently import only supports paged, left-to-right manifests; skipping </span><span class="si">%s</span><span class="s1"> (hint: </span><span class="si">%s</span><span class="s1">, direction: </span><span class="si">%s</span><span class="s1">)&#39;</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">error_msg</span><span class="p">(</span><span class="s1">&#39;Currently import only supports paged or individuals, left-to-right manifests; skipping </span><span class="si">%s</span><span class="s1"> (hint: </span><span class="si">%s</span><span class="s1">, direction: </span><span class="si">%s</span><span class="s1">)&#39;</span> \
             <span class="o">%</span> <span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">view_hint</span><span class="p">,</span> <span class="n">view_direction</span><span class="p">))</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
@@ -121,11 +109,20 @@
 <span class="sd">        :param path: file or url import path</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
+        <span class="c1"># flag to indicate if we are updating an existing record</span>
+        <span class="n">update_existing</span> <span class="o">=</span> <span class="kc">False</span>
+
         <span class="c1"># check if manifest with uri identifier has already been imported</span>
-        <span class="k">if</span> <span class="n">Manifest</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">manifest</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">():</span>
+        <span class="n">db_manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">manifest</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">db_manifest</span><span class="p">:</span>
+            <span class="c1"># TODO: would be nice to compare last-modified or etag</span>
+            <span class="c1"># and see if we actually need to update..</span>
             <span class="c1"># NOTE: not updating for now; may want to add later</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">error_msg</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> has already been imported&#39;</span> <span class="o">%</span> <span class="n">path</span><span class="p">)</span>
-            <span class="k">return</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">:</span>
+                <span class="n">update_existing</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">error_msg</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> has already been imported; use --update to request update&#39;</span> <span class="o">%</span> <span class="n">path</span><span class="p">)</span>
+                <span class="k">return</span>
         <span class="c1"># check if the type of manifest is supported</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">import_supported</span><span class="p">(</span><span class="n">manifest</span><span class="p">):</span>
             <span class="k">return</span>
@@ -138,21 +135,24 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">error_msg</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> has no sequences; skipping&#39;</span> <span class="o">%</span> <span class="n">path</span><span class="p">)</span>
             <span class="k">return</span>
 
-        <span class="c1"># create a new book</span>
-        <span class="n">manif</span> <span class="o">=</span> <span class="n">Manifest</span><span class="p">()</span>
+        <span class="c1"># create a new manifest if not updating a previous import</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">update_existing</span><span class="p">:</span>
+            <span class="n">db_manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="p">()</span>
 
         <span class="c1"># label can be either a list/tuple or a bare string; handle both</span>
         <span class="c1"># TODO: generalize this and move into model classes</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">manif</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">manifest</span><span class="o">.</span><span class="n">label</span>
+            <span class="n">db_manifest</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">manifest</span><span class="o">.</span><span class="n">label</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">label</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">manif</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">manifest</span><span class="o">.</span><span class="n">label</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">db_manifest</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">manifest</span><span class="o">.</span><span class="n">label</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">manif</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+                <span class="n">db_manifest</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
 
-        <span class="n">manif</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="n">manifest</span><span class="o">.</span><span class="n">id</span>
-        <span class="n">manif</span><span class="o">.</span><span class="n">short_id</span> <span class="o">=</span> <span class="n">IIIFPresentation</span><span class="o">.</span><span class="n">short_id</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="c1"># set uri &amp; short id if creating a new record</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">update_existing</span><span class="p">:</span>
+            <span class="n">db_manifest</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="n">manifest</span><span class="o">.</span><span class="n">id</span>
+            <span class="n">db_manifest</span><span class="o">.</span><span class="n">short_id</span> <span class="o">=</span> <span class="n">IIIFPresentation</span><span class="o">.</span><span class="n">short_id</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
         <span class="c1"># convert metadata into a more usable format</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">manifest</span><span class="p">,</span> <span class="s1">&#39;metadata&#39;</span><span class="p">):</span>
             <span class="n">metadata</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">],</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
@@ -160,8 +160,8 @@
             <span class="c1"># handle single values as well as lists</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                    <span class="n">metadata</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">)</span>
-            <span class="n">manif</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span>
+                    <span class="n">metadata</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span>
+            <span class="n">db_manifest</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span>
 
         <span class="c1"># if manifest has any seeAlso links, store the urls;</span>
         <span class="c1"># if format is JSON, fetch it and store in the extra data</span>
@@ -171,7 +171,7 @@
         <span class="c1"># rights information</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">manifest</span><span class="p">,</span> <span class="s1">&#39;seeAlso&#39;</span><span class="p">):</span>
             <span class="n">links</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">manif</span><span class="o">.</span><span class="n">extra_data</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="n">db_manifest</span><span class="o">.</span><span class="n">extra_data</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
             <span class="c1"># collect seeAlso links and formats, whether they</span>
             <span class="c1"># appear as a single element or a list</span>
 
@@ -185,27 +185,41 @@
 
             <span class="c1"># process all the seeAlso links and add to extra data</span>
             <span class="k">for</span> <span class="n">url</span><span class="p">,</span> <span class="n">fmt</span> <span class="ow">in</span> <span class="n">links</span><span class="p">:</span>
-                <span class="n">manif</span><span class="o">.</span><span class="n">extra_data</span><span class="p">[</span><span class="n">url</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">db_manifest</span><span class="o">.</span><span class="n">extra_data</span><span class="p">[</span><span class="n">url</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
                 <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s1">&#39;application/ld+json&#39;</span><span class="p">:</span>
                     <span class="c1"># TODO: error handling on the request?</span>
                     <span class="n">response</span> <span class="o">=</span> <span class="n">get_iiif_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-                    <span class="n">manif</span><span class="o">.</span><span class="n">extra_data</span><span class="p">[</span><span class="n">url</span><span class="p">]</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+                    <span class="n">db_manifest</span><span class="o">.</span><span class="n">extra_data</span><span class="p">[</span><span class="n">url</span><span class="p">]</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 
-        <span class="n">manif</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="c1"># also check for logo and license and add to extra data</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;logo&#39;</span><span class="p">,</span> <span class="s1">&#39;license&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">manifest</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+                <span class="n">db_manifest</span><span class="o">.</span><span class="n">extra_data</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">manifest</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span>
+
+        <span class="n">db_manifest</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 
         <span class="n">thumbnail_id</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">manifest</span><span class="p">,</span> <span class="s1">&#39;thumbnail&#39;</span><span class="p">):</span>
             <span class="n">thumbnail_id</span> <span class="o">=</span> <span class="n">manifest</span><span class="o">.</span><span class="n">thumbnail</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">id</span>
 
         <span class="c1"># for now, only worry about the first sequence</span>
-        <span class="n">order</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="c1"># create a db canvas element for each canvas</span>
-        <span class="k">for</span> <span class="n">canvas</span> <span class="ow">in</span> <span class="n">manifest</span><span class="o">.</span><span class="n">sequences</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">canvases</span><span class="p">:</span>
-            <span class="n">db_canvas</span> <span class="o">=</span> <span class="n">Canvas</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manif</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">order</span><span class="p">,</span> <span class="n">canvas</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">sequences</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">canvases</span><span class="p">):</span>
+            <span class="c1"># when updating an existing manifest, look for existing canvas</span>
+            <span class="k">if</span> <span class="n">update_existing</span><span class="p">:</span>
+                <span class="n">db_canvas</span> <span class="o">=</span> <span class="n">db_manifest</span><span class="o">.</span><span class="n">canvases</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">canvas</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">update_existing</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">db_canvas</span><span class="p">:</span>
+                <span class="c1"># otherwise, create a new canvas (new import or updating</span>
+                <span class="c1"># a manifest where this canvas did not previously exist)</span>
+                <span class="n">db_canvas</span> <span class="o">=</span> <span class="n">Canvas</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">db_manifest</span><span class="p">)</span>
+
+            <span class="c1"># set order and label</span>
+            <span class="n">db_canvas</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="n">order</span>
             <span class="n">db_canvas</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">canvas</span><span class="o">.</span><span class="n">label</span>
-            <span class="c1"># this is canvas id, is that meaningful? do we want image id?</span>
+            <span class="c1"># keep canvas id to obscure image id if necessary for security</span>
             <span class="n">db_canvas</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="n">canvas</span><span class="o">.</span><span class="n">id</span>
-            <span class="n">db_canvas</span><span class="o">.</span><span class="n">short_id</span> <span class="o">=</span> <span class="n">IIIFPresentation</span><span class="o">.</span><span class="n">short_id</span><span class="p">(</span><span class="n">canvas</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+            <span class="c1"># get short id (extensible for subclasses)</span>
+            <span class="n">db_canvas</span><span class="o">.</span><span class="n">short_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">canvas_short_id</span><span class="p">(</span><span class="n">canvas</span><span class="p">)</span>
             <span class="c1"># only support single image per canvas for now</span>
             <span class="n">db_canvas</span><span class="o">.</span><span class="n">iiif_image_id</span> <span class="o">=</span> <span class="n">canvas</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">resource</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">id</span>
             <span class="c1"># check if this page is the thumbnail image</span>
@@ -213,16 +227,30 @@
                 <span class="n">db_canvas</span><span class="o">.</span><span class="n">thumbnail</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="n">db_canvas</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 
-            <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># if updating, check for previously imported canvases that are no</span>
+        <span class="c1"># longer preseent</span>
+        <span class="k">if</span> <span class="n">update_existing</span><span class="p">:</span>
+            <span class="c1"># get a list of all ids in the db</span>
+            <span class="n">all_ids</span> <span class="o">=</span> <span class="n">db_manifest</span><span class="o">.</span><span class="n">canvases</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;uri&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="c1"># get all ids in the current manifest</span>
+            <span class="n">current_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">canvas</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">canvas</span> <span class="ow">in</span> <span class="n">manifest</span><span class="o">.</span><span class="n">sequences</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">canvases</span><span class="p">]</span>
+            <span class="c1"># identify outdated ids in the database but not the manifest</span>
+            <span class="n">outdated_ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">all_ids</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">current_ids</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">outdated_ids</span><span class="p">:</span>
+                <span class="n">outdated_canvases</span> <span class="o">=</span> <span class="n">db_manifest</span><span class="o">.</span><span class="n">canvases</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">uri__in</span><span class="o">=</span><span class="n">outdated_ids</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">outdated_canvases</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="s1">&#39;Updating </span><span class="si">%s</span><span class="s1">; removing </span><span class="si">%d</span><span class="s1"> canvases no longer included&#39;</span> <span class="o">%</span> \
+                        <span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">outdated_canvases</span><span class="p">)))</span>
+                    <span class="n">outdated_canvases</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
 
         <span class="c1"># return the manifest db object that was created</span>
-        <span class="k">return</span> <span class="n">manif</span></div>
+        <span class="k">return</span> <span class="n">db_manifest</span></div>
 
 <div class="viewcode-block" id="ManifestImporter.import_collection"><a class="viewcode-back" href="../../codedocs.html#djiffy.importer.ManifestImporter.import_collection">[docs]</a>    <span class="k">def</span> <span class="nf">import_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Process a single IIIF collection and import</span>
 <span class="sd">        all supported manifests referenced in the collection.</span>
 
-<span class="sd">        :param manifest: :class:`~djiffy.models.IIIFPresentation`</span>
+<span class="sd">        :gedram manifest: :class:`~djiffy.models.IIIFPresentation`</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="k">if</span> <span class="n">manifest</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;sc:Collection&#39;</span><span class="p">:</span>
@@ -234,8 +262,8 @@
                   <span class="nb">hasattr</span><span class="p">(</span><span class="n">brief_manifest</span><span class="p">,</span> <span class="s1">&#39;viewingDirection&#39;</span><span class="p">):</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">import_supported</span><span class="p">(</span><span class="n">brief_manifest</span><span class="p">):</span>
                         <span class="k">continue</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="s1">&#39;Importing </span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> \
-                    <span class="p">(</span><span class="n">brief_manifest</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">brief_manifest</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="s1">&#39;Importing &quot;</span><span class="si">%s</span><span class="s1">&quot; </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> \
+                    <span class="p">(</span><span class="n">brief_manifest</span><span class="o">.</span><span class="n">first_label</span><span class="p">,</span> <span class="n">brief_manifest</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
 
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">manifest</span> <span class="o">=</span> <span class="n">IIIFPresentation</span><span class="o">.</span><span class="n">from_file_or_url</span><span class="p">(</span><span class="n">brief_manifest</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
@@ -247,8 +275,13 @@
                     <span class="n">db_manifest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">import_manifest</span><span class="p">(</span><span class="n">manifest</span><span class="p">,</span> <span class="n">brief_manifest</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
                     <span class="n">imported</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">db_manifest</span><span class="p">)</span>
 
-            <span class="k">return</span> <span class="n">imported</span></div></div>
+            <span class="k">return</span> <span class="n">imported</span></div>
 
+<div class="viewcode-block" id="ManifestImporter.canvas_short_id"><a class="viewcode-back" href="../../codedocs.html#djiffy.importer.ManifestImporter.canvas_short_id">[docs]</a>    <span class="k">def</span> <span class="nf">canvas_short_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">canvas</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Method for generating short id from canvas; default is</span>
+<span class="sd">        :meth:`djiffy.models.IIIFPresentation.short_id`.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">IIIFPresentation</span><span class="o">.</span><span class="n">short_id</span><span class="p">(</span><span class="n">canvas</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div></div>
 
 
 </pre></div>
@@ -310,14 +343,22 @@
 
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script><div class="powered_by">
+<p>Powered by:</p>
+<a href="http://cdh.princeton.edu/">
+<img src="https://cdh.princeton.edu/static/img/CDH_logo_01.svg"
+    alt="Center for Digital Humanities @ Princeton" />
+</a>
+</div>
         </div>
       </div>
       <div class="clearer"></div>
@@ -326,8 +367,8 @@
       &copy;2017, CDH @ Princeton.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
     </div>
 
