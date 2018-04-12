@@ -443,7 +443,7 @@ class TestManifestImporter(TestCase):
         # error handling
         with patch('djiffy.importer.IIIFPresentation') as mockiiifpres:
             mockiiifpres.from_file_or_url.side_effect = IIIFException
-            imported = IIIFPresentation.from_file(self.test_manifest)
+            imported = IIIFPresentation.from_file(self.test_coll_manifest)
             assert self.test_manifest not in imported
 
     @patch('djiffy.importer.IIIFPresentation')
