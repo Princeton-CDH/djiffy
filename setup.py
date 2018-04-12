@@ -8,7 +8,7 @@ with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as readme:
 # allow setup.py to be run from any path
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
-test_requirements = ['pytest', 'pytest-django', 'pytest-cov'],
+test_requirements = ['pytest', 'pytest-django', 'pytest-cov', 'mysqlclient'],
 
 setup(
     name='djiffy',
@@ -20,7 +20,7 @@ setup(
     long_description=README,
     url='https://github.com/Princeton-CDH/djiffy',
     install_requires=[
-        'django>=1.10',
+        'django>=1.10,<2.0',
         'requests',
         'piffle',
         'attrdict',
@@ -36,7 +36,7 @@ setup(
     author='CDH @ Princeton',
     author_email='digitalhumanities@princeton.edu',
     classifiers=[
-        'Development Status :: 3 - Alpha'
+        'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
         'Framework :: Django',
         'Framework :: Django :: 1.10',

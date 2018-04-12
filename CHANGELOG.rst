@@ -1,6 +1,22 @@
 Changelog
 =========
 
+0.3
+---
+
+* Import script now supports updating previously imported manifests;
+  use `--update` option.
+* Import script now allows manifests with viewing hint 'individuals'
+  as well as paged.
+* Manifest object now has properties for logo, license, and
+  rightstatement.org id
+* Canvas short id logic can be customized in ManifestImporter subclasses
+* Project app verbose name is now 'IIIF Content' for listing in Django
+  admin, so it will be more meaningful & recognizable to users
+* Minor template improvements
+* bugfix: ManifestSelectWidget now handles empty string
+
+
 0.2
 ---
 

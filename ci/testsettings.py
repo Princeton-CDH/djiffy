@@ -1,8 +1,17 @@
 # minimal django settings required to run tests
+
+# run against mysql to catch validation issues sqlite doesn't have
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": "test.db",
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'test',
+        'USER': 'root',
+        'HOST': 'localhost',
+        'PORT': '',
+        'TEST': {
+                'CHARSET': 'utf8',
+                'COLLATION': 'utf8_general_ci',
+            },
     }
 }
 

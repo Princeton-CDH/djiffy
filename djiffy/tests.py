@@ -59,6 +59,27 @@ class TestManifest(TestCase):
             manifest=book, order=1)
         assert book.admin_thumbnail() == canv.admin_thumbnail()
 
+    def test_logo(self):
+        book = Manifest(short_id='bk123')
+        assert book.logo is None
+
+        book.extra_data['logo'] = 'http://so.me/logo.img'
+        assert book.logo == book.extra_data['logo']
+
+    def test_license(self):
+        book = Manifest(short_id='bk123')
+        assert book.license is None
+
+        book.extra_data['license'] = 'http://rightsstatements.org/page/InC/1.0/'
+        assert book.license == book.extra_data['license']
+
+    def test_rights_statement_id(self):
+        book = Manifest(short_id='bk123')
+        assert book.rights_statement_id is None
+
+        book.extra_data['license'] = 'http://rightsstatements.org/page/InC/1.0/'
+        assert book.rights_statement_id == 'InC'
+
 
 class TestCanvas(TestCase):
 
@@ -315,13 +336,16 @@ class TestManifestImporter(TestCase):
         assert manif.extra_data[pres.seeAlso.id] == mock_extra_data
         assert mock_getiiifurl.called_with(pres.seeAlso.id)
         assert mock_getiiifurl.return_value.json.called_with()
+        # license & logo available
+        assert manif.license == "http://rightsstatements.org/vocab/NKC/1.0/"
+        assert manif.logo == "https://example.com/logo.png"
 
         assert len(manif.canvases.all()) == len(pres.sequences[0].canvases)
         assert manif.thumbnail.iiif_image_id == \
              'https://libimages1.princeton.edu/loris/plum_prod/p0%2F28%2F71%2Fv9%2F8d-intermediate_file.jp2'
 
         # won't import if already in db
-        assert self.importer.import_manifest(pres, self.test_manifest) == None
+        assert self.importer.import_manifest(pres, self.test_manifest) is None
 
         # non-json seeAlso data should store the url
         manif.delete()
@@ -347,19 +371,53 @@ class TestManifestImporter(TestCase):
         manif.delete()
         del pres.seeAlso
         manif = self.importer.import_manifest(pres, self.test_manifest)
-        assert manif.extra_data == {}
+        assert set(manif.extra_data.keys()) == set(['logo', 'license'])
 
         # unsupported type won't import
         pres.id = 'http://some.other/uri'
         pres.viewingHint = 'non-paged'
         pres.viewingDirection = None
-        assert self.importer.import_manifest(pres, self.test_manifest) == None
+        assert self.importer.import_manifest(pres, self.test_manifest) is None
 
         # manifest with no sequence (not valid IIIF, but shouldn't chocke)
         pres = IIIFPresentation.from_file(self.test_manifest_noseq)
-        assert self.importer.import_manifest(pres, self.test_manifest) == None
+        assert self.importer.import_manifest(pres, self.test_manifest) is None
 
         # TODO: test import handling for fields that could be string or list
+
+    @patch('djiffy.importer.get_iiif_url')
+    def test_import_manifest_update(self, mock_getiiifurl):
+        # test updating a previously imported manifest
+        pres = IIIFPresentation.from_file(self.test_manifest)
+        # simulate no extra data
+        mock_getiiifurl.return_value.json.return_value = {}
+        # remove a canvas before first import to test adding it in update
+        orig_canvases = list(pres.sequences[0].canvases)
+        pres.sequences[0].canvases = orig_canvases[:-1]
+
+        # import once
+        db_manifest = self.importer.import_manifest(pres, self.test_manifest)
+        assert db_manifest.canvases.count() == len(pres.sequences[0].canvases)
+
+        # modify manifest and update - new label, new canvas
+        pres.sequences[0].canvases[0].label = 'New label'
+        pres.sequences[0].canvases = orig_canvases
+
+        self.importer.update = True
+        db_manifest = self.importer.import_manifest(pres, self.test_manifest)
+        assert isinstance(db_manifest, Manifest)
+        # new canvas was added
+        assert db_manifest.canvases.count() == len(orig_canvases)
+        # label updated
+        assert db_manifest.canvases.first().label == 'New label'
+
+        # modify manifest to remove canvases and update
+        pres.sequences[0].canvases = orig_canvases[:5]
+        self.importer.stdout = StringIO()
+        db_manifest = self.importer.import_manifest(pres, self.test_manifest)
+        assert db_manifest.canvases.count() == len(pres.sequences[0].canvases)
+        output = self.importer.stdout.getvalue()
+        assert 'removing %d canvases' % (len(orig_canvases) - 5, ) in output
 
     @patch('djiffy.models.get_iiif_url')
     def test_import_collection(self, mock_getiiifurl):
@@ -385,7 +443,7 @@ class TestManifestImporter(TestCase):
         # error handling
         with patch('djiffy.importer.IIIFPresentation') as mockiiifpres:
             mockiiifpres.from_file_or_url.side_effect = IIIFException
-            imported = IIIFPresentation.from_file(self.test_manifest)
+            imported = IIIFPresentation.from_file(self.test_coll_manifest)
             assert self.test_manifest not in imported
 
     @patch('djiffy.importer.IIIFPresentation')
@@ -403,6 +461,15 @@ class TestManifestImporter(TestCase):
             mockiiifpres.from_file_or_url.assert_called_with(self.test_manifest)
             mock_manif_import.assert_called_with(iiifmanifest,
                 self.test_manifest)
+
+        # skips error
+        mockiiifpres.from_file_or_url.side_effect = IIIFException
+        with patch.object(self.importer, 'import_manifest') as mock_manif_import:
+            self.importer.stderr = StringIO()
+            self.importer.import_paths([self.test_manifest])
+            mockiiifpres.from_file_or_url.assert_called_with(self.test_manifest)
+            mock_manif_import.assert_not_called()
+
 
     def test_output(self):
         # with no stdout defined, no error
@@ -444,6 +511,9 @@ class TestManifestSelectWidget(TestCase):
         widget = ManifestSelectWidget()
         # no value set - should not error
         assert widget.render('manifest', None, {'id': 123})
+        # empty string - shoudl not error
+        assert widget.render('manifest', '', {'id': 123})
+
 
         # create test manifest to render
         manif = Manifest.objects.create(label='test manifest', short_id='abc3')

@@ -23,6 +23,10 @@ working with digitized book content provided via `IIIF Presentation`_
 manifests.  This is an *alpha* version and it does *not* yet support
 the full IIIF Presentation specification.
 
+.. Note::
+    djiffy is compatible with Django 1.10 and 1.11, but is *not* yet compatible
+    with Django 2.0.
+
 
 .. _Django: https://www.djangoproject.com/
 .. _IIIF Presentation: http://iiif.io/api/presentation/2.1/
@@ -31,12 +35,13 @@ the full IIIF Presentation specification.
 Installation
 ------------
 
-Use pip to install from GitHub::
+Use pip to install::
 
-    pip install git+https://github.com/Princeton-CDH/djiffy.git#egg=djiffy
+    pip install djiffy
 
-Use branch or tag name, e.g. ``@develop`` or ``@1.0``, to install a specific
-tagged release or branch::
+
+You can also install from GitHub.  Use a branch or tag name, e.g.
+``@develop`` or ``@1.0``, to install a specific tagged release or branch::
 
     pip install git+https://github.com/Princeton-CDH/djiffy.git@develop#egg=djiffy
 
