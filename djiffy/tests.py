@@ -459,6 +459,15 @@ class TestManifestImporter(TestCase):
             mock_manif_import.assert_called_with(iiifmanifest,
                 self.test_manifest)
 
+        # skips error
+        mockiiifpres.from_file_or_url.side_effect = IIIFException
+        with patch.object(self.importer, 'import_manifest') as mock_manif_import:
+            self.importer.stderr = StringIO()
+            self.importer.import_paths([self.test_manifest])
+            mockiiifpres.from_file_or_url.assert_called_with(self.test_manifest)
+            mock_manif_import.assert_not_called()
+
+
     def test_output(self):
         # with no stdout defined, no error
         self.importer.output('test')
