@@ -23,6 +23,10 @@ working with digitized book content provided via `IIIF Presentation`_
 manifests.  This is an *alpha* version and it does *not* yet support
 the full IIIF Presentation specification.
 
+.. Note::
+    djiffy is compatible with Django 1.10 and 1.11, but is *not* yet compatible
+    with Django 2.0.
+
 
 .. _Django: https://www.djangoproject.com/
 .. _IIIF Presentation: http://iiif.io/api/presentation/2.1/
