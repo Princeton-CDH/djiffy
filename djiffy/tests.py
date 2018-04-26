@@ -100,6 +100,22 @@ class TestCanvas(TestCase):
         assert page.image.api_endpoint == img_service
         assert page.image.image_id == img_id
 
+    def test_plain_text_url(self):
+        extra_data = {
+            'rendering': {
+                '@id': 'http://some.org/with/text',
+                'format': 'text/plain',
+                'label': 'Download page text',
+            }
+        }
+
+        page = Canvas(extra_data=extra_data)
+        assert isinstance(page.plain_text_url, str)
+        assert page.plain_text_url == 'http://some.org/with/text'
+
+        page.extra_data['rendering']['format'] = 'some/other-mime'
+        assert not page.plain_text_url
+
     def test_absolute_url(self):
         manif = Manifest(short_id='bk123', label='Book 1')
         page = Canvas(manifest=manif, label='Image 1', short_id='pg123', order=1)

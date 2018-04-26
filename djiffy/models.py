@@ -169,6 +169,14 @@ class Canvas(models.Model):
         # for now, split into service and image id. (is this reliable?)
         return IIIFImage(*self.iiif_image_id.rsplit('/', 1))
 
+    @property
+    def plain_text_url(self):
+        '''Return plain text url for a canvas if one exists'''
+        rendering = self.extra_data.get('rendering', None)
+        if rendering and rendering.get('format', None) == 'text/plain':
+            return rendering.get('@id', None)
+        return None
+
     def get_absolute_url(self):
         ''''url for this canvas within the django site'''
         return reverse('djiffy:canvas', args=[self.manifest.short_id, self.short_id])
