@@ -143,6 +143,9 @@ class Canvas(models.Model):
     order = models.PositiveIntegerField()
     # (for now only stores a single sequence, so just store order on the page    )
     # format? size? (ocr text eventually?)
+    #: extra data not otherwise given its own field, serialized as json
+    extra_data = JSONField(load_kwargs={'object_pairs_hook': OrderedDict},
+        default=dict)
 
     class Meta:
         ordering = ["manifest", "order"]
@@ -310,4 +313,3 @@ class IIIFPresentation(AttrMap):
             return self.label
         else:
             return self.label[0]
-

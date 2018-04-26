@@ -315,7 +315,6 @@ class TestManifestImporter(TestCase):
     @patch('djiffy.importer.get_iiif_url')
     def test_import_manifest(self, mock_getiiifurl):
         pres = IIIFPresentation.from_file(self.test_manifest)
-
         mock_extra_data = {
             'title': {
                 '@value': 'Sample extra metadata',
@@ -323,6 +322,14 @@ class TestManifestImporter(TestCase):
             },
             'identifier': ['ark:/88435/tm70mz058']
         }
+        # doctor one sequence to add a rendering field
+        added_rendering = {
+            '@id': 'https://someurl/with/plain/text',
+            'format': 'text/plain',
+            'label': 'Download page text'
+        }
+        # set first canvas, first sequence with a link to OCR text
+        pres.sequences[0].canvases[0].rendering = added_rendering
         mock_getiiifurl.return_value.json.return_value = mock_extra_data
         manif = self.importer.import_manifest(pres, self.test_manifest)
         assert isinstance(manif, Manifest)
@@ -343,6 +350,14 @@ class TestManifestImporter(TestCase):
         assert len(manif.canvases.all()) == len(pres.sequences[0].canvases)
         assert manif.thumbnail.iiif_image_id == \
              'https://libimages1.princeton.edu/loris/plum_prod/p0%2F28%2F71%2Fv9%2F8d-intermediate_file.jp2'
+
+        # check handling of canvas with rendering data
+        # should have rendering stored as a dictionary
+        assert manif.canvases.first().extra_data['rendering'] \
+            == added_rendering
+        # now check that another canvas does not have a rendering field if
+        # doesn't have one in the manifest data
+        assert 'rendering' not in manif.canvases.last().extra_data
 
         # won't import if already in db
         assert self.importer.import_manifest(pres, self.test_manifest) is None

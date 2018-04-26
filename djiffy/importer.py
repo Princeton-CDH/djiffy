@@ -184,6 +184,7 @@ class ManifestImporter(object):
             # set order and label
             db_canvas.order = order
             db_canvas.label = canvas.label
+
             # keep canvas id to obscure image id if necessary for security
             db_canvas.uri = canvas.id
             # get short id (extensible for subclasses)
@@ -193,6 +194,12 @@ class ManifestImporter(object):
             # check if this page is the thumbnail image
             if thumbnail_id is not None and db_canvas.iiif_image_id == thumbnail_id:
                 db_canvas.thumbnail = True
+
+            # check for any extra_data, right now only rendering
+            db_canvas.extra_data = OrderedDict()
+            for field in ['rendering']:
+                if hasattr(canvas, field):
+                    db_canvas.extra_data[field] = getattr(canvas, field)
             db_canvas.save()
 
         # if updating, check for previously imported canvases that are no
@@ -250,5 +257,3 @@ class ManifestImporter(object):
         :meth:`djiffy.models.IIIFPresentation.short_id`.
         '''
         return IIIFPresentation.short_id(canvas.id)
-
-
