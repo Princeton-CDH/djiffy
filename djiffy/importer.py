@@ -196,7 +196,6 @@ class ManifestImporter(object):
                 db_canvas.thumbnail = True
 
             # check for any extra_data, right now only rendering
-            db_canvas.extra_data = OrderedDict()
             for field in ['rendering']:
                 if hasattr(canvas, field):
                     db_canvas.extra_data[field] = getattr(canvas, field)

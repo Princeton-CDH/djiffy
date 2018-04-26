@@ -48,7 +48,7 @@ class Manifest(models.Model):
     last_modified = models.DateField(auto_now=True)
     #: extra data provided via a 'seeAlso' reference
     extra_data = JSONField(load_kwargs={'object_pairs_hook': OrderedDict},
-        default=dict)
+        default=OrderedDict)
 
     class Meta:
         verbose_name = 'IIIF Manifest'
@@ -145,7 +145,7 @@ class Canvas(models.Model):
     # format? size? (ocr text eventually?)
     #: extra data not otherwise given its own field, serialized as json
     extra_data = JSONField(load_kwargs={'object_pairs_hook': OrderedDict},
-        default=dict)
+        default=OrderedDict)
 
     class Meta:
         ordering = ["manifest", "order"]
