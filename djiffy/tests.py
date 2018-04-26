@@ -359,8 +359,22 @@ class TestManifestImporter(TestCase):
         # doesn't have one in the manifest data
         assert 'rendering' not in manif.canvases.last().extra_data
 
+        # check other canvas fields
+        first = manif.canvases.first()
+        assert first.label == 'image 1'
+        assert first.short_id == 'p02871v98d'
+        assert first.uri == \
+            'https://plum.princeton.edu/concern/scanned_resources/ph415q7581/manifest/canvas/p02871v98d'
+        assert first.iiif_image_id == 'https://libimages1.princeton.edu/loris/plum_prod/p0%2F28%2F71%2Fv9%2F8d-intermediate_file.jp2'
+        # first canvas, so it happens to be used as thumbnail
+        assert first.thumbnail
+        assert first.order == 0
         # won't import if already in db
         assert self.importer.import_manifest(pres, self.test_manifest) is None
+
+        # check that the last canvas is not used as thumbnail and is in order
+        assert not manif.canvases.last().thumbnail
+        assert manif.canvases.last().order == manif.canvases.count() - 1
 
         # non-json seeAlso data should store the url
         manif.delete()
