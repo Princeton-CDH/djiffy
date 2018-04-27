@@ -172,9 +172,24 @@ class Canvas(models.Model):
     @property
     def plain_text_url(self):
         '''Return plain text url for a canvas if one exists'''
+
         rendering = self.extra_data.get('rendering', None)
-        if rendering and rendering.get('format', None) == 'text/plain':
-            return rendering.get('@id', None)
+        if rendering:
+            # handle both cases where this is a list and where it is just
+            # a dictionary, to be safe
+            if isinstance(rendering, list):
+                for item in rendering:
+                    # iterate over the list and return the first plain text url
+                    # we find
+                    if 'format' in item and item['format'] == 'text/plain':
+                        return item['@id']
+            else:
+                # otherwise, if it's a dictionary, check if it's plaintext and
+                # return
+                if 'format' in rendering \
+                        and rendering['format'] == 'text/plain':
+                    return rendering['@id']
+        # finally return None if no plain text is available or no rendering
         return None
 
     def get_absolute_url(self):

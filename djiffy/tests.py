@@ -101,6 +101,8 @@ class TestCanvas(TestCase):
         assert page.image.image_id == img_id
 
     def test_plain_text_url(self):
+
+        # individual dictionary
         extra_data = {
             'rendering': {
                 '@id': 'http://some.org/with/text',
@@ -111,10 +113,32 @@ class TestCanvas(TestCase):
 
         page = Canvas(extra_data=extra_data)
         assert isinstance(page.plain_text_url, str)
+        # plain text url returned
         assert page.plain_text_url == 'http://some.org/with/text'
 
+        # no plain text url, returns None
         page.extra_data['rendering']['format'] = 'some/other-mime'
-        assert not page.plain_text_url
+        assert page.plain_text_url is None
+
+        # test with a list
+        extra_data = {
+            'rendering': [
+                {'@id': 'http://some.org/pdf', 'format': 'application/pdf',
+                    'label': 'View PDF image'},
+                {'@id': 'http://some.org/with/text', 'format': 'text/plain',
+                    'label': 'Download page text'},
+            ]
+        }
+        # returns the correct text/plain version
+        page = Canvas(extra_data=extra_data)
+        assert isinstance(page.plain_text_url, str)
+        assert page.plain_text_url == 'http://some.org/with/text'
+        # delete the plain text version
+        del page.extra_data['rendering'][1]
+        assert page.plain_text_url is None
+
+
+
 
     def test_absolute_url(self):
         manif = Manifest(short_id='bk123', label='Book 1')
