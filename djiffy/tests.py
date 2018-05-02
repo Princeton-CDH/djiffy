@@ -100,6 +100,46 @@ class TestCanvas(TestCase):
         assert page.image.api_endpoint == img_service
         assert page.image.image_id == img_id
 
+    def test_plain_text_url(self):
+
+        # individual dictionary
+        extra_data = {
+            'rendering': {
+                '@id': 'http://some.org/with/text',
+                'format': 'text/plain',
+                'label': 'Download page text',
+            }
+        }
+
+        page = Canvas(extra_data=extra_data)
+        assert isinstance(page.plain_text_url, str)
+        # plain text url returned
+        assert page.plain_text_url == 'http://some.org/with/text'
+
+        # no plain text url, returns None
+        page.extra_data['rendering']['format'] = 'some/other-mime'
+        assert page.plain_text_url is None
+
+        # test with a list
+        extra_data = {
+            'rendering': [
+                {'@id': 'http://some.org/pdf', 'format': 'application/pdf',
+                    'label': 'View PDF image'},
+                {'@id': 'http://some.org/with/text', 'format': 'text/plain',
+                    'label': 'Download page text'},
+            ]
+        }
+        # returns the correct text/plain version
+        page = Canvas(extra_data=extra_data)
+        assert isinstance(page.plain_text_url, str)
+        assert page.plain_text_url == 'http://some.org/with/text'
+        # delete the plain text version
+        del page.extra_data['rendering'][1]
+        assert page.plain_text_url is None
+
+
+
+
     def test_absolute_url(self):
         manif = Manifest(short_id='bk123', label='Book 1')
         page = Canvas(manifest=manif, label='Image 1', short_id='pg123', order=1)
@@ -315,7 +355,6 @@ class TestManifestImporter(TestCase):
     @patch('djiffy.importer.get_iiif_url')
     def test_import_manifest(self, mock_getiiifurl):
         pres = IIIFPresentation.from_file(self.test_manifest)
-
         mock_extra_data = {
             'title': {
                 '@value': 'Sample extra metadata',
@@ -323,6 +362,14 @@ class TestManifestImporter(TestCase):
             },
             'identifier': ['ark:/88435/tm70mz058']
         }
+        # doctor one sequence to add a rendering field
+        added_rendering = {
+            '@id': 'https://someurl/with/plain/text',
+            'format': 'text/plain',
+            'label': 'Download page text'
+        }
+        # set first canvas, first sequence with a link to OCR text
+        pres.sequences[0].canvases[0].rendering = added_rendering
         mock_getiiifurl.return_value.json.return_value = mock_extra_data
         manif = self.importer.import_manifest(pres, self.test_manifest)
         assert isinstance(manif, Manifest)
@@ -344,8 +391,30 @@ class TestManifestImporter(TestCase):
         assert manif.thumbnail.iiif_image_id == \
              'https://libimages1.princeton.edu/loris/plum_prod/p0%2F28%2F71%2Fv9%2F8d-intermediate_file.jp2'
 
+        # check handling of canvas with rendering data
+        # should have rendering stored as a dictionary
+        assert manif.canvases.first().extra_data['rendering'] \
+            == added_rendering
+        # now check that another canvas does not have a rendering field if
+        # doesn't have one in the manifest data
+        assert 'rendering' not in manif.canvases.last().extra_data
+
+        # check other canvas fields
+        first = manif.canvases.first()
+        assert first.label == 'image 1'
+        assert first.short_id == 'p02871v98d'
+        assert first.uri == \
+            'https://plum.princeton.edu/concern/scanned_resources/ph415q7581/manifest/canvas/p02871v98d'
+        assert first.iiif_image_id == 'https://libimages1.princeton.edu/loris/plum_prod/p0%2F28%2F71%2Fv9%2F8d-intermediate_file.jp2'
+        # first canvas, so it happens to be used as thumbnail
+        assert first.thumbnail
+        assert first.order == 0
         # won't import if already in db
         assert self.importer.import_manifest(pres, self.test_manifest) is None
+
+        # check that the last canvas is not used as thumbnail and is in order
+        assert not manif.canvases.last().thumbnail
+        assert manif.canvases.last().order == manif.canvases.count() - 1
 
         # non-json seeAlso data should store the url
         manif.delete()

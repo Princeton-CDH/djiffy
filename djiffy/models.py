@@ -48,7 +48,7 @@ class Manifest(models.Model):
     last_modified = models.DateField(auto_now=True)
     #: extra data provided via a 'seeAlso' reference
     extra_data = JSONField(load_kwargs={'object_pairs_hook': OrderedDict},
-        default=dict)
+        default=OrderedDict)
 
     class Meta:
         verbose_name = 'IIIF Manifest'
@@ -143,6 +143,9 @@ class Canvas(models.Model):
     order = models.PositiveIntegerField()
     # (for now only stores a single sequence, so just store order on the page    )
     # format? size? (ocr text eventually?)
+    #: extra data not otherwise given its own field, serialized as json
+    extra_data = JSONField(load_kwargs={'object_pairs_hook': OrderedDict},
+        default=OrderedDict)
 
     class Meta:
         ordering = ["manifest", "order"]
@@ -165,6 +168,29 @@ class Canvas(models.Model):
         # Should update to handle iiif image ids as provided in manifests
         # for now, split into service and image id. (is this reliable?)
         return IIIFImage(*self.iiif_image_id.rsplit('/', 1))
+
+    @property
+    def plain_text_url(self):
+        '''Return plain text url for a canvas if one exists'''
+
+        rendering = self.extra_data.get('rendering', None)
+        if rendering:
+            # handle both cases where this is a list and where it is just
+            # a dictionary, to be safe
+            if isinstance(rendering, list):
+                for item in rendering:
+                    # iterate over the list and return the first plain text url
+                    # we find
+                    if 'format' in item and item['format'] == 'text/plain':
+                        return item['@id']
+            else:
+                # otherwise, if it's a dictionary, check if it's plaintext and
+                # return
+                if 'format' in rendering \
+                        and rendering['format'] == 'text/plain':
+                    return rendering['@id']
+        # finally return None if no plain text is available or no rendering
+        return None
 
     def get_absolute_url(self):
         ''''url for this canvas within the django site'''
@@ -310,4 +336,3 @@ class IIIFPresentation(AttrMap):
             return self.label
         else:
             return self.label[0]
-
