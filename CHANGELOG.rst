@@ -4,9 +4,9 @@ Changelog
 0.4
 ---
 * Canvas now has extra_data field to capture additional manifest information
-(currently `rendering`) as part of the import.
+  (currently `rendering`) as part of the import.
 * Canvas has `plain_text_url` property to supply url for plain-text
-transcription/OCR if available from manifest 
+  transcription/OCR if available from manifest. 
 
 
 0.3
