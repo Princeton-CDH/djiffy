@@ -2,12 +2,12 @@ alabaster==0.7.10
 attrdict==2.0.0
 attrs==17.4.0
 Babel==2.5.3
-certifi==2018.1.18
+cached-property==1.4.2
+certifi==2018.4.16
 chardet==3.0.4
-coverage==4.5.1
-Django==1.11.12
+Django==1.11.13
 django-autocomplete-light==3.2.10
--e git+git@github.com:Princeton-CDH/djiffy.git@5d44d1065a033d739a80555eba5c11c5593f27a8#egg=djiffy
+-e git+git@github.com:Princeton-CDH/djiffy.git@5a013322eb6b4ae514320f98c148ec189fc9ff09#egg=djiffy
 docutils==0.14
 future==0.16.0
 idna==2.6
@@ -18,18 +18,16 @@ MarkupSafe==1.0
 more-itertools==4.1.0
 mysqlclient==1.3.12
 packaging==17.1
-piffle==0.3.0.dev0
+piffle==0.3.0
 pluggy==0.6.0
 py==1.5.3
 Pygments==2.2.0
 pyparsing==2.2.0
-pytest==3.5.0
-pytest-cov==2.5.1
-pytest-django==3.1.2
+pytest==3.5.1
 pytz==2018.4
 requests==2.18.4
 six==1.11.0
 snowballstemmer==1.2.1
-Sphinx==1.7.2
+Sphinx==1.7.4
 sphinxcontrib-websupport==1.0.1
 urllib3==1.22
