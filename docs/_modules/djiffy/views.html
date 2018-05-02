@@ -1,0 +1,188 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>djiffy.views &#8212; Djiffy 0.4.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for djiffy.views</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">dal</span> <span class="k">import</span> <span class="n">autocomplete</span>
+<span class="kn">from</span> <span class="nn">django.db.models</span> <span class="k">import</span> <span class="n">Q</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="k">import</span> <span class="n">Http404</span>
+<span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">DetailView</span><span class="p">,</span> <span class="n">ListView</span>
+
+<span class="kn">from</span> <span class="nn">.models</span> <span class="k">import</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">Canvas</span>
+
+
+<div class="viewcode-block" id="ManifestList"><a class="viewcode-back" href="../../codedocs.html#djiffy.views.ManifestList">[docs]</a><span class="k">class</span> <span class="nc">ManifestList</span><span class="p">(</span><span class="n">ListView</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;List view for :class:`~djiffy.models.Manifest`.  Rendered with</span>
+<span class="sd">    djiffy/manifest_list.html template.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Manifest</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s1">&#39;djiffy/manifest_list.html&#39;</span>
+    <span class="n">context_object_name</span> <span class="o">=</span> <span class="s1">&#39;manifests&#39;</span></div>
+
+
+<div class="viewcode-block" id="ManifestDetail"><a class="viewcode-back" href="../../codedocs.html#djiffy.views.ManifestDetail">[docs]</a><span class="k">class</span> <span class="nc">ManifestDetail</span><span class="p">(</span><span class="n">DetailView</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Detail view for a single :class:`~djiffy.models.Manifest`.</span>
+<span class="sd">    Rendered with  djiffy/manifest_detail.html template.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Manifest</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s1">&#39;djiffy/manifest_detail.html&#39;</span>
+    <span class="n">context_object_name</span> <span class="o">=</span> <span class="s1">&#39;manifest&#39;</span>
+
+<div class="viewcode-block" id="ManifestDetail.get_object"><a class="viewcode-back" href="../../codedocs.html#djiffy.views.ManifestDetail.get_object">[docs]</a>    <span class="k">def</span> <span class="nf">get_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queryset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">queryset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">queryset</span> <span class="o">=</span> <span class="n">Manifest</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">queryset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">short_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="n">queryset</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">Http404</span><span class="p">(</span><span class="s2">&quot;No manifest found with id </span><span class="si">%(id)s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="CanvasDetail"><a class="viewcode-back" href="../../codedocs.html#djiffy.views.CanvasDetail">[docs]</a><span class="k">class</span> <span class="nc">CanvasDetail</span><span class="p">(</span><span class="n">DetailView</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Detail view for a single :class:`~djiffy.models.Canvas`.</span>
+<span class="sd">    Rendered with  djiffy/canvast_detail.html template.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Canvas</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s1">&#39;djiffy/canvas_detail.html&#39;</span>
+    <span class="n">context_object_name</span> <span class="o">=</span> <span class="s1">&#39;canvas&#39;</span>
+
+<div class="viewcode-block" id="CanvasDetail.get_object"><a class="viewcode-back" href="../../codedocs.html#djiffy.views.CanvasDetail.get_object">[docs]</a>    <span class="k">def</span> <span class="nf">get_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queryset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">queryset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">queryset</span> <span class="o">=</span> <span class="n">Canvas</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">queryset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">short_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                <span class="n">manifest__short_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;manifest_id&#39;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="n">queryset</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">Http404</span><span class="p">(</span><span class="s2">&quot;No canvas found with id </span><span class="si">%(id)s</span><span class="s2"> and manifest </span><span class="si">%(manifest_id)s</span><span class="s2">&quot;</span> <span class="o">%</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="CanvasAutocomplete"><a class="viewcode-back" href="../../codedocs.html#djiffy.views.CanvasAutocomplete">[docs]</a><span class="k">class</span> <span class="nc">CanvasAutocomplete</span><span class="p">(</span><span class="n">autocomplete</span><span class="o">.</span><span class="n">Select2QuerySetView</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Canvas autocomplete view, e.g. for admin interface lookup&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="CanvasAutocomplete.get_queryset"><a class="viewcode-back" href="../../codedocs.html#djiffy.views.CanvasAutocomplete.get_queryset">[docs]</a>    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Canvas</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">Q</span><span class="p">(</span><span class="n">label__icontains</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">)</span> <span class="o">|</span>
+            <span class="n">Q</span><span class="p">(</span><span class="n">uri__contains</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">)</span> <span class="o">|</span>
+            <span class="n">Q</span><span class="p">(</span><span class="n">manifest__label__icontains</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">)</span>
+        <span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Djiffy</a></h1>
+
+
+
+<p class="blurb">Django application to index and display IIIF Manifests for books</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=Princeton-CDH&repo=djiffy&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a href="https://travis-ci.org/Princeton-CDH/djiffy">
+    <img
+        alt="https://secure.travis-ci.org/Princeton-CDH/djiffy.svg?branch=master"
+        src="https://secure.travis-ci.org/Princeton-CDH/djiffy.svg?branch=master"
+    />
+</a>
+</p>
+
+
+
+
+    
+
+<p>
+<a href="https://codecov.io/github/Princeton-CDH/djiffy">
+    <img
+    alt="https://codecov.io/github/Princeton-CDH/djiffy/coverage.svg?branch=master"
+    src="https://codecov.io/github/Princeton-CDH/djiffy/coverage.svg?branch=master"
+    />
+</a>
+</p>
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../codedocs.html">Code Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Change Log</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><div class="powered_by">
+<p>Powered by:</p>
+<a href="http://cdh.princeton.edu/">
+<img src="https://cdh.princeton.edu/static/img/CDH_logo_01.svg"
+    alt="Center for Digital Humanities @ Princeton" />
+</a>
+</div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, CDH @ Princeton.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
