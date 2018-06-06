@@ -9,6 +9,8 @@ from django.db import models
 from django.urls import reverse
 from jsonfield import JSONField
 from piffle import iiif
+import rdflib
+from rdflib.namespace import DC
 import requests
 
 
@@ -94,6 +96,56 @@ class Manifest(models.Model):
         '''short id for rightstatement.org license'''
         if self.license and 'rightsstatements.org' in self.license:
             return self.license.rstrip(' /').split('/')[-2]
+
+    _rights_graph = None
+
+    def license_label(self, lang='en'):
+        '''Get the text label for the rights license.  Uses local
+        value from edm rights if available; otherwise uses
+        data for the URI to get the preferred label or title.'''
+
+        # Some manifests havea seeAlso data contains an "edm_rights"
+        # section with a label for the rights statement.
+        # Use that if available (NOTE: ignores specified language)
+        # NOTE: possibly PUL specific, but shouldn't hurt to look locally first
+        for data in self.extra_data.values():
+            if 'edm_rights' in data and 'pref_label' in data['edm_rights']:
+                return data['edm_rights']['pref_label']
+
+        # if license/rights label is not available locally, get via uri
+        if self._rights_graph is None:
+            # if license is defined and a url
+            if self.license and urllib.parse.urlparse(self.license).scheme in ['http', 'https']:
+                self._rights_graph = rdflib.Graph()
+                # rights statement org does content-negotiation for json-jd,
+                # but rdflib doesn't handle that automatically
+                if 'rightsstatements.org' in self.license:
+                    resp = requests.get(self.license,
+                                        headers={'Accept': 'application/json'},
+                                        allow_redirects=False)
+                    if resp.status_code == requests.codes.see_other:
+                        self._rights_graph.parse(resp.headers['location'], format='json-ld')
+
+                # creative commons doesn't support content negotiation,
+                # but you can add rdf to the end of the url
+                elif 'creativecommons.org' in self.license:
+                    rdf_uri = '/'.join([self.license.rstrip('/'), 'rdf'])
+                    self._rights_graph.parse(rdf_uri)
+
+        # get the preferred label for this license in the requested language;
+        # returns a list of label, value; use the first value
+        if self._rights_graph:
+            license_uri = rdflib.URIRef(self.license)
+            preflabel = self._rights_graph.preferredLabel(license_uri,
+                                                          lang=lang)
+            if preflabel:
+                # convert rdflib Literal to string
+                return str(preflabel[0][1])
+            # otherwise, get dc title
+            # iterate over all titles and return one with a matching language code
+            for title in self._rights_graph.objects(subject=license_uri, predicate=DC.title):
+                if title.language == lang:
+                    return str(title)
 
 
 class IIIFImage(iiif.IIIFImageClient):
