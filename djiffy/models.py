@@ -117,20 +117,26 @@ class Manifest(models.Model):
             # if license is defined and a url
             if self.license and urllib.parse.urlparse(self.license).scheme in ['http', 'https']:
                 self._rights_graph = rdflib.Graph()
-                # rights statement org does content-negotiation for json-jd,
-                # but rdflib doesn't handle that automatically
-                if 'rightsstatements.org' in self.license:
-                    resp = requests.get(self.license,
-                                        headers={'Accept': 'application/json'},
-                                        allow_redirects=False)
-                    if resp.status_code == requests.codes.see_other:
-                        self._rights_graph.parse(resp.headers['location'], format='json-ld')
+                try:
+                    # rights statement org does content-negotiation for json-jd,
+                    # but rdflib doesn't handle that automatically
+                    if 'rightsstatements.org' in self.license:
+                        resp = requests.get(self.license,
+                                            headers={'Accept': 'application/json'},
+                                            allow_redirects=False)
+                        if resp.status_code == requests.codes.see_other:
+                            self._rights_graph.parse(resp.headers['location'], format='json-ld')
 
-                # creative commons doesn't support content negotiation,
-                # but you can add rdf to the end of the url
-                elif 'creativecommons.org' in self.license:
-                    rdf_uri = '/'.join([self.license.rstrip('/'), 'rdf'])
-                    self._rights_graph.parse(rdf_uri)
+                    # creative commons doesn't support content negotiation,
+                    # but you can add rdf to the end of the url
+                    elif 'creativecommons.org' in self.license:
+                        rdf_uri = '/'.join([self.license.rstrip('/'), 'rdf'])
+                        self._rights_graph.parse(rdf_uri)
+
+                except Exception:
+                    # possible to get an exception when parsing the
+                    # rdf, maybe on the request; don't choke if we do!
+                    pass
 
         # get the preferred label for this license in the requested language;
         # returns a list of label, value; use the first value

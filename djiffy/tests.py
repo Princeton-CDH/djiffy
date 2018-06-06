@@ -149,6 +149,20 @@ class TestManifest(TestCase):
         mockrequests.get.assert_not_called()
         mockrdflib.Graph.assert_not_called()
 
+        # error handling - shouldn't blow up if there's an error
+        book = Manifest(short_id='bk123')
+        testgraph = rdflib.Graph()
+        mockrdflib.Graph.return_value = testgraph
+        book.extra_data['license'] = 'http://rightsstatements.org/vocab/NKC/1.0/'
+        # exception on parse
+        with patch.object(testgraph, 'parse') as mockparse:
+            mockparse.side_effect = Exception
+            assert book.license_label() is None
+
+        # exception on request
+        mockrequests.get.side_effect = Exception
+        assert book.license_label() is None
+
 
 class TestCanvas(TestCase):
 
