@@ -104,7 +104,7 @@ class Manifest(models.Model):
         value from edm rights if available; otherwise uses
         data for the URI to get the preferred label or title.'''
 
-        # Some manifests havea seeAlso data contains an "edm_rights"
+        # Some manifests have a seeAlso data contains an "edm_rights"
         # section with a label for the rights statement.
         # Use that if available (NOTE: ignores specified language)
         # NOTE: possibly PUL specific, but shouldn't hurt to look locally first
