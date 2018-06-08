@@ -7,6 +7,7 @@ from django.core.management import call_command
 from django.test import TestCase, override_settings
 from django.urls import reverse
 import pytest
+import rdflib
 import requests
 
 from .admin import ManifestSelectWidget
@@ -70,15 +71,97 @@ class TestManifest(TestCase):
         book = Manifest(short_id='bk123')
         assert book.license is None
 
-        book.extra_data['license'] = 'http://rightsstatements.org/page/InC/1.0/'
+        book.extra_data['license'] = 'http://rightsstatements.org/vocab/InC/1.0/'
         assert book.license == book.extra_data['license']
 
     def test_rights_statement_id(self):
         book = Manifest(short_id='bk123')
         assert book.rights_statement_id is None
 
-        book.extra_data['license'] = 'http://rightsstatements.org/page/InC/1.0/'
+        book.extra_data['license'] = 'http://rightsstatements.org/vocab/InC/1.0/'
         assert book.rights_statement_id == 'InC'
+
+    @patch('djiffy.models.requests')
+    @patch('djiffy.models.rdflib')
+    def test_license_label(self, mockrdflib, mockrequests):
+
+
+        book = Manifest(short_id='bk123')
+        # no license, no label
+        assert book.license_label() is None
+        # non http license, no label
+        book.extra_data['license'] = 'foo://bar'
+        assert book.license_label() is None
+
+        # rightsstatement.org license
+        book.extra_data['license'] = 'http://rightsstatements.org/vocab/NKC/1.0/'
+        # simulate expected return: 303 to data url
+        mockresponse = mockrequests.get.return_value
+        mockresponse.status_code = 303
+        mockresponse.headers = {'location': 'http://rightsstatements.org/vocab/NKC/1.0/'}
+        mockrequests.codes = requests.codes
+
+        # load fixture data into an rdflib graph and return via mockrdflib
+        testgraph = rdflib.Graph()
+        testgraph.parse(os.path.join(FIXTURE_DIR, 'rightsstatement_org_NKC.json'),
+                        format='json-ld')
+        mockrdflib.Graph.return_value = testgraph
+        # use actual uriref method
+        mockrdflib.URIRef = rdflib.URIRef
+        with patch.object(testgraph, 'parse') as mockparse:
+            label = book.license_label()
+            assert label == 'No Known Copyright'
+            mockrequests.get.assert_called_with(
+                book.license, headers={'Accept': 'application/json'},
+                allow_redirects=False)
+            mockrdflib.Graph.assert_any_call()
+            mockparse.assert_called_with(mockresponse.headers['location'],
+                                         format='json-ld')
+
+            # with language code
+            label = book.license_label(lang='de')
+            assert label == 'Kein Urheberrechtsschutz bekannt'
+
+        # CC license
+        book = Manifest(short_id='bk123')
+        book.extra_data['license'] = 'http://creativecommons.org/licenses/by-nc-nd/3.0/'
+        testgraph = rdflib.Graph()
+        testgraph.parse(os.path.join(FIXTURE_DIR, 'cc_by_nc_nd.rdf'),
+                        format='xml')
+        mockrdflib.Graph.return_value = testgraph
+
+        with patch.object(testgraph, 'parse') as mockparse:
+            label = book.license_label()
+            assert label == 'Attribution-NonCommercial-NoDerivs 3.0 Unported'
+
+            # with language code
+            label = book.license_label(lang='fr')
+            assert label == 'Attribution - Pas d’Utilisation Commerciale - Pas de Modification 3.0 non transposé'
+
+        # rights label in extra data
+        mockrequests.reset_mock()
+        mockrdflib.reset_mock()
+        local_label = 'copyright status unknown'
+        book.extra_data['seeAlso'] = {'edm_rights': {'pref_label': local_label}}
+        label = book.license_label()
+        assert label == local_label
+        # should not call requests or use rdflib
+        mockrequests.get.assert_not_called()
+        mockrdflib.Graph.assert_not_called()
+
+        # error handling - shouldn't blow up if there's an error
+        book = Manifest(short_id='bk123')
+        testgraph = rdflib.Graph()
+        mockrdflib.Graph.return_value = testgraph
+        book.extra_data['license'] = 'http://rightsstatements.org/vocab/NKC/1.0/'
+        # exception on parse
+        with patch.object(testgraph, 'parse') as mockparse:
+            mockparse.side_effect = Exception
+            assert book.license_label() is None
+
+        # exception on request
+        mockrequests.get.side_effect = Exception
+        assert book.license_label() is None
 
 
 class TestCanvas(TestCase):

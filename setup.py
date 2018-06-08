@@ -26,6 +26,8 @@ setup(
         'attrdict',
         'jsonfield',
         'django-autocomplete-light',
+        'rdflib',
+        'rdflib-jsonld',
     ],
     setup_requires=['pytest-runner'],
     tests_require=test_requirements,
