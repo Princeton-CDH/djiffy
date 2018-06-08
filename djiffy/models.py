@@ -136,6 +136,9 @@ class Manifest(models.Model):
                 except Exception:
                     # possible to get an exception when parsing the
                     # rdf, maybe on the request; don't choke if we do!
+
+                    # NOTE: using generic Exception here becuase unfortunately
+                    # that is what rdflib raises when it can't parse RDF
                     pass
 
         # get the preferred label for this license in the requested language;
