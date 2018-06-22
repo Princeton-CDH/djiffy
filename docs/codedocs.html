@@ -1,0 +1,657 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Code Documentation &#8212; Djiffy 0.5.0 documentation</title>
+    <link rel="stylesheet" href="_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Changelog" href="changelog.html" />
+    <link rel="prev" title="Djiffy Documentation" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="code-documentation">
+<h1>Code Documentation<a class="headerlink" href="#code-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="module-djiffy.models">
+<span id="models"></span><h2>Models<a class="headerlink" href="#module-djiffy.models" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="djiffy.models.Canvas">
+<em class="property">class </em><code class="descclassname">djiffy.models.</code><code class="descname">Canvas</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#Canvas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.Canvas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimal db model representation of a canvas from an IIIF manifest</p>
+<dl class="exception">
+<dt id="djiffy.models.Canvas.DoesNotExist">
+<em class="property">exception </em><code class="descname">DoesNotExist</code><a class="headerlink" href="#djiffy.models.Canvas.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="djiffy.models.Canvas.MultipleObjectsReturned">
+<em class="property">exception </em><code class="descname">MultipleObjectsReturned</code><a class="headerlink" href="#djiffy.models.Canvas.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="djiffy.models.Canvas.admin_thumbnail">
+<code class="descname">admin_thumbnail</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#Canvas.admin_thumbnail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.Canvas.admin_thumbnail" title="Permalink to this definition">¶</a></dt>
+<dd><p>thumbnail for convenience display in admin interface</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.Canvas.extra_data">
+<code class="descname">extra_data</code><a class="headerlink" href="#djiffy.models.Canvas.extra_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>extra data not otherwise given its own field, serialized as json</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="djiffy.models.Canvas.get_absolute_url">
+<code class="descname">get_absolute_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#Canvas.get_absolute_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.Canvas.get_absolute_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>‘url for this canvas within the django site</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.Canvas.iiif_image_id">
+<code class="descname">iiif_image_id</code><a class="headerlink" href="#djiffy.models.Canvas.iiif_image_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>URL of IIIF image for this canvas</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.Canvas.image">
+<code class="descname">image</code><a class="headerlink" href="#djiffy.models.Canvas.image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Associated IIIF image for this canvas as <a class="reference internal" href="#djiffy.models.IIIFImage" title="djiffy.models.IIIFImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">IIIFImage</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.Canvas.label">
+<code class="descname">label</code><a class="headerlink" href="#djiffy.models.Canvas.label" title="Permalink to this definition">¶</a></dt>
+<dd><p>label</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.Canvas.manifest">
+<code class="descname">manifest</code><a class="headerlink" href="#djiffy.models.Canvas.manifest" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#djiffy.models.Manifest" title="djiffy.models.Manifest"><code class="xref py py-class docutils literal notranslate"><span class="pre">Manifest</span></code></a> this canvas vbelongs to</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="djiffy.models.Canvas.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#Canvas.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.Canvas.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Next canvas after this one in sequence (within manifest
+primary sequence).  Returns an empty queryset if there is no next
+canvas.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.Canvas.order">
+<code class="descname">order</code><a class="headerlink" href="#djiffy.models.Canvas.order" title="Permalink to this definition">¶</a></dt>
+<dd><p>order of this canvas within associated manifest primary sequence</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.Canvas.plain_text_url">
+<code class="descname">plain_text_url</code><a class="headerlink" href="#djiffy.models.Canvas.plain_text_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return plain text url for a canvas if one exists</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="djiffy.models.Canvas.prev">
+<code class="descname">prev</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#Canvas.prev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.Canvas.prev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Previous canvas before this one in sequence
+(within manifest primary sequence).  Returns an empty queryset
+if there is no next canvas.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.Canvas.short_id">
+<code class="descname">short_id</code><a class="headerlink" href="#djiffy.models.Canvas.short_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>short id extracted from URI</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.Canvas.thumbnail">
+<code class="descname">thumbnail</code><a class="headerlink" href="#djiffy.models.Canvas.thumbnail" title="Permalink to this definition">¶</a></dt>
+<dd><p>boolean flag to indicate if this canvas shoudl be used as thumbnail</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.Canvas.uri">
+<code class="descname">uri</code><a class="headerlink" href="#djiffy.models.Canvas.uri" title="Permalink to this definition">¶</a></dt>
+<dd><p>URI</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="djiffy.models.IIIFException">
+<em class="property">exception </em><code class="descclassname">djiffy.models.</code><code class="descname">IIIFException</code><a class="reference internal" href="_modules/djiffy/models.html#IIIFException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.IIIFException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Custom exception for IIIF/djiffy specific errors</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="djiffy.models.IIIFImage">
+<em class="property">class </em><code class="descclassname">djiffy.models.</code><code class="descname">IIIFImage</code><span class="sig-paren">(</span><em>api_endpoint=None</em>, <em>image_id=None</em>, <em>region=None</em>, <em>size=None</em>, <em>rotation=None</em>, <em>quality=None</em>, <em>fmt=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#IIIFImage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.IIIFImage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subclass of <code class="xref py py-class docutils literal notranslate"><span class="pre">piffle.iiif.IIIFImageClient</span></code>, for generating
+IIIF Image URIs for manifest canvas images.</p>
+<dl class="method">
+<dt id="djiffy.models.IIIFImage.mini_thumbnail">
+<code class="descname">mini_thumbnail</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#IIIFImage.mini_thumbnail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.IIIFImage.mini_thumbnail" title="Permalink to this definition">¶</a></dt>
+<dd><p>mini thumbnail</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.IIIFImage.mini_thumbnail_size">
+<code class="descname">mini_thumbnail_size</code><em class="property"> = 100</em><a class="headerlink" href="#djiffy.models.IIIFImage.mini_thumbnail_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>long edge size for mini thumbnail</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="djiffy.models.IIIFImage.page_size">
+<code class="descname">page_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#IIIFImage.page_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.IIIFImage.page_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>page size for display: <code class="xref py py-attr docutils literal notranslate"><span class="pre">SINGLE_PAGE_SIZE</span></code> on the long edge</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.IIIFImage.single_page_size">
+<code class="descname">single_page_size</code><em class="property"> = 1000</em><a class="headerlink" href="#djiffy.models.IIIFImage.single_page_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>long edge size for single page display</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="djiffy.models.IIIFImage.thumbnail">
+<code class="descname">thumbnail</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#IIIFImage.thumbnail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.IIIFImage.thumbnail" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.IIIFImage.thumbnail_size">
+<code class="descname">thumbnail_size</code><em class="property"> = 300</em><a class="headerlink" href="#djiffy.models.IIIFImage.thumbnail_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>long edge size for thumbnail</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="djiffy.models.IIIFPresentation">
+<em class="property">class </em><code class="descclassname">djiffy.models.</code><code class="descname">IIIFPresentation</code><span class="sig-paren">(</span><em>items=None</em>, <em>sequence_type=&lt;class 'tuple'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#IIIFPresentation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.IIIFPresentation" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">attrdict.AttrMap</span></code> subclass for read access to IIIF Presentation
+content</p>
+<dl class="classmethod">
+<dt id="djiffy.models.IIIFPresentation.from_file">
+<em class="property">classmethod </em><code class="descname">from_file</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#IIIFPresentation.from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.IIIFPresentation.from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iniitialize <a class="reference internal" href="#djiffy.models.IIIFPresentation" title="djiffy.models.IIIFPresentation"><code class="xref py py-class docutils literal notranslate"><span class="pre">IIIFPresentation</span></code></a> from a file.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="djiffy.models.IIIFPresentation.from_file_or_url">
+<em class="property">classmethod </em><code class="descname">from_file_or_url</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#IIIFPresentation.from_file_or_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.IIIFPresentation.from_file_or_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iniitialize <a class="reference internal" href="#djiffy.models.IIIFPresentation" title="djiffy.models.IIIFPresentation"><code class="xref py py-class docutils literal notranslate"><span class="pre">IIIFPresentation</span></code></a> from a file or a url.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="djiffy.models.IIIFPresentation.from_url">
+<em class="property">classmethod </em><code class="descname">from_url</code><span class="sig-paren">(</span><em>uri</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#IIIFPresentation.from_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.IIIFPresentation.from_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iniitialize <a class="reference internal" href="#djiffy.models.IIIFPresentation" title="djiffy.models.IIIFPresentation"><code class="xref py py-class docutils literal notranslate"><span class="pre">IIIFPresentation</span></code></a> from a URL.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="#djiffy.models.IIIFException" title="djiffy.models.IIIFException"><code class="xref py py-class docutils literal notranslate"><span class="pre">IIIFException</span></code></a> if URL is not retrieved successfully,
+if the response is not JSON content, or if the JSON cannot be parsed.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="djiffy.models.IIIFPresentation.is_url">
+<em class="property">classmethod </em><code class="descname">is_url</code><span class="sig-paren">(</span><em>url</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#IIIFPresentation.is_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.IIIFPresentation.is_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Utility method to check if a path is a url or file</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="djiffy.models.IIIFPresentation.short_id">
+<em class="property">classmethod </em><code class="descname">short_id</code><span class="sig-paren">(</span><em>uri</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#IIIFPresentation.short_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.IIIFPresentation.short_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a short id from full manifest/canvas uri identifiers
+for use in local urls.  Logic is based on the recommended
+url pattern from the IIIF Presentation 2.0 specification.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="djiffy.models.Manifest">
+<em class="property">class </em><code class="descclassname">djiffy.models.</code><code class="descname">Manifest</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#Manifest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.Manifest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimal db model representation of an IIIF presentation manifest</p>
+<dl class="exception">
+<dt id="djiffy.models.Manifest.DoesNotExist">
+<em class="property">exception </em><code class="descname">DoesNotExist</code><a class="headerlink" href="#djiffy.models.Manifest.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="djiffy.models.Manifest.MultipleObjectsReturned">
+<em class="property">exception </em><code class="descname">MultipleObjectsReturned</code><a class="headerlink" href="#djiffy.models.Manifest.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="djiffy.models.Manifest.admin_thumbnail">
+<code class="descname">admin_thumbnail</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#Manifest.admin_thumbnail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.Manifest.admin_thumbnail" title="Permalink to this definition">¶</a></dt>
+<dd><p>thumbnail for convenience display in admin interface</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.Manifest.created">
+<code class="descname">created</code><a class="headerlink" href="#djiffy.models.Manifest.created" title="Permalink to this definition">¶</a></dt>
+<dd><p>date local manifest cache was created</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.Manifest.extra_data">
+<code class="descname">extra_data</code><a class="headerlink" href="#djiffy.models.Manifest.extra_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>extra data provided via a ‘seeAlso’ reference</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="djiffy.models.Manifest.get_absolute_url">
+<code class="descname">get_absolute_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#Manifest.get_absolute_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.Manifest.get_absolute_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>‘url for this manifest within the django site</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.Manifest.label">
+<code class="descname">label</code><a class="headerlink" href="#djiffy.models.Manifest.label" title="Permalink to this definition">¶</a></dt>
+<dd><p>label</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.Manifest.last_modified">
+<code class="descname">last_modified</code><a class="headerlink" href="#djiffy.models.Manifest.last_modified" title="Permalink to this definition">¶</a></dt>
+<dd><p>date local manifest cache was last modified</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.Manifest.license">
+<code class="descname">license</code><a class="headerlink" href="#djiffy.models.Manifest.license" title="Permalink to this definition">¶</a></dt>
+<dd><p>manifest license, if there is one</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="djiffy.models.Manifest.license_label">
+<code class="descname">license_label</code><span class="sig-paren">(</span><em>lang='en'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#Manifest.license_label"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.Manifest.license_label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the text label for the rights license.  Uses local
+value from edm rights if available; otherwise uses
+data for the URI to get the preferred label or title.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.Manifest.logo">
+<code class="descname">logo</code><a class="headerlink" href="#djiffy.models.Manifest.logo" title="Permalink to this definition">¶</a></dt>
+<dd><p>manifest logo, if there is one</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.Manifest.metadata">
+<code class="descname">metadata</code><a class="headerlink" href="#djiffy.models.Manifest.metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>iiif presentation metadata for display</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.Manifest.rights_statement_id">
+<code class="descname">rights_statement_id</code><a class="headerlink" href="#djiffy.models.Manifest.rights_statement_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>short id for rightstatement.org license</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.Manifest.short_id">
+<code class="descname">short_id</code><a class="headerlink" href="#djiffy.models.Manifest.short_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>short id extracted from URI</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.Manifest.thumbnail">
+<code class="descname">thumbnail</code><a class="headerlink" href="#djiffy.models.Manifest.thumbnail" title="Permalink to this definition">¶</a></dt>
+<dd><p>thumbnail url for associated canvas</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.Manifest.uri">
+<code class="descname">uri</code><a class="headerlink" href="#djiffy.models.Manifest.uri" title="Permalink to this definition">¶</a></dt>
+<dd><p>URI</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="djiffy.models.get_iiif_url">
+<code class="descclassname">djiffy.models.</code><code class="descname">get_iiif_url</code><span class="sig-paren">(</span><em>url</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#get_iiif_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.get_iiif_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around <code class="xref py py-meth docutils literal notranslate"><span class="pre">requests.get()</span></code> to support conditionally
+adding an auth token based on the domain of the request url and
+any <strong>AUTH_TOKENS</strong> configured in django settings.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-djiffy.views">
+<span id="views"></span><h2>Views<a class="headerlink" href="#module-djiffy.views" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="djiffy.views.CanvasAutocomplete">
+<em class="property">class </em><code class="descclassname">djiffy.views.</code><code class="descname">CanvasAutocomplete</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/views.html#CanvasAutocomplete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.views.CanvasAutocomplete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Canvas autocomplete view, e.g. for admin interface lookup</p>
+<dl class="method">
+<dt id="djiffy.views.CanvasAutocomplete.get_queryset">
+<code class="descname">get_queryset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/views.html#CanvasAutocomplete.get_queryset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.views.CanvasAutocomplete.get_queryset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the queryset with GET[‘q’].</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="djiffy.views.CanvasDetail">
+<em class="property">class </em><code class="descclassname">djiffy.views.</code><code class="descname">CanvasDetail</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/views.html#CanvasDetail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.views.CanvasDetail" title="Permalink to this definition">¶</a></dt>
+<dd><p>Detail view for a single <a class="reference internal" href="#djiffy.models.Canvas" title="djiffy.models.Canvas"><code class="xref py py-class docutils literal notranslate"><span class="pre">Canvas</span></code></a>.
+Rendered with  djiffy/canvast_detail.html template.</p>
+<dl class="method">
+<dt id="djiffy.views.CanvasDetail.get_object">
+<code class="descname">get_object</code><span class="sig-paren">(</span><em>queryset=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/views.html#CanvasDetail.get_object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.views.CanvasDetail.get_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the object the view is displaying.</p>
+<p>By default this requires <cite>self.queryset</cite> and a <cite>pk</cite> or <cite>slug</cite> argument
+in the URLconf, but subclasses can override this to return any object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.views.CanvasDetail.model">
+<code class="descname">model</code><a class="headerlink" href="#djiffy.views.CanvasDetail.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#djiffy.models.Canvas" title="djiffy.models.Canvas"><code class="xref py py-class docutils literal notranslate"><span class="pre">djiffy.models.Canvas</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="djiffy.views.ManifestDetail">
+<em class="property">class </em><code class="descclassname">djiffy.views.</code><code class="descname">ManifestDetail</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/views.html#ManifestDetail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.views.ManifestDetail" title="Permalink to this definition">¶</a></dt>
+<dd><p>Detail view for a single <a class="reference internal" href="#djiffy.models.Manifest" title="djiffy.models.Manifest"><code class="xref py py-class docutils literal notranslate"><span class="pre">Manifest</span></code></a>.
+Rendered with  djiffy/manifest_detail.html template.</p>
+<dl class="method">
+<dt id="djiffy.views.ManifestDetail.get_object">
+<code class="descname">get_object</code><span class="sig-paren">(</span><em>queryset=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/views.html#ManifestDetail.get_object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.views.ManifestDetail.get_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the object the view is displaying.</p>
+<p>By default this requires <cite>self.queryset</cite> and a <cite>pk</cite> or <cite>slug</cite> argument
+in the URLconf, but subclasses can override this to return any object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.views.ManifestDetail.model">
+<code class="descname">model</code><a class="headerlink" href="#djiffy.views.ManifestDetail.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#djiffy.models.Manifest" title="djiffy.models.Manifest"><code class="xref py py-class docutils literal notranslate"><span class="pre">djiffy.models.Manifest</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="djiffy.views.ManifestList">
+<em class="property">class </em><code class="descclassname">djiffy.views.</code><code class="descname">ManifestList</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/views.html#ManifestList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.views.ManifestList" title="Permalink to this definition">¶</a></dt>
+<dd><p>List view for <a class="reference internal" href="#djiffy.models.Manifest" title="djiffy.models.Manifest"><code class="xref py py-class docutils literal notranslate"><span class="pre">Manifest</span></code></a>.  Rendered with
+djiffy/manifest_list.html template.</p>
+<dl class="attribute">
+<dt id="djiffy.views.ManifestList.model">
+<code class="descname">model</code><a class="headerlink" href="#djiffy.views.ManifestList.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#djiffy.models.Manifest" title="djiffy.models.Manifest"><code class="xref py py-class docutils literal notranslate"><span class="pre">djiffy.models.Manifest</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-djiffy.importer">
+<span id="import"></span><h2>Import<a class="headerlink" href="#module-djiffy.importer" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="djiffy.importer.ManifestImporter">
+<em class="property">class </em><code class="descclassname">djiffy.importer.</code><code class="descname">ManifestImporter</code><span class="sig-paren">(</span><em>stdout=None</em>, <em>stderr=None</em>, <em>style=None</em>, <em>update=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/importer.html#ManifestImporter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.importer.ManifestImporter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manifest importer.  Intended for use with Django manage commands.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>stdout</strong> – optional stdout, if status output is desired</li>
+<li><strong>stderr</strong> – optional stderr, if error output is desired</li>
+<li><strong>style</strong> – optional django command style object, for styled output</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="djiffy.importer.ManifestImporter.canvas_short_id">
+<code class="descname">canvas_short_id</code><span class="sig-paren">(</span><em>canvas</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/importer.html#ManifestImporter.canvas_short_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.importer.ManifestImporter.canvas_short_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method for generating short id from canvas; default is
+<a class="reference internal" href="#djiffy.models.IIIFPresentation.short_id" title="djiffy.models.IIIFPresentation.short_id"><code class="xref py py-meth docutils literal notranslate"><span class="pre">djiffy.models.IIIFPresentation.short_id()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="djiffy.importer.ManifestImporter.error_msg">
+<code class="descname">error_msg</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/importer.html#ManifestImporter.error_msg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.importer.ManifestImporter.error_msg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output an error message if stderr is configured (used to support output
+via manage command).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="djiffy.importer.ManifestImporter.import_collection">
+<code class="descname">import_collection</code><span class="sig-paren">(</span><em>manifest</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/importer.html#ManifestImporter.import_collection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.importer.ManifestImporter.import_collection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process a single IIIF collection and import
+all supported manifests referenced in the collection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Gedram manifest:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><a class="reference internal" href="#djiffy.models.IIIFPresentation" title="djiffy.models.IIIFPresentation"><code class="xref py py-class docutils literal notranslate"><span class="pre">IIIFPresentation</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="djiffy.importer.ManifestImporter.import_manifest">
+<code class="descname">import_manifest</code><span class="sig-paren">(</span><em>manifest</em>, <em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/importer.html#ManifestImporter.import_manifest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.importer.ManifestImporter.import_manifest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process a single IIIF manifest and create
+<a class="reference internal" href="#djiffy.models.Manifest" title="djiffy.models.Manifest"><code class="xref py py-class docutils literal notranslate"><span class="pre">Manifest</span></code></a> and
+<a class="reference internal" href="#djiffy.models.Canvas" title="djiffy.models.Canvas"><code class="xref py py-class docutils literal notranslate"><span class="pre">Canvas</span></code></a> objects.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>manifest</strong> – <a class="reference internal" href="#djiffy.models.IIIFPresentation" title="djiffy.models.IIIFPresentation"><code class="xref py py-class docutils literal notranslate"><span class="pre">IIIFPresentation</span></code></a></li>
+<li><strong>path</strong> – file or url import path</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="djiffy.importer.ManifestImporter.import_paths">
+<code class="descname">import_paths</code><span class="sig-paren">(</span><em>paths</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/importer.html#ManifestImporter.import_paths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.importer.ManifestImporter.import_paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import a list of paths - file or url, collection or manifest.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="djiffy.importer.ManifestImporter.import_supported">
+<code class="descname">import_supported</code><span class="sig-paren">(</span><em>manifest</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/importer.html#ManifestImporter.import_supported"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.importer.ManifestImporter.import_supported" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if import is supported (currently limited to paged or individuals,
+left-to-right content).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="djiffy.importer.ManifestImporter.output">
+<code class="descname">output</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/importer.html#ManifestImporter.output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.importer.ManifestImporter.output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output a message if stdout is configured (used to support output
+via manage command)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="manage-commands">
+<h2>Manage Commands<a class="headerlink" href="#manage-commands" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-djiffy.management.commands.import_manifest">
+<span id="import-manifest"></span><h3>Import manifest<a class="headerlink" href="#module-djiffy.management.commands.import_manifest" title="Permalink to this headline">¶</a></h3>
+<p>Generic manage command for importing IIIF Collections or manifests
+into the database. Supports collections and individual manifests,
+and local file paths as well as URLs.</p>
+<dl class="class">
+<dt id="djiffy.management.commands.import_manifest.Command">
+<em class="property">class </em><code class="descclassname">djiffy.management.commands.import_manifest.</code><code class="descname">Command</code><span class="sig-paren">(</span><em>stdout=None</em>, <em>stderr=None</em>, <em>no_color=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/management/commands/import_manifest.html#Command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.management.commands.import_manifest.Command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import IIIF Collections or Manifests into the local database.</p>
+<dl class="method">
+<dt id="djiffy.management.commands.import_manifest.Command.add_arguments">
+<code class="descname">add_arguments</code><span class="sig-paren">(</span><em>parser</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/management/commands/import_manifest.html#Command.add_arguments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.management.commands.import_manifest.Command.add_arguments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entry point for subclassed commands to add custom arguments.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="djiffy.management.commands.import_manifest.Command.handle">
+<code class="descname">handle</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/management/commands/import_manifest.html#Command.handle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.management.commands.import_manifest.Command.handle" title="Permalink to this definition">¶</a></dt>
+<dd><p>The actual logic of the command. Subclasses must implement
+this method.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Djiffy</a></h1>
+
+
+
+<p class="blurb">Django application to index and display IIIF Manifests for books</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=Princeton-CDH&repo=djiffy&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a href="https://travis-ci.org/Princeton-CDH/djiffy">
+    <img
+        alt="https://secure.travis-ci.org/Princeton-CDH/djiffy.svg?branch=master"
+        src="https://secure.travis-ci.org/Princeton-CDH/djiffy.svg?branch=master"
+    />
+</a>
+</p>
+
+
+
+
+    
+
+<p>
+<a href="https://codecov.io/github/Princeton-CDH/djiffy">
+    <img
+    alt="https://codecov.io/github/Princeton-CDH/djiffy/coverage.svg?branch=master"
+    src="https://codecov.io/github/Princeton-CDH/djiffy/coverage.svg?branch=master"
+    />
+</a>
+</p>
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Code Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-djiffy.models">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-djiffy.views">Views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-djiffy.importer">Import</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#manage-commands">Manage Commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a></li>
+</ul>
+
+
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Code Documentation</a><ul>
+<li><a class="reference internal" href="#module-djiffy.models">Models</a></li>
+<li><a class="reference internal" href="#module-djiffy.views">Views</a></li>
+<li><a class="reference internal" href="#module-djiffy.importer">Import</a></li>
+<li><a class="reference internal" href="#manage-commands">Manage Commands</a><ul>
+<li><a class="reference internal" href="#module-djiffy.management.commands.import_manifest">Import manifest</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><div class="powered_by">
+<p>Powered by:</p>
+<a href="http://cdh.princeton.edu/">
+<img src="https://cdh.princeton.edu/static/img/CDH_logo_01.svg"
+    alt="Center for Digital Humanities @ Princeton" />
+</a>
+</div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, CDH @ Princeton.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/codedocs.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
