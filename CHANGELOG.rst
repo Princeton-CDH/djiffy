@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.5.1
+-----
+
+* Fix pytest version requirement for failing build on Travis-CI
+
 0.5
 ---
 
