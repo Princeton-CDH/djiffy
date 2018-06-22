@@ -7,11 +7,12 @@ chardet==3.0.4
 coverage==4.5.1
 Django==1.11.12
 django-autocomplete-light==3.2.10
--e git+git@github.com:Princeton-CDH/djiffy.git@5d44d1065a033d739a80555eba5c11c5593f27a8#egg=djiffy
+-e git+git@github.com:Princeton-CDH/djiffy.git@93e59ca2ec0f191bf210d61230ee29cebf229b71#egg=djiffy
 docutils==0.14
 future==0.16.0
 idna==2.6
 imagesize==1.0.0
+isodate==0.6.0
 Jinja2==2.10
 jsonfield==2.0.2
 MarkupSafe==1.0
@@ -27,6 +28,8 @@ pytest==3.5.0
 pytest-cov==2.5.1
 pytest-django==3.1.2
 pytz==2018.4
+rdflib==4.2.2
+rdflib-jsonld==0.4.0
 requests==2.18.4
 six==1.11.0
 snowballstemmer==1.2.1

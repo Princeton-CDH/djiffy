@@ -1,0 +1,96 @@
+{
+  "@id" : "http://rightsstatements.org/vocab/NKC/1.0/",
+  "@type" : [ "skos:Concept", "dcterms:RightsStatement" ],
+  "identifier" : "NKC",
+  "creator" : "http://rightsstatements.org/vocab/irswg",
+  "description" : [ {
+    "@language" : "de",
+    "@value" : "Dieser Rechtehinweis besagt, dass die Institution, die das Objekt zugänglich macht, davon ausgeht, dass kein Urheberrechtsschutz oder verwandte Schutzrechte bestehen, dies aber nicht abschließend festgestellt hat."
+  }, {
+    "@language" : "en",
+    "@value" : "This Rights Statement indicates that the organization that has published the Item believes that no copyright or related rights are known to exist for the Item, but that a conclusive determination could not be made."
+  } ],
+  "modified" : "2018-05-25",
+  "versionInfo" : "1.0",
+  "definition" : [ {
+    "@language" : "de",
+    "@value" : "Die Institution, die das Werk zugänglich gemacht hat, nimmt an, dass kein Urheberrechtsschutz besteht, hat es jedoch nicht abschließend festgestellt.\n\nBitte kontaktieren Sie für weitergehende Informationen die Institution, die das Objekt zugänglich gemacht hat.\n\nSie sind berechtigt, das Objekt in jeder Form zu nutzen, die das Urheberrechtsgesetz und/oder einschlägige verwandte Schutzrechte gestatten."
+  }, {
+    "@language" : "en",
+    "@value" : "The organization that has made the Item available reasonably believes that the Item is not restricted by copyright or related rights, but a conclusive determination could not be made.\n\nPlease refer to the organization that has made the Item available for more information.\n\nYou are free to use this Item in any way that is permitted by the copyright and related rights legislation that applies to your use."
+  } ],
+  "inScheme" : "http://rightsstatements.org/vocab/1.0/",
+  "note" : [ {
+    "@language" : "de",
+    "@value" : "Möglicherweise finden Sie zusätzliche Informationen zum Urheberrechtsschutz des Objekts auf der Website der Institution, die das Objekt verfügbar gemacht hat."
+  }, {
+    "@language" : "de",
+    "@value" : "Soweit nicht ausdrücklich an anderer Stelle ausgewiesen, macht die Institution, die das Objekt zugänglich macht, keine Zusicherungen in Bezug auf dieses und übernimmt keine Garantie für die Richtigkeit des gewählten Rechtehinweises. Sie sind für die eigene Nutzung selbst verantwortlich."
+  }, {
+    "@language" : "de",
+    "@value" : "Möglicherweise benötigen Sie zusätzliche Erlaubnisse für die beabsichtigte Nutzung. Zum Beispiel weil andere Rechte wie Veröffentlichungs-, Persönlichkeits- oder Urheberpersönlichkeitsrechte den erlaubten Nutzungsumfang einschränken."
+  }, {
+    "@language" : "en",
+    "@value" : "You may need to obtain other permissions for your intended use. For example, other rights such as publicity, privacy or moral rights may limit how you may use the material."
+  }, {
+    "@language" : "en",
+    "@value" : "You may find additional information about the copyright status of the Item on the website of the organization that has made the Item available."
+  }, {
+    "@language" : "en",
+    "@value" : "Unless expressly stated otherwise, the organization that has made this Item available makes no warranties about the Item and cannot guarantee the accuracy of this Rights Statement. You are responsible for your own use."
+  } ],
+  "prefLabel" : [ {
+    "@language" : "en",
+    "@value" : "No Known Copyright"
+  }, {
+    "@language" : "de",
+    "@value" : "Kein Urheberrechtsschutz bekannt"
+  } ],
+  "relatedMatch" : "premiscopy:unk",
+  "scopeNote" : [ {
+    "@language" : "de",
+    "@value" : "Dieser Rechtehinweis sollte für Objekte verwendet werden, bei denen der Urheberrechtsschutz nicht abschließend festgestellt wurde, obschon die Institution, die beabsichtigt das Objekt zugänglich zu machen, mit Grund davon ausgeht, dass das zugrundeliegende Werk nicht mehr urheberrechtlich, oder durch verwandte Schutzrechte geschützt ist. Dieser Rechtehinweis sollte nicht für Verwaiste Werke verwendet werden (bei denen davon auszugehen ist, dass diese urheberrechtlich geschützt sind) oder für Objekte, bei denen die Institution, die beabsichtigt, das Objekt zugänglich zu machen, keine Anstrengungen unternommen hat, um den Rechtsstatus des zugrunde liegenden Werks festzustellen."
+  }, {
+    "@language" : "en",
+    "@value" : "This Rights Statement should be used for Items for which the copyright status has not been determined conclusively, but for which the organization that intends to make the Item available has reasonable cause to believe that the underlying Work is not covered by copyright or related rights anymore. This Rights Statement should not be used for Orphan Works (which are assumed to be in-copyright) or for Items where the organization that intends to make the Item available has not undertaken an effort to ascertain the copyright status of the underlying Work."
+  } ],
+  "@context" : {
+    "prefLabel" : "http://www.w3.org/2004/02/skos/core#prefLabel",
+    "note" : "http://www.w3.org/2004/02/skos/core#note",
+    "creator" : {
+      "@id" : "http://purl.org/dc/terms/creator",
+      "@type" : "@id"
+    },
+    "versionInfo" : "http://www.w3.org/2002/07/owl#versionInfo",
+    "identifier" : "http://purl.org/dc/elements/1.1/identifier",
+    "scopeNote" : "http://www.w3.org/2004/02/skos/core#scopeNote",
+    "relatedMatch" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#relatedMatch",
+      "@type" : "@id"
+    },
+    "description" : "http://purl.org/dc/terms/description",
+    "definition" : "http://www.w3.org/2004/02/skos/core#definition",
+    "inScheme" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#inScheme",
+      "@type" : "@id"
+    },
+    "modified" : {
+      "@id" : "http://purl.org/dc/terms/modified",
+      "@type" : "http://www.w3.org/2001/XMLSchema#date"
+    },
+    "cc" : "http://creativecommons.org/ns#",
+    "schema" : "http://schema.org/",
+    "premiscopy" : "http://id.loc.gov/vocabulary/preservation/copyrightStatus/",
+    "owl" : "http://www.w3.org/2002/07/owl#",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "dcmitype" : "http://purl.org/dc/dcmitype/",
+    "skos" : "http://www.w3.org/2004/02/skos/core#",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "p3p" : "http://www.w3.org/2002/01/p3prdfv1#",
+    "edm" : "http://www.europeana.eu/schemas/edm/",
+    "dcterms" : "http://purl.org/dc/terms/",
+    "odrl" : "http://www.w3c.org/community/odrl/two/vocab/2.1/",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "dc" : "http://purl.org/dc/elements/1.1/"
+  }
+}

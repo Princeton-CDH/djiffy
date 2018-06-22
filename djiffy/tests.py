@@ -7,6 +7,7 @@ from django.core.management import call_command
 from django.test import TestCase, override_settings
 from django.urls import reverse
 import pytest
+import rdflib
 import requests
 
 from .admin import ManifestSelectWidget
@@ -70,15 +71,97 @@ class TestManifest(TestCase):
         book = Manifest(short_id='bk123')
         assert book.license is None
 
-        book.extra_data['license'] = 'http://rightsstatements.org/page/InC/1.0/'
+        book.extra_data['license'] = 'http://rightsstatements.org/vocab/InC/1.0/'
         assert book.license == book.extra_data['license']
 
     def test_rights_statement_id(self):
         book = Manifest(short_id='bk123')
         assert book.rights_statement_id is None
 
-        book.extra_data['license'] = 'http://rightsstatements.org/page/InC/1.0/'
+        book.extra_data['license'] = 'http://rightsstatements.org/vocab/InC/1.0/'
         assert book.rights_statement_id == 'InC'
+
+    @patch('djiffy.models.requests')
+    @patch('djiffy.models.rdflib')
+    def test_license_label(self, mockrdflib, mockrequests):
+
+
+        book = Manifest(short_id='bk123')
+        # no license, no label
+        assert book.license_label() is None
+        # non http license, no label
+        book.extra_data['license'] = 'foo://bar'
+        assert book.license_label() is None
+
+        # rightsstatement.org license
+        book.extra_data['license'] = 'http://rightsstatements.org/vocab/NKC/1.0/'
+        # simulate expected return: 303 to data url
+        mockresponse = mockrequests.get.return_value
+        mockresponse.status_code = 303
+        mockresponse.headers = {'location': 'http://rightsstatements.org/vocab/NKC/1.0/'}
+        mockrequests.codes = requests.codes
+
+        # load fixture data into an rdflib graph and return via mockrdflib
+        testgraph = rdflib.Graph()
+        testgraph.parse(os.path.join(FIXTURE_DIR, 'rightsstatement_org_NKC.json'),
+                        format='json-ld')
+        mockrdflib.Graph.return_value = testgraph
+        # use actual uriref method
+        mockrdflib.URIRef = rdflib.URIRef
+        with patch.object(testgraph, 'parse') as mockparse:
+            label = book.license_label()
+            assert label == 'No Known Copyright'
+            mockrequests.get.assert_called_with(
+                book.license, headers={'Accept': 'application/json'},
+                allow_redirects=False)
+            mockrdflib.Graph.assert_any_call()
+            mockparse.assert_called_with(mockresponse.headers['location'],
+                                         format='json-ld')
+
+            # with language code
+            label = book.license_label(lang='de')
+            assert label == 'Kein Urheberrechtsschutz bekannt'
+
+        # CC license
+        book = Manifest(short_id='bk123')
+        book.extra_data['license'] = 'http://creativecommons.org/licenses/by-nc-nd/3.0/'
+        testgraph = rdflib.Graph()
+        testgraph.parse(os.path.join(FIXTURE_DIR, 'cc_by_nc_nd.rdf'),
+                        format='xml')
+        mockrdflib.Graph.return_value = testgraph
+
+        with patch.object(testgraph, 'parse') as mockparse:
+            label = book.license_label()
+            assert label == 'Attribution-NonCommercial-NoDerivs 3.0 Unported'
+
+            # with language code
+            label = book.license_label(lang='fr')
+            assert label == 'Attribution - Pas d’Utilisation Commerciale - Pas de Modification 3.0 non transposé'
+
+        # rights label in extra data
+        mockrequests.reset_mock()
+        mockrdflib.reset_mock()
+        local_label = 'copyright status unknown'
+        book.extra_data['seeAlso'] = {'edm_rights': {'pref_label': local_label}}
+        label = book.license_label()
+        assert label == local_label
+        # should not call requests or use rdflib
+        mockrequests.get.assert_not_called()
+        mockrdflib.Graph.assert_not_called()
+
+        # error handling - shouldn't blow up if there's an error
+        book = Manifest(short_id='bk123')
+        testgraph = rdflib.Graph()
+        mockrdflib.Graph.return_value = testgraph
+        book.extra_data['license'] = 'http://rightsstatements.org/vocab/NKC/1.0/'
+        # exception on parse
+        with patch.object(testgraph, 'parse') as mockparse:
+            mockparse.side_effect = Exception
+            assert book.license_label() is None
+
+        # exception on request
+        mockrequests.get.side_effect = Exception
+        assert book.license_label() is None
 
 
 class TestCanvas(TestCase):
@@ -99,6 +182,46 @@ class TestCanvas(TestCase):
         assert isinstance(page.image, IIIFImage)
         assert page.image.api_endpoint == img_service
         assert page.image.image_id == img_id
+
+    def test_plain_text_url(self):
+
+        # individual dictionary
+        extra_data = {
+            'rendering': {
+                '@id': 'http://some.org/with/text',
+                'format': 'text/plain',
+                'label': 'Download page text',
+            }
+        }
+
+        page = Canvas(extra_data=extra_data)
+        assert isinstance(page.plain_text_url, str)
+        # plain text url returned
+        assert page.plain_text_url == 'http://some.org/with/text'
+
+        # no plain text url, returns None
+        page.extra_data['rendering']['format'] = 'some/other-mime'
+        assert page.plain_text_url is None
+
+        # test with a list
+        extra_data = {
+            'rendering': [
+                {'@id': 'http://some.org/pdf', 'format': 'application/pdf',
+                    'label': 'View PDF image'},
+                {'@id': 'http://some.org/with/text', 'format': 'text/plain',
+                    'label': 'Download page text'},
+            ]
+        }
+        # returns the correct text/plain version
+        page = Canvas(extra_data=extra_data)
+        assert isinstance(page.plain_text_url, str)
+        assert page.plain_text_url == 'http://some.org/with/text'
+        # delete the plain text version
+        del page.extra_data['rendering'][1]
+        assert page.plain_text_url is None
+
+
+
 
     def test_absolute_url(self):
         manif = Manifest(short_id='bk123', label='Book 1')
@@ -315,7 +438,6 @@ class TestManifestImporter(TestCase):
     @patch('djiffy.importer.get_iiif_url')
     def test_import_manifest(self, mock_getiiifurl):
         pres = IIIFPresentation.from_file(self.test_manifest)
-
         mock_extra_data = {
             'title': {
                 '@value': 'Sample extra metadata',
@@ -323,6 +445,14 @@ class TestManifestImporter(TestCase):
             },
             'identifier': ['ark:/88435/tm70mz058']
         }
+        # doctor one sequence to add a rendering field
+        added_rendering = {
+            '@id': 'https://someurl/with/plain/text',
+            'format': 'text/plain',
+            'label': 'Download page text'
+        }
+        # set first canvas, first sequence with a link to OCR text
+        pres.sequences[0].canvases[0].rendering = added_rendering
         mock_getiiifurl.return_value.json.return_value = mock_extra_data
         manif = self.importer.import_manifest(pres, self.test_manifest)
         assert isinstance(manif, Manifest)
@@ -344,8 +474,30 @@ class TestManifestImporter(TestCase):
         assert manif.thumbnail.iiif_image_id == \
              'https://libimages1.princeton.edu/loris/plum_prod/p0%2F28%2F71%2Fv9%2F8d-intermediate_file.jp2'
 
+        # check handling of canvas with rendering data
+        # should have rendering stored as a dictionary
+        assert manif.canvases.first().extra_data['rendering'] \
+            == added_rendering
+        # now check that another canvas does not have a rendering field if
+        # doesn't have one in the manifest data
+        assert 'rendering' not in manif.canvases.last().extra_data
+
+        # check other canvas fields
+        first = manif.canvases.first()
+        assert first.label == 'image 1'
+        assert first.short_id == 'p02871v98d'
+        assert first.uri == \
+            'https://plum.princeton.edu/concern/scanned_resources/ph415q7581/manifest/canvas/p02871v98d'
+        assert first.iiif_image_id == 'https://libimages1.princeton.edu/loris/plum_prod/p0%2F28%2F71%2Fv9%2F8d-intermediate_file.jp2'
+        # first canvas, so it happens to be used as thumbnail
+        assert first.thumbnail
+        assert first.order == 0
         # won't import if already in db
         assert self.importer.import_manifest(pres, self.test_manifest) is None
+
+        # check that the last canvas is not used as thumbnail and is in order
+        assert not manif.canvases.last().thumbnail
+        assert manif.canvases.last().order == manif.canvases.count() - 1
 
         # non-json seeAlso data should store the url
         manif.delete()

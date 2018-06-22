@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>djiffy.importer &#8212; Djiffy 0.3.0 documentation</title>
+    <title>djiffy.importer &#8212; Djiffy 0.5.0 documentation</title>
     <link rel="stylesheet" href="../../_static/style.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="../../_static/documentation_options.js"></script>
@@ -216,6 +216,7 @@
             <span class="c1"># set order and label</span>
             <span class="n">db_canvas</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="n">order</span>
             <span class="n">db_canvas</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">canvas</span><span class="o">.</span><span class="n">label</span>
+
             <span class="c1"># keep canvas id to obscure image id if necessary for security</span>
             <span class="n">db_canvas</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="n">canvas</span><span class="o">.</span><span class="n">id</span>
             <span class="c1"># get short id (extensible for subclasses)</span>
@@ -225,6 +226,11 @@
             <span class="c1"># check if this page is the thumbnail image</span>
             <span class="k">if</span> <span class="n">thumbnail_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">db_canvas</span><span class="o">.</span><span class="n">iiif_image_id</span> <span class="o">==</span> <span class="n">thumbnail_id</span><span class="p">:</span>
                 <span class="n">db_canvas</span><span class="o">.</span><span class="n">thumbnail</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="c1"># check for any extra_data, right now only rendering</span>
+            <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;rendering&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">canvas</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+                    <span class="n">db_canvas</span><span class="o">.</span><span class="n">extra_data</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">canvas</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span>
             <span class="n">db_canvas</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 
         <span class="c1"># if updating, check for previously imported canvases that are no</span>
@@ -282,8 +288,6 @@
 <span class="sd">        :meth:`djiffy.models.IIIFPresentation.short_id`.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="n">IIIFPresentation</span><span class="o">.</span><span class="n">short_id</span><span class="p">(</span><span class="n">canvas</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div></div>
-
-
 </pre></div>
 
           </div>

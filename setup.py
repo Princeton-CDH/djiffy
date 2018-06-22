@@ -26,6 +26,8 @@ setup(
         'attrdict',
         'jsonfield',
         'django-autocomplete-light',
+        'rdflib',
+        'rdflib-jsonld',
     ],
     setup_requires=['pytest-runner'],
     tests_require=test_requirements,
@@ -34,7 +36,7 @@ setup(
         'docs': ['sphinx']
     },
     author='CDH @ Princeton',
-    author_email='digitalhumanities@princeton.edu',
+    author_email='cdhdevteam@princeton.edu',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',

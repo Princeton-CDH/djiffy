@@ -1,6 +1,23 @@
 Changelog
 =========
 
+0.5
+---
+
+* New method on Manifest object to get text label for rights license
+
+0.4.1
+-----
+* Fix a git merge issue that resulted in some code not being merged into master
+
+0.4
+---
+* Canvas now has extra_data field to capture additional manifest information
+  (currently `rendering`) as part of the import.
+* Canvas has `plain_text_url` property to supply url for plain-text
+  transcription/OCR if available from manifest.
+
+
 0.3
 ---
 

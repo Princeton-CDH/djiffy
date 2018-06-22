@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Code Documentation &#8212; Djiffy 0.3.0 documentation</title>
+    <title>Code Documentation &#8212; Djiffy 0.5.0 documentation</title>
     <link rel="stylesheet" href="_static/style.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -57,6 +57,12 @@
 <dd><p>thumbnail for convenience display in admin interface</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="djiffy.models.Canvas.extra_data">
+<code class="descname">extra_data</code><a class="headerlink" href="#djiffy.models.Canvas.extra_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>extra data not otherwise given its own field, serialized as json</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="djiffy.models.Canvas.get_absolute_url">
 <code class="descname">get_absolute_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#Canvas.get_absolute_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.Canvas.get_absolute_url" title="Permalink to this definition">¶</a></dt>
@@ -99,6 +105,12 @@ canvas.</p>
 <dt id="djiffy.models.Canvas.order">
 <code class="descname">order</code><a class="headerlink" href="#djiffy.models.Canvas.order" title="Permalink to this definition">¶</a></dt>
 <dd><p>order of this canvas within associated manifest primary sequence</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="djiffy.models.Canvas.plain_text_url">
+<code class="descname">plain_text_url</code><a class="headerlink" href="#djiffy.models.Canvas.plain_text_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return plain text url for a canvas if one exists</p>
 </dd></dl>
 
 <dl class="method">
@@ -279,6 +291,14 @@ url pattern from the IIIF Presentation 2.0 specification.</p>
 <dt id="djiffy.models.Manifest.license">
 <code class="descname">license</code><a class="headerlink" href="#djiffy.models.Manifest.license" title="Permalink to this definition">¶</a></dt>
 <dd><p>manifest license, if there is one</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="djiffy.models.Manifest.license_label">
+<code class="descname">license_label</code><span class="sig-paren">(</span><em>lang='en'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#Manifest.license_label"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#djiffy.models.Manifest.license_label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the text label for the rights license.  Uses local
+value from edm rights if available; otherwise uses
+data for the URI to get the preferred label or title.</p>
 </dd></dl>
 
 <dl class="attribute">

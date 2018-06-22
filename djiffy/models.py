@@ -9,6 +9,8 @@ from django.db import models
 from django.urls import reverse
 from jsonfield import JSONField
 from piffle import iiif
+import rdflib
+from rdflib.namespace import DC
 import requests
 
 
@@ -48,7 +50,7 @@ class Manifest(models.Model):
     last_modified = models.DateField(auto_now=True)
     #: extra data provided via a 'seeAlso' reference
     extra_data = JSONField(load_kwargs={'object_pairs_hook': OrderedDict},
-        default=dict)
+        default=OrderedDict)
 
     class Meta:
         verbose_name = 'IIIF Manifest'
@@ -94,6 +96,65 @@ class Manifest(models.Model):
         '''short id for rightstatement.org license'''
         if self.license and 'rightsstatements.org' in self.license:
             return self.license.rstrip(' /').split('/')[-2]
+
+    _rights_graph = None
+
+    def license_label(self, lang='en'):
+        '''Get the text label for the rights license.  Uses local
+        value from edm rights if available; otherwise uses
+        data for the URI to get the preferred label or title.'''
+
+        # Some manifests have a seeAlso data contains an "edm_rights"
+        # section with a label for the rights statement.
+        # Use that if available (NOTE: ignores specified language)
+        # NOTE: possibly PUL specific, but shouldn't hurt to look locally first
+        for data in self.extra_data.values():
+            if 'edm_rights' in data and 'pref_label' in data['edm_rights']:
+                return data['edm_rights']['pref_label']
+
+        # if license/rights label is not available locally, get via uri
+        if self._rights_graph is None:
+            # if license is defined and a url
+            if self.license and urllib.parse.urlparse(self.license).scheme in ['http', 'https']:
+                self._rights_graph = rdflib.Graph()
+                try:
+                    # rights statement org does content-negotiation for json-jd,
+                    # but rdflib doesn't handle that automatically
+                    if 'rightsstatements.org' in self.license:
+                        resp = requests.get(self.license,
+                                            headers={'Accept': 'application/json'},
+                                            allow_redirects=False)
+                        if resp.status_code == requests.codes.see_other:
+                            self._rights_graph.parse(resp.headers['location'], format='json-ld')
+
+                    # creative commons doesn't support content negotiation,
+                    # but you can add rdf to the end of the url
+                    elif 'creativecommons.org' in self.license:
+                        rdf_uri = '/'.join([self.license.rstrip('/'), 'rdf'])
+                        self._rights_graph.parse(rdf_uri)
+
+                except Exception:
+                    # possible to get an exception when parsing the
+                    # rdf, maybe on the request; don't choke if we do!
+
+                    # NOTE: using generic Exception here becuase unfortunately
+                    # that is what rdflib raises when it can't parse RDF
+                    pass
+
+        # get the preferred label for this license in the requested language;
+        # returns a list of label, value; use the first value
+        if self._rights_graph:
+            license_uri = rdflib.URIRef(self.license)
+            preflabel = self._rights_graph.preferredLabel(license_uri,
+                                                          lang=lang)
+            if preflabel:
+                # convert rdflib Literal to string
+                return str(preflabel[0][1])
+            # otherwise, get dc title
+            # iterate over all titles and return one with a matching language code
+            for title in self._rights_graph.objects(subject=license_uri, predicate=DC.title):
+                if title.language == lang:
+                    return str(title)
 
 
 class IIIFImage(iiif.IIIFImageClient):
@@ -143,6 +204,9 @@ class Canvas(models.Model):
     order = models.PositiveIntegerField()
     # (for now only stores a single sequence, so just store order on the page    )
     # format? size? (ocr text eventually?)
+    #: extra data not otherwise given its own field, serialized as json
+    extra_data = JSONField(load_kwargs={'object_pairs_hook': OrderedDict},
+        default=OrderedDict)
 
     class Meta:
         ordering = ["manifest", "order"]
@@ -165,6 +229,29 @@ class Canvas(models.Model):
         # Should update to handle iiif image ids as provided in manifests
         # for now, split into service and image id. (is this reliable?)
         return IIIFImage(*self.iiif_image_id.rsplit('/', 1))
+
+    @property
+    def plain_text_url(self):
+        '''Return plain text url for a canvas if one exists'''
+
+        rendering = self.extra_data.get('rendering', None)
+        if rendering:
+            # handle both cases where this is a list and where it is just
+            # a dictionary, to be safe
+            if isinstance(rendering, list):
+                for item in rendering:
+                    # iterate over the list and return the first plain text url
+                    # we find
+                    if 'format' in item and item['format'] == 'text/plain':
+                        return item['@id']
+            else:
+                # otherwise, if it's a dictionary, check if it's plaintext and
+                # return
+                if 'format' in rendering \
+                        and rendering['format'] == 'text/plain':
+                    return rendering['@id']
+        # finally return None if no plain text is available or no rendering
+        return None
 
     def get_absolute_url(self):
         ''''url for this canvas within the django site'''
@@ -310,4 +397,3 @@ class IIIFPresentation(AttrMap):
             return self.label
         else:
             return self.label[0]
-
