@@ -1,6 +1,6 @@
 default_app_config = 'djiffy.apps.DjiffyConfig'
 
-__version_info__ = (0, 5, 0, None)
+__version_info__ = (0, 6, 0, 'dev')
 
 # Dot-connect all but the last. Last is dash-connected if not None.
 __version__ = '.'.join([str(i) for i in __version_info__[:-1]])
