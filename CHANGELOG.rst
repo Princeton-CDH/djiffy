@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.5
+---
+
+* New method on Manifest object to get text label for rights license
+
 0.4.1
 -----
 * Fix a git merge issue that resulted in some code not being merged into master

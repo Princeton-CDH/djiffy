@@ -36,7 +36,7 @@ setup(
         'docs': ['sphinx']
     },
     author='CDH @ Princeton',
-    author_email='digitalhumanities@princeton.edu',
+    author_email='cdhdevteam@princeton.edu',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
