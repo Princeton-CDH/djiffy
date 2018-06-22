@@ -8,7 +8,8 @@ with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as readme:
 # allow setup.py to be run from any path
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
-test_requirements = ['pytest', 'pytest-django', 'pytest-cov', 'mysqlclient'],
+test_requirements = ['pytest>=3.6', 'pytest-django', 'pytest-cov', 'mysqlclient'],
+# pytest v3.6 required for pytest-django but doesn't happen on travis-ci
 
 setup(
     name='djiffy',
