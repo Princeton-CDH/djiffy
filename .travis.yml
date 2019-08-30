@@ -7,6 +7,9 @@ env:
   - DJANGO=1.10
   - DJANGO=1.11
 
+services:
+  - mysql
+
 before_install:
   - mysql -e 'CREATE DATABASE IF NOT EXISTS test;'
 

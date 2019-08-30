@@ -325,31 +325,31 @@ class TestIIIFPresentation(TestCase):
 
             # error handling
             # bad status code response on the url
-            with pytest.raises(IIIFException) as err:
+            with pytest.raises(IIIFException) as excinfo:
                 mockresponse.status_code = requests.codes.forbidden
                 mockresponse.reason = 'Forbidden'
                 IIIFPresentation.from_url(manifest_url)
-            assert 'Error retrieving manifest' in str(err)
-            assert '403 Forbidden' in str(err)
+            assert 'Error retrieving manifest' in str(excinfo.value)
+            assert '403 Forbidden' in str(excinfo.value)
 
             # valid http response but not a json response
-            with pytest.raises(IIIFException) as err:
+            with pytest.raises(IIIFException) as excinfo:
                 mockresponse.status_code = requests.codes.ok
                 # content type header does not indicate json
                 mockresponse.headers = {'content-type': 'text/html'}
                 mockresponse.json.side_effect = \
                     json.decoder.JSONDecodeError('err', 'doc', 1)
                 IIIFPresentation.from_url(manifest_url)
-            assert 'No JSON found' in str(err)
+            assert 'No JSON found' in str(excinfo.value)
 
             # json parsing error
-            with pytest.raises(IIIFException) as err:
+            with pytest.raises(IIIFException) as excinfo:
                 # content type header indicates json, but parsing failed
                 mockresponse.headers = {'content-type': 'application/json'}
                 mockresponse.json.side_effect = \
                     json.decoder.JSONDecodeError('err', 'doc', 1)
                 IIIFPresentation.from_url(manifest_url)
-            assert 'Error parsing JSON' in str(err)
+            assert 'Error parsing JSON' in str(excinfo.value)
 
     def test_from_url_or_file(self):
         with patch.object(IIIFPresentation, 'from_url') as mock_from_url:
@@ -362,9 +362,9 @@ class TestIIIFPresentation(TestCase):
             mock_from_url.assert_called_with('http://mani.fe/st')
 
             # nonexistent file path
-            with pytest.raises(IIIFException) as err:
+            with pytest.raises(IIIFException) as excinfo:
                 IIIFPresentation.from_file_or_url('/manifest/not/found')
-            assert 'File not found: ' in str(err)
+            assert 'File not found: ' in str(excinfo.value)
 
     def test_short_id(self):
         manifest_uri = 'https://ii.if/resources/p0c484h74c/manifest'

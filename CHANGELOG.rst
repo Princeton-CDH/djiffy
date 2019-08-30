@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.5.2 Maintenance release
+---------------------------
+
+* Update for pytest 5.x and mysql change on Travis-CI
+
+
 0.5.1
 -----
 
