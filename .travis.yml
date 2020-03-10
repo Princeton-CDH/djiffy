@@ -1,36 +1,32 @@
 language: python
-
 python:
-  - 3.5
-  - 3.6
-
+- 3.5
+- 3.6
 env:
-  - DJANGO=1.11
-  - DJANGO=2.0
-  - DJANGO=2.1
-  - DJANGO=2.2
-  - DJANGO=3.0
-
- exclude:
+- DJANGO=1.11
+- DJANGO=2.0
+- DJANGO=2.1
+- DJANGO=2.2
+- DJANGO=3.0
+jobs:
+  exclude:
   - python: 3.5
     env: DJANGO=3.0
-
 services:
-  - mysql
-
+- mysql
 before_install:
-  - mysql -e 'CREATE DATABASE IF NOT EXISTS test;'
-
+- mysql -e 'CREATE DATABASE IF NOT EXISTS test;'
 install:
-  - pip install -q Django==$DJANGO
-  - pip install -e .
-  - pip install -e '.[test]'
-  - pip install codecov
-  - cp ci/testsettings.py testsettings.py
-  - python -c "import uuid; print('SECRET_KEY = \'%s\'' % uuid.uuid4())" >> testsettings.py
-
+- pip install -q Django==$DJANGO
+- pip install -e .
+- pip install -e '.[test]'
+- pip install codecov
+- cp ci/testsettings.py testsettings.py
+- python -c "import uuid; print('SECRET_KEY = \'%s\'' % uuid.uuid4())" >> testsettings.py
 script:
-  - py.test --cov=djiffy
-
+- py.test --cov=djiffy
 after_success:
-  - codecov
+- codecov
+notifications:
+  slack:
+    secure: NKBMF47PDz4w3tctiNzUk0f0xcRt5vQ97qcKP57pbvFKkRkY/pznsLpxcW1HZcRZaYAcaZzadGjZdZiRqZi3OG28NFYcw/Lv4/BndT/+J3sDCMZFsSPActk3GWJ5es1PCb1C74vL4MJDyXnQ8nMjdyzbJ8Pwcd+N8kE9+jOxoy1+gRB5U8a1oQhyvI8Vwe8y3AX2eqR+Aehr90+/kziMuMdisKD7aBtwRtOff7LlfC/sAlhPy0JxSnx/Sl6cZ0MmwQaCiWk28ZbOis4XsW6DHNvL3Z4yq6KCc/VkwuXbxLMT5bvPwrBcdcU5/K7Jljanv4fI01pt4M0nghVaFRqz5pw0IV+x5NJqcF2o92/viMUnudZmWNAP9UAmcB6KJgUnF24V0lItItfNc63LseQBL9j/6IoqJ8hwDiURf5Dxu8VzunD918i7cOKdlMihyGvHp/kWKSyKhZEVkxBnaX1bYRhjT7VOextgIOEnxAPivWc+ehc6F+b7fCL5HcJz95E/wL+QYLWAeg/LSEK0D1ODsbA7fE5lcgR0dAdEeEplKx94KG5YtPbhE9TuFsVdN0USsneamjYOGMgFrX1xm7VyROFQkfDW5ViMkJDjV2wY4uK/bYM7VDOtSf+lvwQc2FjmWXmagIiJXh494x9YGy4AioieLswQHfD1ANopnirfUh4=
