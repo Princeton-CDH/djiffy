@@ -510,8 +510,9 @@ class TestManifestImporter(TestCase):
         manif.delete()
         link1 = 'https://bibdata.princeton.edu/bibliographic/4765261/jsonld'
         link2 = 'https://findingaids.princeton.edu/collections/RBD1.1/c8193.xml?scope=record'
-        pres.seeAlso = [{'@id': link1, 'format': 'application/ld+json'},
-                        {'@id': link2, 'format': 'text/xml'}
+        pres.seeAlso = [
+            {'@id': link1, 'format': 'application/ld+json'},
+            {'@id': link2, 'format': 'text/xml'}
         ]
         manif = self.importer.import_manifest(pres, self.test_manifest)
         assert link1 in manif.extra_data
@@ -574,7 +575,7 @@ class TestManifestImporter(TestCase):
     @patch('djiffy.models.get_iiif_url')
     def test_import_collection(self, mock_getiiifurl):
         pres = IIIFPresentation.from_file(self.test_manifest)
-        assert self.importer.import_collection(pres) == None
+        assert self.importer.import_collection(pres) is None
 
         # mock actual request to avoid hitting real urls when
         # importing the collection
@@ -612,7 +613,7 @@ class TestManifestImporter(TestCase):
             self.importer.import_paths([self.test_manifest])
             mockiiifpres.from_file_or_url.assert_called_with(self.test_manifest)
             mock_manif_import.assert_called_with(iiifmanifest,
-                self.test_manifest)
+                                                 self.test_manifest)
 
         # skips error
         mockiiifpres.from_file_or_url.side_effect = IIIFException
@@ -621,7 +622,6 @@ class TestManifestImporter(TestCase):
             self.importer.import_paths([self.test_manifest])
             mockiiifpres.from_file_or_url.assert_called_with(self.test_manifest)
             mock_manif_import.assert_not_called()
-
 
     def test_output(self):
         # with no stdout defined, no error
@@ -645,6 +645,7 @@ class TestManifestImporter(TestCase):
 
         # both stderr and style
         self.importer.stderr = StringIO()
+
         def err_style(msg):
             return '<i>%s</i>' % msg
 
@@ -653,7 +654,6 @@ class TestManifestImporter(TestCase):
         self.importer.error_msg('oops')
         self.importer.stderr.seek(0)
         assert self.importer.stderr.read() == '<i>oops</i>'
-
 
 
 class TestManifestSelectWidget(TestCase):
@@ -666,7 +666,6 @@ class TestManifestSelectWidget(TestCase):
         # empty string - shoudl not error
         assert widget.render('manifest', '', {'id': 123})
 
-
         # create test manifest to render
         manif = Manifest.objects.create(label='test manifest', short_id='abc3')
         rendered = widget.render('person', manif.id, {'id': 1234})
@@ -678,7 +677,7 @@ class TestManifestSelectWidget(TestCase):
 
         # associate canvas for thumbnail
         canv = Canvas.objects.create(short_id='def4', thumbnail=True,
-            manifest=manif, order=1)
+                                     manifest=manif, order=1)
         rendered = widget.render('person', manif.id, {'id': 1234})
         # no thumbnail - should not display text 'none'
         assert canv.admin_thumbnail() in rendered
@@ -704,7 +703,7 @@ class TestViews(TestCase):
 
     def test_manifest_detail(self):
         manifest_url = reverse('djiffy:manifest',
-            kwargs={'id': self.manif1.short_id})
+                               kwargs={'id': self.manif1.short_id})
         response = self.client.get(manifest_url)
         assert response.context['manifest'] == self.manif1
         self.assertTemplateUsed(template_name='djiffy/manifest_detail.html')
@@ -715,7 +714,8 @@ class TestViews(TestCase):
         assert response.status_code == 404
 
     def test_canvas_detail(self):
-        canvas_url = reverse('djiffy:canvas',
+        canvas_url = reverse(
+            'djiffy:canvas',
             kwargs={'id': self.pages[0].short_id,
                     'manifest_id': self.manif1.short_id})
         response = self.client.get(canvas_url)
@@ -723,37 +723,44 @@ class TestViews(TestCase):
         self.assertTemplateUsed(template_name='djiffy/canvas_detail.html')
 
         # bogus canvas id
-        bad_canvas_url = reverse('djiffy:canvas',
+        bad_canvas_url = reverse(
+            'djiffy:canvas',
             kwargs={'id': 'bogus', 'manifest_id': self.manif1.short_id})
         response = self.client.get(bad_canvas_url)
         assert response.status_code == 404
 
         # bogus manifest id
-        bad_canvas_url = reverse('djiffy:canvas',
+        bad_canvas_url = reverse(
+            'djiffy:canvas',
             kwargs={'id': self.pages[0].short_id, 'manifest_id': 'bogus'})
         response = self.client.get(bad_canvas_url)
         assert response.status_code == 404
 
         # existing manifest and canvas ids that don't belong together
-        bad_canvas_url = reverse('djiffy:canvas',
-            kwargs={'id': self.pages[0].short_id, 'manifest_id': self.manif2.short_id})
+        bad_canvas_url = reverse(
+            'djiffy:canvas',
+            kwargs={'id': self.pages[0].short_id,
+                    'manifest_id': self.manif2.short_id})
         response = self.client.get(bad_canvas_url)
         assert response.status_code == 404
 
     def test_canvas_autocomplete(self):
         canvas_autocomplete_url = reverse('djiffy:canvas-autocomplete')
-        response = self.client.get(canvas_autocomplete_url, params={'q': 'pg1'})
+        response = self.client.get(canvas_autocomplete_url,
+                                   params={'q': 'pg1'})
         assert response.status_code == 200
         data = json.loads(response.content.decode('utf-8'))
         assert 'results' in data
         assert data['results'][0]['text'] == str(self.pages[0])
         # check the manifest label functionality -- all pages for a manifest
-        response = self.client.get(canvas_autocomplete_url, params={'q': 'Book'})
+        response = self.client.get(canvas_autocomplete_url,
+                                   params={'q': 'Book'})
         assert response.status_code == 200
         data = json.loads(response.content.decode('utf-8'))
         assert 'results' in data
         # should bring back all three since the manifest label is Book 1
         assert len(data['results']) == 3
+
 
 @patch('djiffy.management.commands.import_manifest.ManifestImporter')
 class TestImportManifest(TestCase):

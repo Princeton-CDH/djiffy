@@ -197,16 +197,17 @@ class Canvas(models.Model):
     #: URL of IIIF image for this canvas
     iiif_image_id = models.URLField()
     #: :class:`Manifest` this canvas vbelongs to
-    manifest = models.ForeignKey(Manifest, related_name='canvases')
+    manifest = models.ForeignKey(Manifest, related_name='canvases',
+                                 on_delete=models.CASCADE)
     #: boolean flag to indicate if this canvas shoudl be used as thumbnail
     thumbnail = models.BooleanField(default=False)
     #: order of this canvas within associated manifest primary sequence
     order = models.PositiveIntegerField()
-    # (for now only stores a single sequence, so just store order on the page    )
+    # (for now only stores a single sequence, so just store order on the page)
     # format? size? (ocr text eventually?)
     #: extra data not otherwise given its own field, serialized as json
     extra_data = JSONField(load_kwargs={'object_pairs_hook': OrderedDict},
-        default=OrderedDict)
+                           default=OrderedDict)
 
     class Meta:
         ordering = ["manifest", "order"]

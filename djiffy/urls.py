@@ -2,6 +2,8 @@ from django.conf.urls import url
 
 from djiffy import views
 
+app_name = 'djiffy'
+
 urlpatterns = [
     url(r'^$', views.ManifestList.as_view(), name='list'),
     url(r'^(?P<id>[^/]+)/$', views.ManifestDetail.as_view(), name='manifest'),
