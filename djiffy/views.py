@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.http import Http404
 from django.views.generic import DetailView, ListView
 
-from .models import Manifest, Canvas
+from djiffy.models import Canvas, Manifest
 
 
 class ManifestList(ListView):
