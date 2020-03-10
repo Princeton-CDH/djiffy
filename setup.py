@@ -8,7 +8,8 @@ with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as readme:
 # allow setup.py to be run from any path
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
-test_requirements = ['pytest>=5.1', 'pytest-django', 'pytest-cov', 'mysqlclient'],
+test_requirements = ['pytest>=5.1', 'pytest-django', 'pytest-cov',
+                     'mysqlclient'],
 # pytest v3.6 required for pytest-django but doesn't happen on travis-ci
 
 setup(
@@ -21,7 +22,7 @@ setup(
     long_description=README,
     url='https://github.com/Princeton-CDH/djiffy',
     install_requires=[
-        'django>=1.11,<2.1',
+        'django>=1.11,<2.2',
         'requests',
         'piffle',
         'attrdict',
