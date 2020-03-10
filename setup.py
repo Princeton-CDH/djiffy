@@ -22,7 +22,7 @@ setup(
     long_description=README,
     url='https://github.com/Princeton-CDH/djiffy',
     install_requires=[
-        'django>=1.11,<2.2',
+        'django>=1.11,<3.0',
         'requests',
         'piffle',
         'attrdict',
