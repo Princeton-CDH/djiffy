@@ -7,6 +7,7 @@ from attrdict import AttrMap
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
+from django.utils.html import format_html
 from jsonfield import JSONField
 from piffle import iiif
 import rdflib
@@ -79,7 +80,6 @@ class Manifest(models.Model):
         if self.thumbnail:
             return self.thumbnail.admin_thumbnail()
     admin_thumbnail.short_description = 'Thumbnail'
-    admin_thumbnail.allow_tags = True
 
     @property
     def logo(self):
@@ -274,9 +274,8 @@ class Canvas(models.Model):
 
     def admin_thumbnail(self):
         '''thumbnail for convenience display in admin interface'''
-        return u'<img src="%s" />' % self.image.mini_thumbnail()
+        return format_html('<img src="{}" />', self.image.mini_thumbnail())
     admin_thumbnail.short_description = 'Thumbnail'
-    admin_thumbnail.allow_tags = True
 
 
 class IIIFPresentation(AttrMap):
