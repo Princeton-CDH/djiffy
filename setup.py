@@ -25,7 +25,7 @@ setup(
         'requests',
         'piffle',
         'attrdict',
-        'jsonfield',
+        'jsonfield<3.0',
         'django-autocomplete-light',
         'rdflib',
         'rdflib-jsonld',
