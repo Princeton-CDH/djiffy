@@ -19,7 +19,7 @@ Django application to index and display IIIF Manifests for books
    :alt: Requirements Status
 .. image:: https://img.shields.io/pypi/pyversions/djiffy
    :alt: PyPI - Python Version
-   .. image:: https://img.shields.io/pypi/djversions/djiffy
+.. image:: https://img.shields.io/pypi/djversions/djiffy
    :alt: PyPI - Django Version
 
 
