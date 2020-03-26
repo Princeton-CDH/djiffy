@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.6
+---
+
+* Now supports Django 1.11 through 3.0; dropped support for Django 1.10
+
+
 0.5.2 Maintenance release
 ---------------------------
 

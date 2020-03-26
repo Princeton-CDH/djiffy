@@ -8,7 +8,8 @@ with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as readme:
 # allow setup.py to be run from any path
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
-test_requirements = ['pytest>=5.1', 'pytest-django', 'pytest-cov', 'mysqlclient'],
+test_requirements = ['pytest>=5.1', 'pytest-django', 'pytest-cov',
+                     'mysqlclient'],
 # pytest v3.6 required for pytest-django but doesn't happen on travis-ci
 
 setup(
@@ -21,12 +22,12 @@ setup(
     long_description=README,
     url='https://github.com/Princeton-CDH/djiffy',
     install_requires=[
-        'django>=1.10,<2.0',
+        'django>=1.11,<3.1',
         'requests',
         'piffle',
         'attrdict',
-        'jsonfield',
-        'django-autocomplete-light',
+        'jsonfield<3.0,>=2.1',
+        'django-autocomplete-light>=3.5.1',
         'rdflib',
         'rdflib-jsonld',
     ],
@@ -42,13 +43,17 @@ setup(
         'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
         'Framework :: Django',
-        'Framework :: Django :: 1.10',
         'Framework :: Django :: 1.11',
+        'Framework :: Django :: 2.0',
+        'Framework :: Django :: 2.1',
+        'Framework :: Django :: 2.2',
+        'Framework :: Django :: 3.0',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
 )

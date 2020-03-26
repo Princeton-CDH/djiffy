@@ -9,14 +9,17 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': '',
         'TEST': {
-                'CHARSET': 'utf8',
-                'COLLATION': 'utf8_general_ci',
-            },
+            'CHARSET': 'utf8',
+            'COLLATION': 'utf8_general_ci',
+        },
     }
 }
 
 INSTALLED_APPS = (
+    'django.contrib.auth',
+    'django.contrib.admin',
     'django.contrib.contenttypes',
+    'django.contrib.humanize',
     'dal',
     'dal_select2',
     'djiffy',
