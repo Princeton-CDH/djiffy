@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.7
+---
+
+* Now supports Django 3.1; dropped support for Django 1.11
+* Now tested on python 3.7, 3.8; dropped support for python 3.5
+* Shifted continuous integration from Travis-CI to GitHub Actions
+
 0.6
 ---
 
