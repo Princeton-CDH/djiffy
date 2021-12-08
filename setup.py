@@ -9,7 +9,7 @@ with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as readme:
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 test_requirements = ['pytest>=5.1', 'pytest-django', 'pytest-cov',
-                     'mysqlclient'],
+                     'psycopg2-binary'],
 # pytest v3.6 required for pytest-django but doesn't happen on travis-ci
 
 setup(
@@ -43,11 +43,9 @@ setup(
         'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
         'Framework :: Django',
-        'Framework :: Django :: 2.0',
-        'Framework :: Django :: 2.1',
-        'Framework :: Django :: 2.2',
         'Framework :: Django :: 3.0',
         'Framework :: Django :: 3.1',
+        'Framework :: Django :: 3.2',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
