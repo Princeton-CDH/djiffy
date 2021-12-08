@@ -69,7 +69,7 @@ class ManifestImporter(object):
         view_hint = getattr(manifest, 'viewingHint', None)
         view_direction = getattr(manifest, 'viewingDirection', None)
         if (view_hint and manifest.viewingHint in ['paged', 'individuals', None]) or \
-          (view_direction and manifest.viewingDirection == ['left-to-right', 'right-to-left']):
+          (view_direction and manifest.viewingDirection in ['left-to-right', 'right-to-left']):
             return True
 
         else:
