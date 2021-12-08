@@ -35,6 +35,7 @@ class ManifestAdmin(admin.ModelAdmin):
     inlines = [CanvasInline]
     list_display = ('admin_thumbnail', 'label', 'short_id', 'created',
         'last_modified')
+    list_display_links = ('admin_thumbnail', 'label')
     search_fields = ('label', 'short_id', 'uri', 'metadata', 'extra_data')
 
 
