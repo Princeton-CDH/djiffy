@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.7
+---
+
+* Now tested against  Django 3.1 and 3.2; dropped support for Django 1.11 and 2.2
+* Now tested on python 3.7, 3.8; dropped support for python 3.5 and 3.6
+* Shifted continuous integration from Travis-CI to GitHub Actions
+* Admin thumbnail format is now configurable in django settings via **DJIFFY_THUMBNAIL_FORMAT**; default is png
+* Manifest import check for "supported" manifests can be disabled by setting **DJIFFY_IMPORT_CHECK_SUPPORTED** to False in django settings
+
 0.6
 ---
 

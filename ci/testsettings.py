@@ -1,36 +1,33 @@
 # minimal django settings required to run tests
+import os
 
-# run against mysql to catch validation issues sqlite doesn't have
+# run against postgresql
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'test',
-        'USER': 'root',
-        'HOST': 'localhost',
-        'PORT': '',
-        'TEST': {
-            'CHARSET': 'utf8',
-            'COLLATION': 'utf8_general_ci',
-        },
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "USER": os.getenv("DB_USER"),
+        "NAME": os.getenv("DB_NAME"),
+        "HOST": "127.0.0.1",
     }
 }
 
 INSTALLED_APPS = (
-    'django.contrib.auth',
-    'django.contrib.admin',
-    'django.contrib.contenttypes',
-    'django.contrib.humanize',
-    'dal',
-    'dal_select2',
-    'djiffy',
+    "django.contrib.auth",
+    "django.contrib.admin",
+    "django.contrib.contenttypes",
+    "django.contrib.humanize",
+    "dal",
+    "dal_select2",
+    "djiffy",
 )
 
-ROOT_URLCONF = 'djiffy.test_urls'
+ROOT_URLCONF = "djiffy.test_urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'APP_DIRS': True,
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "APP_DIRS": True,
     }
 ]
 
