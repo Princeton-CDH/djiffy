@@ -6,6 +6,12 @@ on:
   schedule: # run automatically on main branch each Tuesday at 11am
     - cron: "0 16 * * 2"
 
+
+env:
+  DB_NAME: djiffy
+  DB_USER: djiffy
+  DB_PASSWORD: djiffy123
+
 jobs:
   python-unit:
     name: Python unit tests
@@ -15,13 +21,14 @@ jobs:
         python: [3.6, 3.7, 3.8]
         django: [3.0, 3.1, 3.2]
     services:
-      db:
-        image: mariadb
+      postgres:
+        image: postgres:12
         env:
-          MYSQL_DATABASE: test
-          MYSQL_ROOT_PASSWORD: ''
+          POSTGRES_DB: ${{ env.DB_NAME }}
+          POSTGRES_USER: ${{ env.DB_USER }}
+          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
         ports:
-        - 3306:3306
+          - 5432:5432
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
