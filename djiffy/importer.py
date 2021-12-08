@@ -183,7 +183,7 @@ class ManifestImporter(object):
         thumbnail_id = None
         if hasattr(manifest, 'thumbnail'):
             # if available as IIIF image, use that
-            if hasattr(manifest.thumbnail, 'sevice'):
+            if hasattr(manifest.thumbnail, 'service'):
                 thumbnail_id = manifest.thumbnail.service.id
             # otherwise, id is a path to an image
             else:
