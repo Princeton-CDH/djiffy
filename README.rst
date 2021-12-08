@@ -145,6 +145,28 @@ configurations.
     pip install -e '.[test]'
     pytest
 
+Documentation
+^^^^^^^^^^^^^
+
+Documentation is generated using `sphinx <http://www.sphinx-doc.org/>`_.
+To generate documentation, first install development requirements::
+
+    pip install -r dev-requirements.txt
+
+Then build documentation using the customized make file in the `docs`
+directory::
+
+    cd sphinx-docs
+    make html
+
+To build and publish documentation for a release, add the ``gh-pages`` branch
+to the ``docs`` folder in your worktree::
+
+    git worktree add -B gh-pages docs origin/gh-pages
+
+In the ``sphinx-docs`` folder, use ``make docs`` to build the HTML documents
+and static assets, add it to the docs folder, and commit it for publication on
+Github Pages. After the build completes, push to GitHub from the ``docs`` folder.
 
 License
 -------
