@@ -214,8 +214,8 @@ class ManifestImporter(object):
             if thumbnail_id is not None and db_canvas.iiif_image_id == thumbnail_id:
                 db_canvas.thumbnail = True
 
-            # check for any extra_data, right now only rendering
-            for field in ['rendering']:
+            # include other fields as extra_data for now
+            for field in ['rendering', 'width', 'height']:
                 if hasattr(canvas, field):
                     db_canvas.extra_data[field] = getattr(canvas, field)
             db_canvas.save()
