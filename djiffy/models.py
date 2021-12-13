@@ -257,6 +257,14 @@ class Canvas(models.Model):
         # finally return None if no plain text is available or no rendering
         return None
 
+    @property
+    def width(self):
+        return self.extra_data.get('width', None)
+
+    @property
+    def height(self):
+        return self.extra_data.get('height', None)
+
     def get_absolute_url(self):
         ''''url for this canvas within the django site'''
         return reverse('djiffy:canvas', args=[self.manifest.short_id, self.short_id])

@@ -198,6 +198,15 @@ class TestCanvas(TestCase):
         assert isinstance(page.plain_text_url, str)
         # plain text url returned
         assert page.plain_text_url == 'http://some.org/with/text'
+        # dimensions not in extra data
+        assert page.height is None
+        assert page.width is None
+
+        # with dimensions in extra data
+        extra_data['width'] = 400
+        extra_data['height'] = 300
+        assert page.width == 400
+        assert page.height == 300
 
         # no plain text url, returns None
         page.extra_data['rendering']['format'] = 'some/other-mime'
