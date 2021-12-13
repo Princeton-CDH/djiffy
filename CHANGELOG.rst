@@ -9,6 +9,7 @@ Changelog
 * Shifted continuous integration from Travis-CI to GitHub Actions
 * Admin thumbnail format is now configurable in django settings via **DJIFFY_THUMBNAIL_FORMAT**; default is png
 * Manifest import check for "supported" manifests can be disabled by setting **DJIFFY_IMPORT_CHECK_SUPPORTED** to False in django settings
+* Canvas data now includes dimensions, with convenience properties `width` and `height`
 
 0.6
 ---
