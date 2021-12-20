@@ -11,12 +11,6 @@ Django application to index and display IIIF Manifests for books
 .. image:: https://codecov.io/gh/Princeton-CDH/djiffy/branch/develop/graph/badge.svg
    :target: https://codecov.io/gh/Princeton-CDH/djiffy
    :alt: Code Coverage
-.. image:: https://landscape.io/github/Princeton-CDH/djiffy/develop/landscape.svg?style=flat
-   :target: https://landscape.io/github/Princeton-CDH/djiffy/develop
-   :alt: Code Health
-.. image:: https://requires.io/github/Princeton-CDH/djiffy/requirements.svg?branch=develop
-   :target: https://requires.io/github/Princeton-CDH/djiffy/requirements/?branch=develop
-   :alt: Requirements Status
 .. image:: https://img.shields.io/pypi/pyversions/djiffy
    :alt: PyPI - Python Version
 .. image:: https://img.shields.io/pypi/djversions/djiffy
