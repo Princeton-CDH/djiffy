@@ -1,5 +1,7 @@
 from collections import OrderedDict
 
+from django.conf import settings
+
 from djiffy.models import Manifest, Canvas, IIIFPresentation, IIIFException, \
     get_iiif_url
 
@@ -16,6 +18,8 @@ class ManifestImporter(object):
     stderr = None
     style = None
     # verbosity level?
+
+    check_import_supported = getattr(settings, 'DJIFFY_IMPORT_CHECK_SUPPORTED', True)
 
     # TODO: should have better reporting on what was done
 
@@ -57,10 +61,15 @@ class ManifestImporter(object):
     def import_supported(self, manifest):
         '''Check if import is supported (currently limited to paged or individuals,
         left-to-right content).'''
+
+        # if import check is disabled, bypass checks and return true
+        if not self.check_import_supported:
+            return True
+
         view_hint = getattr(manifest, 'viewingHint', None)
         view_direction = getattr(manifest, 'viewingDirection', None)
-        if (view_hint and manifest.viewingHint in ['paged', 'individuals']) or \
-          (view_direction and manifest.viewingDirection == 'left-to-right'):
+        if (view_hint and manifest.viewingHint in ['paged', 'individuals', None]) or \
+          (view_direction and manifest.viewingDirection in ['left-to-right', 'right-to-left']):
             return True
 
         else:
@@ -76,6 +85,8 @@ class ManifestImporter(object):
         :param manifest: :class:`~djiffy.models.IIIFPresentation`
         :param path: file or url import path
         '''
+
+        self.output('Importing %s' % path)
 
         # flag to indicate if we are updating an existing record
         update_existing = False
@@ -144,7 +155,10 @@ class ManifestImporter(object):
             # appear as a single element or a list
 
             # single link, not in a list
-            if hasattr(manifest.seeAlso, 'format'):
+            if isinstance(manifest.seeAlso, str):
+                # link with no format
+                links.append((manifest.seeAlso, ''))
+            elif hasattr(manifest.seeAlso, 'format'):
                 links.append((manifest.seeAlso.id, manifest.seeAlso.format))
             # list of seeAlso links
             else:
@@ -168,7 +182,12 @@ class ManifestImporter(object):
 
         thumbnail_id = None
         if hasattr(manifest, 'thumbnail'):
-            thumbnail_id = manifest.thumbnail.service.id
+            # if available as IIIF image, use that
+            if hasattr(manifest.thumbnail, 'service'):
+                thumbnail_id = manifest.thumbnail.service.id
+            # otherwise, id is a path to an image
+            else:
+                thumbnail_id = manifest.thumbnail.id
 
         # for now, only worry about the first sequence
         # create a db canvas element for each canvas
@@ -195,8 +214,8 @@ class ManifestImporter(object):
             if thumbnail_id is not None and db_canvas.iiif_image_id == thumbnail_id:
                 db_canvas.thumbnail = True
 
-            # check for any extra_data, right now only rendering
-            for field in ['rendering']:
+            # include other fields as extra_data for now
+            for field in ['rendering', 'width', 'height']:
                 if hasattr(canvas, field):
                     db_canvas.extra_data[field] = getattr(canvas, field)
             db_canvas.save()

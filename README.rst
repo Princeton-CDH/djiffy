@@ -30,7 +30,7 @@ manifests.  This is an *alpha* version and it does *not* yet support
 the full IIIF Presentation specification.
 
 .. Note::
-    djiffy is tested against Django 1.11 through 3.0.
+    djiffy is tested against Django 2.2 through 3.1.
 
 .. _Django: https://www.djangoproject.com/
 .. _IIIF Presentation: http://iiif.io/api/presentation/2.1/
@@ -143,8 +143,30 @@ configurations.
 - Or install test requirements and use py.test directly::
 
     pip install -e '.[test]'
-    py.test
+    pytest
 
+Documentation
+^^^^^^^^^^^^^
+
+Documentation is generated using `sphinx <http://www.sphinx-doc.org/>`_.
+To generate documentation, first install development requirements::
+
+    pip install -r dev-requirements.txt
+
+Then build documentation using the customized make file in the `docs`
+directory::
+
+    cd sphinx-docs
+    make html
+
+To build and publish documentation for a release, add the ``gh-pages`` branch
+to the ``docs`` folder in your worktree::
+
+    git worktree add -B gh-pages docs origin/gh-pages
+
+In the ``sphinx-docs`` folder, use ``make docs`` to build the HTML documents
+and static assets, add it to the docs folder, and commit it for publication on
+Github Pages. After the build completes, push to GitHub from the ``docs`` folder.
 
 License
 -------

@@ -62,6 +62,7 @@ class Manifest(models.Model):
 
     # todo: metadata? thumbnail references
     # - should we cache the actual manifest file?
+    # TODO: thumbnail doesn't have to be a IIIF image! Support thumbnail url?
 
     def __str__(self):
         return self.label or self.short_id
@@ -168,16 +169,18 @@ class IIIFImage(iiif.IIIFImageClient):
     #: long edge size for mini thumbnail
     mini_thumbnail_size = 100
 
+    thumbnail_format = getattr(settings, 'DJIFFY_THUMBNAIL_FORMAT', 'png')
+
     def thumbnail(self):
         '''thumbnail'''
         return self.size(height=self.thumbnail_size, width=self.thumbnail_size,
-                         exact=True).format('png')
+                         exact=True).format(self.thumbnail_format)
 
     def mini_thumbnail(self):
         '''mini thumbnail'''
         return self.size(height=self.mini_thumbnail_size,
                          width=self.mini_thumbnail_size, exact=True) \
-                   .format('png')
+                   .format(self.thumbnail_format)
 
     def page_size(self):
         '''page size for display: :attr:`SINGLE_PAGE_SIZE` on the long edge'''
@@ -199,7 +202,7 @@ class Canvas(models.Model):
     #: :class:`Manifest` this canvas vbelongs to
     manifest = models.ForeignKey(Manifest, related_name='canvases',
                                  on_delete=models.CASCADE)
-    #: boolean flag to indicate if this canvas shoudl be used as thumbnail
+    #: boolean flag to indicate if this canvas should be used as thumbnail
     thumbnail = models.BooleanField(default=False)
     #: order of this canvas within associated manifest primary sequence
     order = models.PositiveIntegerField()
@@ -253,6 +256,14 @@ class Canvas(models.Model):
                     return rendering['@id']
         # finally return None if no plain text is available or no rendering
         return None
+
+    @property
+    def width(self):
+        return self.extra_data.get('width', None)
+
+    @property
+    def height(self):
+        return self.extra_data.get('height', None)
 
     def get_absolute_url(self):
         ''''url for this canvas within the django site'''
