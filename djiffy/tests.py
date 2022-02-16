@@ -360,6 +360,12 @@ class TestIIIFPresentation(TestCase):
                 IIIFPresentation.from_url(manifest_url)
             assert 'Error parsing JSON' in str(excinfo.value)
 
+    def test_from_url_bad_domain(self):
+        manifest_url = 'http://ma.ni/fe.st'
+        with pytest.raises(IIIFException):
+            IIIFPresentation.from_url(manifest_url)
+
+
     def test_from_url_or_file(self):
         with patch.object(IIIFPresentation, 'from_url') as mock_from_url:
             # local fixture file
