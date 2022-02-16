@@ -74,6 +74,13 @@ class TestManifest(TestCase):
         book.extra_data['license'] = 'http://rightsstatements.org/vocab/InC/1.0/'
         assert book.license == book.extra_data['license']
 
+    def test_attribution(self):
+        book = Manifest(short_id='bk123')
+        assert book.attribution is None
+
+        book.extra_data['attribution'] = 'Created by a person'
+        assert book.attribution == book.extra_data['attribution']
+
     def test_rights_statement_id(self):
         book = Manifest(short_id='bk123')
         assert book.rights_statement_id is None
@@ -481,9 +488,10 @@ class TestManifestImporter(TestCase):
         assert manif.extra_data[pres.seeAlso.id] == mock_extra_data
         assert mock_getiiifurl.called_with(pres.seeAlso.id)
         assert mock_getiiifurl.return_value.json.called_with()
-        # license & logo available
+        # license, logo, & attribution available
         assert manif.license == "http://rightsstatements.org/vocab/NKC/1.0/"
         assert manif.logo == "https://example.com/logo.png"
+        assert manif.attribution == "Created by a person"
 
         assert len(manif.canvases.all()) == len(pres.sequences[0].canvases)
         assert manif.thumbnail.iiif_image_id == \
@@ -539,7 +547,7 @@ class TestManifestImporter(TestCase):
         manif.delete()
         del pres.seeAlso
         manif = self.importer.import_manifest(pres, self.test_manifest)
-        assert set(manif.extra_data.keys()) == set(['logo', 'license'])
+        assert set(manif.extra_data.keys()) == set(['logo', 'license', 'attribution'])
 
         # unsupported type won't import
         pres.id = 'http://some.other/uri'
