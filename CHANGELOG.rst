@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.7.2
+-----
+
+* Include manifest attribution information in ``extra_data`` on import
+
+
 0.7.1
 -----
 
