@@ -326,7 +326,7 @@ class IIIFPresentation(AttrMap):
                         (uri, err))
             raise IIIFException('Error retrieving manifest at %s: %s %s' %
                 (uri, response.status_code, response.reason))
-        except ConnectionError:
+        except requests.ConnectionError:
             # could not reach URL to get a status code in the first place
             raise IIIFException('Error connecting to manifest at %s' % uri)
 
