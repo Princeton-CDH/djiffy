@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.7.1
+-----
+
+* Improved error handling for connection errors when importing IIIF manifests
+
 0.7
 ---
 
