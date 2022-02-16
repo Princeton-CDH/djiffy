@@ -13,6 +13,7 @@ from piffle import iiif
 import rdflib
 from rdflib.namespace import DC
 import requests
+from requests.exceptions import ConnectionError
 
 
 def get_iiif_url(url):
@@ -326,7 +327,7 @@ class IIIFPresentation(AttrMap):
                         (uri, err))
             raise IIIFException('Error retrieving manifest at %s: %s %s' %
                 (uri, response.status_code, response.reason))
-        except requests.ConnectionError:
+        except ConnectionError:
             # could not reach URL to get a status code in the first place
             raise IIIFException('Error connecting to manifest at %s' % uri)
 
