@@ -89,6 +89,11 @@ class Manifest(models.Model):
         return self.extra_data.get('logo', None)
 
     @property
+    def attribution(self):
+        '''manifest attribution, if there is one'''
+        return self.extra_data.get('attribution', None)
+
+    @property
     def license(self):
         '''manifest license, if there is one'''
         return self.extra_data.get('license', None)

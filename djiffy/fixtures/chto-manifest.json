@@ -895,5 +895,6 @@
     "format": "application/ld+json"
   },
   "license": "http://rightsstatements.org/vocab/NKC/1.0/",
-  "logo": "https://example.com/logo.png"
+  "logo": "https://example.com/logo.png",
+  "attribution": "Created by a person"
 }
