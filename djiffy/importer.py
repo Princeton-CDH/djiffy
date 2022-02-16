@@ -49,7 +49,7 @@ class ManifestImporter(object):
             try:
                 manifest = IIIFPresentation.from_file_or_url(path)
             except IIIFException as err:
-                self.stderr.write(str(err))
+                self.error_msg(str(err))
                 continue
 
             if manifest.type == 'sc:Collection':
