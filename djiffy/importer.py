@@ -173,8 +173,8 @@ class ManifestImporter(object):
                     response = get_iiif_url(url)
                     db_manifest.extra_data[url] = response.json()
 
-        # also check for logo and license and add to extra data
-        for field in ['logo', 'license']:
+        # also check for logo, license, and attribution and add to extra data
+        for field in ['logo', 'license', 'attribution']:
             if hasattr(manifest, field):
                 db_manifest.extra_data[field] = getattr(manifest, field)
 
