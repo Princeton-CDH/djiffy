@@ -13,6 +13,7 @@ from piffle import iiif
 import rdflib
 from rdflib.namespace import DC
 import requests
+from requests.exceptions import ConnectionError
 
 
 def get_iiif_url(url):
@@ -311,21 +312,24 @@ class IIIFPresentation(AttrMap):
         :raises: :class:`IIIFException` if URL is not retrieved successfully,
             if the response is not JSON content, or if the JSON cannot be parsed.
         '''
-        response = get_iiif_url(uri)
-        if response.status_code == requests.codes.ok:
-            try:
-                return cls(response.json())
-            except json.decoder.JSONDecodeError as err:
-                # if json fails, two possibilities:
-                # - we didn't actually get json (e.g. redirect for auth)
-                if 'application/json' not in response.headers['content-type']:
-                    raise IIIFException('No JSON found at %s' % uri)
-                # - there is something wrong with the json
-                raise IIIFException('Error parsing JSON for %s: %s' %
-                    (uri, err))
-
-        raise IIIFException('Error retrieving manifest at %s: %s %s' %
-            (uri, response.status_code, response.reason))
+        try:
+            response = get_iiif_url(uri)
+            if response.status_code == requests.codes.ok:
+                try:
+                    return cls(response.json())
+                except json.decoder.JSONDecodeError as err:
+                    # if json fails, two possibilities:
+                    # - we didn't actually get json (e.g. redirect for auth)
+                    if 'application/json' not in response.headers['content-type']:
+                        raise IIIFException('No JSON found at %s' % uri)
+                    # - there is something wrong with the json
+                    raise IIIFException('Error parsing JSON for %s: %s' %
+                        (uri, err))
+            raise IIIFException('Error retrieving manifest at %s: %s %s' %
+                (uri, response.status_code, response.reason))
+        except ConnectionError:
+            # could not reach URL to get a status code in the first place
+            raise IIIFException('Error connecting to manifest at %s' % uri)
 
     @classmethod
     def is_url(cls, url):
