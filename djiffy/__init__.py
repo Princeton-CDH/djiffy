@@ -1,6 +1,6 @@
 default_app_config = 'djiffy.apps.DjiffyConfig'
 
-__version_info__ = (0, 7, 2, None)
+__version_info__ = (0, 7, 3, None)
 
 
 # Dot-connect all but the last. Last is dash-connected if not None.
