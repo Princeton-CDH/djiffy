@@ -11,6 +11,8 @@ env:
   DB_NAME: djiffy
   DB_USER: djiffy
   DB_PASSWORD: djiffy123
+  DJANGO_DB_BACKEND: postgresql
+
 
 jobs:
   python-unit:

@@ -4,7 +4,7 @@ import os
 # run against postgresql
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
+        "ENGINE": "django.db.backends.%s" % os.getenv("DJANGO_DB_BACKEND"),
         "PASSWORD": os.getenv("DB_PASSWORD"),
         "USER": os.getenv("DB_USER"),
         "NAME": os.getenv("DB_NAME"),

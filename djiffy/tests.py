@@ -515,8 +515,8 @@ class TestManifestImporter(TestCase):
         # first canvas, so it happens to be used as thumbnail
         assert first.thumbnail
         assert first.order == 0
-        # won't import if already in db
-        assert self.importer.import_manifest(pres, self.test_manifest) is None
+        # won't import if already in db, but should return the object
+        assert self.importer.import_manifest(pres, self.test_manifest) == manif
 
         # check that the last canvas is not used as thumbnail and is in order
         assert not manif.canvases.last().thumbnail

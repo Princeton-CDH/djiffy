@@ -13,7 +13,7 @@ help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 .PHONY: help Makefile
-l
+
 # build production documentation for publishing on github pages
 # run the html build, then move to /docs/ folder and add to git
 docs:
