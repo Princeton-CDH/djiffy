@@ -39,7 +39,6 @@ jobs:
             pip-
 
       - name: Install package dependencies
-      - name: Install package with dependencies
         run: |
           pip install -q Django==${{ env.DJANGO_VERSION }}
           pip install -e .
