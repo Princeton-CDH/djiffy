@@ -15,7 +15,8 @@ Django application to index and display IIIF Manifests for books
    :alt: PyPI - Python Version
 .. image:: https://img.shields.io/pypi/djversions/djiffy
    :alt: PyPI - Django Version
-
+.. image:: https://github.com/Princeton-CDH/djiffy/actions/workflows/sphinx_docs.yml/badge.svg
+    :alt: Sphinx Docs
 
 
 **djiffy** is intended to be a reusable `Django`_ application for
@@ -28,6 +29,8 @@ the full IIIF Presentation specification.
 
 .. _Django: https://www.djangoproject.com/
 .. _IIIF Presentation: http://iiif.io/api/presentation/2.1/
+
+Code documentation is available at https://princeton-cdh.github.io/djiffy/
 
 
 Installation
@@ -153,14 +156,8 @@ directory::
     cd sphinx-docs
     make html
 
-To build and publish documentation for a release, add the ``gh-pages`` branch
-to the ``docs`` folder in your worktree::
-
-    git worktree add -B gh-pages docs origin/gh-pages
-
-In the ``sphinx-docs`` folder, use ``make docs`` to build the HTML documents
-and static assets, add it to the docs folder, and commit it for publication on
-Github Pages. After the build completes, push to GitHub from the ``docs`` folder.
+As of v0.7.3, documentation is automatically built with GitHub Actions
+and published using GitHub pages.
 
 License
 -------
