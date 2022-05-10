@@ -6,6 +6,8 @@ Changelog
 
 * `ManifestImporter.import_paths` now returns a list of database manifest
    objects for the requested uris, whether newly imported or already available
+* Setup GitHub Actions workflow for sphinx documentation
+
 
 0.7.2
 -----
