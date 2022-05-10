@@ -9,6 +9,8 @@ on:
 env:
   DJANGO_ENV: docs
   DJANGO_VERSION: 3.2
+  DJANGO_DB_BACKEND: sqlite3
+
 
 jobs:
   docs:
