@@ -1,0 +1,70 @@
+name: sphinx docs
+
+on:
+  push: # run on push to main and PR
+    branches:
+      - main
+  pull_request:
+
+env:
+  DJANGO_ENV: docs
+  DJANGO_VERSION: 3.2
+
+jobs:
+  docs:
+    name: sphinx documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Python version to use is stored in the .python-version file, which is the
+      # convention for pyenv: https://github.com/pyenv/pyenv
+      - name: Get Python version
+        run: echo "PYTHON_VERSION=$(cat .python-version)" >> $GITHUB_ENV
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      # We base the python cache on the hash of all requirements files, so that
+      # if any change, the cache is invalidated.
+      - name: Cache pip
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ hashFiles('requirements/*.txt') }}
+          restore-keys: |
+            pip-${{ hashFiles('requirements/*.txt') }}
+            pip-
+
+      - name: Install package dependencies
+      - name: Install package with dependencies
+        run: |
+          pip install -q Django==${{ env.DJANGO_VERSION }}
+          pip install -e .
+          pip install -e '.[docs]'
+
+      - name: Setup test settings
+        run: |
+          cp ci/testsettings.py testsettings.py
+          python -c "import uuid; print('SECRET_KEY = \'%s\'' % uuid.uuid4())" >> testsettings.py
+
+      - name: Build Sphinx docs
+        run: cd sphinx-docs && make -b coverage html
+
+      # for pull requests, exit with error if documentation coverage is incomplete
+      - name: Report on documentation coverage
+        if: ${{ github.event_name == 'pull_request' }}
+        run: if [[ $((`wc -l < sphinx-docs/_build/coverage/python.txt`)) -eq 2 ]] ; then echo "Documentation coverage complete"; else cat sphinx-docs/_build/coverage/python.txt && exit 1; fi
+
+      # when building on push to main, publish the built docs
+      - name: Deploy built docs to github pages
+        if: ${{ github.event_name == 'push' }}
+        uses: peaceiris/actions-gh-pages@v2
+        env:
+          ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          PUBLISH_BRANCH: gh-pages
+          PUBLISH_DIR: ./sphinx-docs/_build/html
+        with:
+          emptyCommits: false
