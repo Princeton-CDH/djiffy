@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 import json
 import os.path
-import sys
+
 import urllib
 
 # cached property is only available in Python 3.8+
@@ -116,7 +116,7 @@ class Manifest(models.Model):
         license = self.license
         if license:
             # CC uri is also http rather than https
-            if license.startswith('http://creativecommons.org'):
+            if urllib.parse.urlparse(license).hostname == 'creativecommons.org':
                 # remove language from url if present
                 url_parts = license.rstrip("/").split('/')
                 # url looks like https://creativecommons.org/publicdomain/mark/1.0/deed.de
@@ -130,13 +130,13 @@ class Manifest(models.Model):
     def rights_statement_id(self):
         '''short id for rightstatement.org license'''
         # rightstatement uri is http, not https
-        if self.license and self.license.startswith('http://rightsstatements.org'):
+        if self.license and urllib.parse.urlparse(self.license).hostname == 'rightsstatements.org':
             return self.license.rstrip(' /').split('/')[-2]
 
     @c_property_if38
     def creativecommons_id(self):
         '''short id for creative commons license'''
-        if self.license and self.license.startswith('https://creativecommons.org'):
+        if self.license and urllib.parse.urlparse(self.license).hostname == 'creativecommons.org':
             if "publicdomain/zero/" in self.license:
                 return "cc-zero"
             if "publicdomain/mark/" in self.license:
@@ -171,10 +171,11 @@ class Manifest(models.Model):
             # if license is defined and a url
             if self.license and urllib.parse.urlparse(self.license).scheme in ['http', 'https']:
                 self._rights_graph = rdflib.Graph()
+                url_hostname = urllib.parse.urlparse(self.license).hostname
                 try:
                     # rights statement org does content-negotiation for json-jd,
                     # but rdflib doesn't handle that automatically
-                    if 'rightsstatements.org' in self.license:
+                    if url_hostname == 'rightsstatements.org':
                         resp = requests.get(self.license,
                                             headers={'Accept': 'application/json'},
                                             allow_redirects=False)
@@ -183,7 +184,7 @@ class Manifest(models.Model):
 
                     # creative commons doesn't support content negotiation,
                     # but you can add rdf to the end of the url
-                    elif 'creativecommons.org' in self.license:
+                    elif url_hostname == 'creativecommons.org':
                         # license uri removes language if present and adds trailing slash
                         self._rights_graph.parse("%srdf" % self.license_uri)
 
