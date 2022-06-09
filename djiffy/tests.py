@@ -64,6 +64,7 @@ class TestManifest(TestCase):
         book = Manifest(short_id='bk123')
         assert book.logo is None
 
+        book = Manifest(short_id='bk123')
         book.extra_data['logo'] = 'http://so.me/logo.img'
         assert book.logo == book.extra_data['logo']
 
@@ -71,6 +72,7 @@ class TestManifest(TestCase):
         book = Manifest(short_id='bk123')
         assert book.license is None
 
+        book = Manifest(short_id='bk123')
         book.extra_data['license'] = 'http://rightsstatements.org/vocab/InC/1.0/'
         assert book.license == book.extra_data['license']
 
@@ -78,6 +80,7 @@ class TestManifest(TestCase):
         book = Manifest(short_id='bk123')
         assert book.attribution is None
 
+        book = Manifest(short_id='bk123')
         book.extra_data['attribution'] = 'Created by a person'
         assert book.attribution == book.extra_data['attribution']
 
@@ -85,22 +88,25 @@ class TestManifest(TestCase):
         book = Manifest(short_id='bk123')
         assert book.rights_statement_id is None
 
-        book.extra_data['license'] = 'http://rightsstatements.org/vocab/InC/1.0/'
+        book = Manifest(
+            short_id='bk123',
+            extra_data={'license': 'http://rightsstatements.org/vocab/InC/1.0/'})
         assert book.rights_statement_id == 'InC'
 
     @patch('djiffy.models.requests')
     @patch('djiffy.models.rdflib')
     def test_license_label(self, mockrdflib, mockrequests):
-
-
         book = Manifest(short_id='bk123')
         # no license, no label
         assert book.license_label() is None
+
         # non http license, no label
+        book = Manifest(short_id='bk123')
         book.extra_data['license'] = 'foo://bar'
         assert book.license_label() is None
 
         # rightsstatement.org license
+        book = Manifest(short_id='bk123')
         book.extra_data['license'] = 'http://rightsstatements.org/vocab/NKC/1.0/'
         # simulate expected return: 303 to data url
         mockresponse = mockrequests.get.return_value

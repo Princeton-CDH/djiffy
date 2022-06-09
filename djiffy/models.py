@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from functools import cached_property
 import json
 import os.path
 import urllib
@@ -83,26 +84,50 @@ class Manifest(models.Model):
             return self.thumbnail.admin_thumbnail()
     admin_thumbnail.short_description = 'Thumbnail'
 
-    @property
+    @cached_property
     def logo(self):
         '''manifest logo, if there is one'''
         return self.extra_data.get('logo', None)
 
-    @property
+    @cached_property
     def attribution(self):
         '''manifest attribution, if there is one'''
         return self.extra_data.get('attribution', None)
 
-    @property
+    @cached_property
     def license(self):
         '''manifest license, if there is one'''
         return self.extra_data.get('license', None)
 
-    @property
+    @cached_property
+    def license_uri(self):
+        '''manifest license as :class:`rdflib.URIRef`, if there is a license'''
+        license = self.license
+        if license:
+            if 'creativecommons.org' in license:
+                # remove language from url if present
+                url_parts = license.rstrip("/").split('/')
+                # url looks like https://creativecommons.org/publicdomain/mark/1.0/deed.de
+                # if the last part is a language code, remove it
+                if url_parts[-1].startswith("deed."):
+                    url_parts = url_parts[:-1]
+                license = "%s/" % '/'.join(url_parts)   # URI requires trailing slash
+            return rdflib.URIRef(license)
+
+    @cached_property
     def rights_statement_id(self):
         '''short id for rightstatement.org license'''
         if self.license and 'rightsstatements.org' in self.license:
             return self.license.rstrip(' /').split('/')[-2]
+
+    @cached_property
+    def creativecommons_id(self):
+        '''short id for creative commons license'''
+        if self.license and 'creativecommons.org' in self.license:
+            if "publicdomain/zero/" in self.license:
+                return "cc-zero"
+            if "publicdomain/mark/" in self.license:
+                return "publicdomain"
 
     _rights_graph = None
 
@@ -137,8 +162,8 @@ class Manifest(models.Model):
                     # creative commons doesn't support content negotiation,
                     # but you can add rdf to the end of the url
                     elif 'creativecommons.org' in self.license:
-                        rdf_uri = '/'.join([self.license.rstrip('/'), 'rdf'])
-                        self._rights_graph.parse(rdf_uri)
+                        # license uri removes language if present and adds trailing slash
+                        self._rights_graph.parse("%srdf" % self.license_uri)
 
                 except Exception:
                     # possible to get an exception when parsing the
@@ -151,7 +176,7 @@ class Manifest(models.Model):
         # get the preferred label for this license in the requested language;
         # returns a list of label, value; use the first value
         if self._rights_graph:
-            license_uri = rdflib.URIRef(self.license)
+            license_uri = self.license_uri
             preflabel = self._rights_graph.preferredLabel(license_uri,
                                                           lang=lang)
             if preflabel:
