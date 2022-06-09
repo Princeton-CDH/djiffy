@@ -64,6 +64,7 @@ class TestManifest(TestCase):
         book = Manifest(short_id='bk123')
         assert book.logo is None
 
+        book = Manifest(short_id='bk123')
         book.extra_data['logo'] = 'http://so.me/logo.img'
         assert book.logo == book.extra_data['logo']
 
@@ -71,13 +72,31 @@ class TestManifest(TestCase):
         book = Manifest(short_id='bk123')
         assert book.license is None
 
+        book = Manifest(short_id='bk123')
         book.extra_data['license'] = 'http://rightsstatements.org/vocab/InC/1.0/'
         assert book.license == book.extra_data['license']
+
+    def test_license_uri(self):
+        book = Manifest(short_id='bk123')
+        assert book.license_uri is None
+
+        # rights statement uri used as-is
+        book = Manifest(short_id='bk456')
+        rights_statement = 'http://rightsstatements.org/vocab/InC/1.0/'
+        book.extra_data['license'] = rights_statement
+        assert book.license_uri == rdflib.URIRef(rights_statement)
+
+        # creative commons uri removes language/translation portion
+        cc_pd_uri = "http://creativecommons.org/publicdomain/mark/1.0/"
+        book = Manifest(short_id='bk789')
+        book.extra_data['license'] = "%sdeed.de" % cc_pd_uri
+        assert book.license_uri == rdflib.URIRef(cc_pd_uri)
 
     def test_attribution(self):
         book = Manifest(short_id='bk123')
         assert book.attribution is None
 
+        book = Manifest(short_id='bk123')
         book.extra_data['attribution'] = 'Created by a person'
         assert book.attribution == book.extra_data['attribution']
 
@@ -85,22 +104,58 @@ class TestManifest(TestCase):
         book = Manifest(short_id='bk123')
         assert book.rights_statement_id is None
 
-        book.extra_data['license'] = 'http://rightsstatements.org/vocab/InC/1.0/'
+        book = Manifest(
+            short_id='bk123',
+            extra_data={'license': 'http://rightsstatements.org/vocab/InC/1.0/'})
         assert book.rights_statement_id == 'InC'
+
+    def test_creativecommons_id(self):
+        book = Manifest(short_id='bk123')
+        assert book.creativecommons_id is None
+
+        # public domain
+        book = Manifest(
+            short_id='bk456',
+            extra_data={'license': 'https://creativecommons.org/publicdomain/mark/1.0/'})
+        assert book.creativecommons_id == 'publicdomain'
+
+        # cc zero
+        book = Manifest(
+            short_id='bk789',
+            extra_data={'license': 'https://creativecommons.org/publicdomain/zero/1.0/'})
+        assert book.creativecommons_id == 'cc-zero'
+
+    def test_license_image(self):
+        book = Manifest(short_id='bk123')
+        assert book.license_image is None
+
+        # in copyright
+        book = Manifest(
+            short_id='bk456',
+            extra_data={'license': 'http://rightsstatements.org/vocab/InC/1.0/'})
+        assert book.license_image == "img/rightsstatements_org/InC.svg"
+
+        # cc zero
+        book = Manifest(
+            short_id='bk789',
+            extra_data={'license': 'https://creativecommons.org/publicdomain/zero/1.0/'})
+        assert book.license_image == "img/creativecommons/cc-zero.svg"
+
 
     @patch('djiffy.models.requests')
     @patch('djiffy.models.rdflib')
     def test_license_label(self, mockrdflib, mockrequests):
-
-
         book = Manifest(short_id='bk123')
         # no license, no label
         assert book.license_label() is None
+
         # non http license, no label
+        book = Manifest(short_id='bk123')
         book.extra_data['license'] = 'foo://bar'
         assert book.license_label() is None
 
         # rightsstatement.org license
+        book = Manifest(short_id='bk123')
         book.extra_data['license'] = 'http://rightsstatements.org/vocab/NKC/1.0/'
         # simulate expected return: 303 to data url
         mockresponse = mockrequests.get.return_value
