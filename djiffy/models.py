@@ -8,6 +8,7 @@ from attrdict import AttrMap
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
+from django.templatetags.static import static
 from django.utils.html import format_html
 from jsonfield import JSONField
 from piffle import iiif
@@ -128,6 +129,14 @@ class Manifest(models.Model):
                 return "cc-zero"
             if "publicdomain/mark/" in self.license:
                 return "publicdomain"
+
+    @cached_property
+    def license_image(self):
+        '''license image, if we can generate one'''
+        if self.rights_statement_id:
+            return static("img/rightsstatements_org/%s.svg" % self.rights_statement_id)
+        if self.creativecommons_id:
+            return static("img/creativecommons/%s.svg" % self.creativecommons_id)
 
     _rights_graph = None
 
