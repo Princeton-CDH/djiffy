@@ -1,8 +1,15 @@
 from collections import OrderedDict
-from functools import cached_property
+
 import json
 import os.path
+import sys
 import urllib
+
+# cached property is only available in Python 3.8+
+try:
+    from functools import cached_property
+except ImportError:
+    cached_property = None
 
 from attrdict import AttrMap
 from django.conf import settings
@@ -16,6 +23,9 @@ import rdflib
 from rdflib.namespace import DC
 import requests
 from requests.exceptions import ConnectionError
+
+# use cached property if python3.8 or greater; fallback to regular property
+c_property_if38 = cached_property or property
 
 
 def get_iiif_url(url):
@@ -85,22 +95,22 @@ class Manifest(models.Model):
             return self.thumbnail.admin_thumbnail()
     admin_thumbnail.short_description = 'Thumbnail'
 
-    @cached_property
+    @c_property_if38
     def logo(self):
         '''manifest logo, if there is one'''
         return self.extra_data.get('logo', None)
 
-    @cached_property
+    @c_property_if38
     def attribution(self):
         '''manifest attribution, if there is one'''
         return self.extra_data.get('attribution', None)
 
-    @cached_property
+    @c_property_if38
     def license(self):
         '''manifest license, if there is one'''
         return self.extra_data.get('license', None)
 
-    @cached_property
+    @c_property_if38
     def license_uri(self):
         '''manifest license as :class:`rdflib.URIRef`, if there is a license'''
         license = self.license
@@ -115,22 +125,22 @@ class Manifest(models.Model):
                 license = "%s/" % '/'.join(url_parts)   # URI requires trailing slash
             return rdflib.URIRef(license)
 
-    @cached_property
+    @c_property_if38
     def rights_statement_id(self):
         '''short id for rightstatement.org license'''
         if self.license and 'rightsstatements.org' in self.license:
             return self.license.rstrip(' /').split('/')[-2]
 
-    @cached_property
+    @c_property_if38
     def creativecommons_id(self):
         '''short id for creative commons license'''
-        if self.license and 'creativecommons.org' in self.license:
+        if self.license and self.license.startswith('https://creativecommons.org'):
             if "publicdomain/zero/" in self.license:
                 return "cc-zero"
             if "publicdomain/mark/" in self.license:
                 return "publicdomain"
 
-    @cached_property
+    @c_property_if38
     def license_image(self):
         '''license image, if we can generate one'''
         if self.rights_statement_id:
@@ -140,6 +150,7 @@ class Manifest(models.Model):
 
     _rights_graph = None
 
+    # TODO: should use django current language if possible
     def license_label(self, lang='en'):
         '''Get the text label for the rights license.  Uses local
         value from edm rights if available; otherwise uses
