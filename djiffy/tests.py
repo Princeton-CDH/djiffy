@@ -87,7 +87,7 @@ class TestManifest(TestCase):
         assert book.license_uri == rdflib.URIRef(rights_statement)
 
         # creative commons uri removes language/translation portion
-        cc_pd_uri = "https://creativecommons.org/publicdomain/mark/1.0/"
+        cc_pd_uri = "http://creativecommons.org/publicdomain/mark/1.0/"
         book = Manifest(short_id='bk789')
         book.extra_data['license'] = "%sdeed.de" % cc_pd_uri
         assert book.license_uri == rdflib.URIRef(cc_pd_uri)
