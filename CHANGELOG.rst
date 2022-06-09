@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.9
+---
+
+* Manifest dynamic properties for license uris and labels are now cached
+* Manifest license logic now handles CreativeCommons license URIs.
+* Images for rightstatement.org and some CC licenses are now included in static content
+* License image path can be generated using the `license_image` property for Manifests with supported licenses
+
 0.7.3
 -----
 
