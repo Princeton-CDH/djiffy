@@ -115,7 +115,7 @@ class Manifest(models.Model):
         '''manifest license as :class:`rdflib.URIRef`, if there is a license'''
         license = self.license
         if license:
-            if 'creativecommons.org' in license:
+            if license.startswith('https://creativecommons.org'):
                 # remove language from url if present
                 url_parts = license.rstrip("/").split('/')
                 # url looks like https://creativecommons.org/publicdomain/mark/1.0/deed.de
@@ -128,7 +128,8 @@ class Manifest(models.Model):
     @c_property_if38
     def rights_statement_id(self):
         '''short id for rightstatement.org license'''
-        if self.license and 'rightsstatements.org' in self.license:
+        # rightstatement uri is http, not https
+        if self.license and self.license.startswith('http://rightsstatements.org'):
             return self.license.rstrip(' /').split('/')[-2]
 
     @c_property_if38
