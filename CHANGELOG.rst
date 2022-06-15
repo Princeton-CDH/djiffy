@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.9
+0.8
 ---
 
 * Manifest dynamic properties for license uris and labels are now cached
