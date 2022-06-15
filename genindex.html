@@ -1,16 +1,17 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; Djiffy 0.7.0-dev documentation</title>
+    <title>Index &#8212; Djiffy 0.8.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/style.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
@@ -58,14 +59,16 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="codedocs.html#djiffy.management.commands.import_manifest.Command.add_arguments">add_arguments() (djiffy.management.commands.import_manifest.Command method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="codedocs.html#djiffy.models.Canvas.admin_thumbnail">admin_thumbnail() (djiffy.models.Canvas method)</a>
 
       <ul>
         <li><a href="codedocs.html#djiffy.models.Manifest.admin_thumbnail">(djiffy.models.Manifest method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="codedocs.html#djiffy.models.Manifest.attribution">attribution (djiffy.models.Manifest property)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -89,6 +92,8 @@
       <li><a href="codedocs.html#djiffy.management.commands.import_manifest.Command">Command (class in djiffy.management.commands.import_manifest)</a>
 </li>
       <li><a href="codedocs.html#djiffy.models.Manifest.created">created (djiffy.models.Manifest attribute)</a>
+</li>
+      <li><a href="codedocs.html#djiffy.models.Manifest.creativecommons_id">creativecommons_id (djiffy.models.Manifest property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -230,11 +235,15 @@
       </ul></li>
       <li><a href="codedocs.html#djiffy.models.Manifest.last_modified">last_modified (djiffy.models.Manifest attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="codedocs.html#djiffy.models.Manifest.license">license (djiffy.models.Manifest property)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="codedocs.html#djiffy.models.Manifest.license_image">license_image (djiffy.models.Manifest property)</a>
+</li>
       <li><a href="codedocs.html#djiffy.models.Manifest.license_label">license_label() (djiffy.models.Manifest method)</a>
+</li>
+      <li><a href="codedocs.html#djiffy.models.Manifest.license_uri">license_uri (djiffy.models.Manifest property)</a>
 </li>
       <li><a href="codedocs.html#djiffy.models.Manifest.logo">logo (djiffy.models.Manifest property)</a>
 </li>
@@ -447,7 +456,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script><div class="powered_by">
+<script>document.getElementById('searchbox').style.display = "block"</script><div class="powered_by">
 <p>Powered by:</p>
 <a href="http://cdh.princeton.edu/">
 <img src="https://cdh.princeton.edu/static/img/CDH_logo_01.svg"
@@ -462,7 +471,7 @@
       &copy;2017, CDH @ Princeton.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

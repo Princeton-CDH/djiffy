@@ -1,16 +1,17 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>djiffy.models &#8212; Djiffy 0.7.0-dev documentation</title>
+    <title>djiffy.models &#8212; Djiffy 0.8.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/style.css" />
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -31,21 +32,34 @@
           <div class="body" role="main">
             
   <h1>Source code for djiffy.models</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os.path</span>
+
 <span class="kn">import</span> <span class="nn">urllib</span>
 
-<span class="kn">from</span> <span class="nn">attrdict</span> <span class="kn">import</span> <span class="n">AttrMap</span>
-<span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
-<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
-<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">reverse</span>
-<span class="kn">from</span> <span class="nn">django.utils.html</span> <span class="kn">import</span> <span class="n">format_html</span>
-<span class="kn">from</span> <span class="nn">jsonfield</span> <span class="kn">import</span> <span class="n">JSONField</span>
-<span class="kn">from</span> <span class="nn">piffle</span> <span class="kn">import</span> <span class="n">iiif</span>
+<span class="c1"># cached property is only available in Python 3.8+</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">cached_property</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">cached_property</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="kn">from</span> <span class="nn">attrdict</span> <span class="k">import</span> <span class="n">AttrMap</span>
+<span class="kn">from</span> <span class="nn">django.conf</span> <span class="k">import</span> <span class="n">settings</span>
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="k">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="k">import</span> <span class="n">reverse</span>
+<span class="kn">from</span> <span class="nn">django.templatetags.static</span> <span class="k">import</span> <span class="n">static</span>
+<span class="kn">from</span> <span class="nn">django.utils.html</span> <span class="k">import</span> <span class="n">format_html</span>
+<span class="kn">from</span> <span class="nn">jsonfield</span> <span class="k">import</span> <span class="n">JSONField</span>
+<span class="kn">from</span> <span class="nn">piffle</span> <span class="k">import</span> <span class="n">iiif</span>
 <span class="kn">import</span> <span class="nn">rdflib</span>
-<span class="kn">from</span> <span class="nn">rdflib.namespace</span> <span class="kn">import</span> <span class="n">DC</span>
+<span class="kn">from</span> <span class="nn">rdflib.namespace</span> <span class="k">import</span> <span class="n">DC</span>
 <span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">requests.exceptions</span> <span class="k">import</span> <span class="ne">ConnectionError</span>
+
+<span class="c1"># use cached property if python3.8 or greater; fallback to regular property</span>
+<span class="n">c_property_if38</span> <span class="o">=</span> <span class="n">cached_property</span> <span class="ow">or</span> <span class="nb">property</span>
 
 
 <div class="viewcode-block" id="get_iiif_url"><a class="viewcode-back" href="../../codedocs.html#djiffy.models.get_iiif_url">[docs]</a><span class="k">def</span> <span class="nf">get_iiif_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
@@ -97,7 +111,7 @@
     <span class="c1"># - should we cache the actual manifest file?</span>
     <span class="c1"># TODO: thumbnail doesn&#39;t have to be a IIIF image! Support thumbnail url?</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">short_id</span>
 
     <span class="nd">@property</span>
@@ -115,24 +129,64 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">thumbnail</span><span class="o">.</span><span class="n">admin_thumbnail</span><span class="p">()</span></div>
     <span class="n">admin_thumbnail</span><span class="o">.</span><span class="n">short_description</span> <span class="o">=</span> <span class="s1">&#39;Thumbnail&#39;</span>
 
-    <span class="nd">@property</span>
+    <span class="nd">@c_property_if38</span>
     <span class="k">def</span> <span class="nf">logo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;manifest logo, if there is one&#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;logo&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-    <span class="nd">@property</span>
+    <span class="nd">@c_property_if38</span>
+    <span class="k">def</span> <span class="nf">attribution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;manifest attribution, if there is one&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;attribution&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="nd">@c_property_if38</span>
     <span class="k">def</span> <span class="nf">license</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;manifest license, if there is one&#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;license&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-    <span class="nd">@property</span>
+    <span class="nd">@c_property_if38</span>
+    <span class="k">def</span> <span class="nf">license_uri</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;manifest license as :class:`rdflib.URIRef`, if there is a license&#39;&#39;&#39;</span>
+        <span class="n">license</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">license</span>
+        <span class="k">if</span> <span class="n">license</span><span class="p">:</span>
+            <span class="c1"># CC uri is also http rather than https</span>
+            <span class="k">if</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="n">license</span><span class="p">)</span><span class="o">.</span><span class="n">hostname</span> <span class="o">==</span> <span class="s1">&#39;creativecommons.org&#39;</span><span class="p">:</span>
+                <span class="c1"># remove language from url if present</span>
+                <span class="n">url_parts</span> <span class="o">=</span> <span class="n">license</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+                <span class="c1"># url looks like https://creativecommons.org/publicdomain/mark/1.0/deed.de</span>
+                <span class="c1"># if the last part is a language code, remove it</span>
+                <span class="k">if</span> <span class="n">url_parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;deed.&quot;</span><span class="p">):</span>
+                    <span class="n">url_parts</span> <span class="o">=</span> <span class="n">url_parts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">license</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/&quot;</span> <span class="o">%</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">url_parts</span><span class="p">)</span>   <span class="c1"># URI requires trailing slash</span>
+            <span class="k">return</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">license</span><span class="p">)</span>
+
+    <span class="nd">@c_property_if38</span>
     <span class="k">def</span> <span class="nf">rights_statement_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;short id for rightstatement.org license&#39;&#39;&#39;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">license</span> <span class="ow">and</span> <span class="s1">&#39;rightsstatements.org&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">license</span><span class="p">:</span>
+        <span class="c1"># rightstatement uri is http, not https</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">license</span> <span class="ow">and</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">license</span><span class="p">)</span><span class="o">.</span><span class="n">hostname</span> <span class="o">==</span> <span class="s1">&#39;rightsstatements.org&#39;</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">license</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39; /&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="nd">@c_property_if38</span>
+    <span class="k">def</span> <span class="nf">creativecommons_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;short id for creative commons license&#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">license</span> <span class="ow">and</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">license</span><span class="p">)</span><span class="o">.</span><span class="n">hostname</span> <span class="o">==</span> <span class="s1">&#39;creativecommons.org&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;publicdomain/zero/&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">license</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;cc-zero&quot;</span>
+            <span class="k">if</span> <span class="s2">&quot;publicdomain/mark/&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">license</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;publicdomain&quot;</span>
+
+    <span class="nd">@c_property_if38</span>
+    <span class="k">def</span> <span class="nf">license_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;license image, if we can generate one&#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rights_statement_id</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">static</span><span class="p">(</span><span class="s2">&quot;img/rightsstatements_org/</span><span class="si">%s</span><span class="s2">.svg&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">rights_statement_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">creativecommons_id</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">static</span><span class="p">(</span><span class="s2">&quot;img/creativecommons/</span><span class="si">%s</span><span class="s2">.svg&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">creativecommons_id</span><span class="p">)</span>
 
     <span class="n">_rights_graph</span> <span class="o">=</span> <span class="kc">None</span>
 
+    <span class="c1"># TODO: should use django current language if possible</span>
 <div class="viewcode-block" id="Manifest.license_label"><a class="viewcode-back" href="../../codedocs.html#djiffy.models.Manifest.license_label">[docs]</a>    <span class="k">def</span> <span class="nf">license_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Get the text label for the rights license.  Uses local</span>
 <span class="sd">        value from edm rights if available; otherwise uses</span>
@@ -151,10 +205,11 @@
             <span class="c1"># if license is defined and a url</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">license</span> <span class="ow">and</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">license</span><span class="p">)</span><span class="o">.</span><span class="n">scheme</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;https&#39;</span><span class="p">]:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_rights_graph</span> <span class="o">=</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+                <span class="n">url_hostname</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">license</span><span class="p">)</span><span class="o">.</span><span class="n">hostname</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="c1"># rights statement org does content-negotiation for json-jd,</span>
                     <span class="c1"># but rdflib doesn&#39;t handle that automatically</span>
-                    <span class="k">if</span> <span class="s1">&#39;rightsstatements.org&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">license</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">url_hostname</span> <span class="o">==</span> <span class="s1">&#39;rightsstatements.org&#39;</span><span class="p">:</span>
                         <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">license</span><span class="p">,</span>
                                             <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">},</span>
                                             <span class="n">allow_redirects</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -163,9 +218,9 @@
 
                     <span class="c1"># creative commons doesn&#39;t support content negotiation,</span>
                     <span class="c1"># but you can add rdf to the end of the url</span>
-                    <span class="k">elif</span> <span class="s1">&#39;creativecommons.org&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">license</span><span class="p">:</span>
-                        <span class="n">rdf_uri</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">license</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">),</span> <span class="s1">&#39;rdf&#39;</span><span class="p">])</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_rights_graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">rdf_uri</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">url_hostname</span> <span class="o">==</span> <span class="s1">&#39;creativecommons.org&#39;</span><span class="p">:</span>
+                        <span class="c1"># license uri removes language if present and adds trailing slash</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_rights_graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">rdf&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">license_uri</span><span class="p">)</span>
 
                 <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                     <span class="c1"># possible to get an exception when parsing the</span>
@@ -178,7 +233,7 @@
         <span class="c1"># get the preferred label for this license in the requested language;</span>
         <span class="c1"># returns a list of label, value; use the first value</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rights_graph</span><span class="p">:</span>
-            <span class="n">license_uri</span> <span class="o">=</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">license</span><span class="p">)</span>
+            <span class="n">license_uri</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">license_uri</span>
             <span class="n">preflabel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rights_graph</span><span class="o">.</span><span class="n">preferredLabel</span><span class="p">(</span><span class="n">license_uri</span><span class="p">,</span>
                                                           <span class="n">lang</span><span class="o">=</span><span class="n">lang</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">preflabel</span><span class="p">:</span>
@@ -255,7 +310,7 @@
             <span class="p">(</span><span class="s1">&#39;view_manifest&#39;</span><span class="p">,</span> <span class="s1">&#39;Can view </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">verbose_name</span><span class="p">),</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%d</span><span class="s1"> (</span><span class="si">%s</span><span class="s1">)</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">manifest</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">,</span>
             <span class="s1">&#39;*&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">thumbnail</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
 
@@ -289,6 +344,14 @@
                     <span class="k">return</span> <span class="n">rendering</span><span class="p">[</span><span class="s1">&#39;@id&#39;</span><span class="p">]</span>
         <span class="c1"># finally return None if no plain text is available or no rendering</span>
         <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">width</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">height</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Canvas.get_absolute_url"><a class="viewcode-back" href="../../codedocs.html#djiffy.models.Canvas.get_absolute_url">[docs]</a>    <span class="k">def</span> <span class="nf">get_absolute_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;&#39;url for this canvas within the django site&#39;&#39;&#39;</span>
@@ -336,21 +399,24 @@
 <span class="sd">        :raises: :class:`IIIFException` if URL is not retrieved successfully,</span>
 <span class="sd">            if the response is not JSON content, or if the JSON cannot be parsed.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">get_iiif_url</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">requests</span><span class="o">.</span><span class="n">codes</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
-            <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-                <span class="c1"># if json fails, two possibilities:</span>
-                <span class="c1"># - we didn&#39;t actually get json (e.g. redirect for auth)</span>
-                <span class="k">if</span> <span class="s1">&#39;application/json&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s1">&#39;content-type&#39;</span><span class="p">]:</span>
-                    <span class="k">raise</span> <span class="n">IIIFException</span><span class="p">(</span><span class="s1">&#39;No JSON found at </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">uri</span><span class="p">)</span>
-                <span class="c1"># - there is something wrong with the json</span>
-                <span class="k">raise</span> <span class="n">IIIFException</span><span class="p">(</span><span class="s1">&#39;Error parsing JSON for </span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
-                    <span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
-
-        <span class="k">raise</span> <span class="n">IIIFException</span><span class="p">(</span><span class="s1">&#39;Error retrieving manifest at </span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
-            <span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">reason</span><span class="p">))</span></div>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">get_iiif_url</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">requests</span><span class="o">.</span><span class="n">codes</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+                <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                    <span class="c1"># if json fails, two possibilities:</span>
+                    <span class="c1"># - we didn&#39;t actually get json (e.g. redirect for auth)</span>
+                    <span class="k">if</span> <span class="s1">&#39;application/json&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s1">&#39;content-type&#39;</span><span class="p">]:</span>
+                        <span class="k">raise</span> <span class="n">IIIFException</span><span class="p">(</span><span class="s1">&#39;No JSON found at </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">uri</span><span class="p">)</span>
+                    <span class="c1"># - there is something wrong with the json</span>
+                    <span class="k">raise</span> <span class="n">IIIFException</span><span class="p">(</span><span class="s1">&#39;Error parsing JSON for </span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
+                        <span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="n">IIIFException</span><span class="p">(</span><span class="s1">&#39;Error retrieving manifest at </span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
+                <span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">reason</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">ConnectionError</span><span class="p">:</span>
+            <span class="c1"># could not reach URL to get a status code in the first place</span>
+            <span class="k">raise</span> <span class="n">IIIFException</span><span class="p">(</span><span class="s1">&#39;Error connecting to manifest at </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">uri</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="IIIFPresentation.is_url"><a class="viewcode-back" href="../../codedocs.html#djiffy.models.IIIFPresentation.is_url">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">is_url</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
@@ -386,7 +452,7 @@
         <span class="k">return</span> <span class="n">uri</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Access an item as an attribute.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -408,19 +474,19 @@
             <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;@</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">key</span>
         <span class="k">return</span> <span class="n">key</span>
 
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Access a value associated with a key.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle_at_keys</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span>
 
-    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a key-value pair to the instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle_at_keys</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Delete a key-value pair</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -500,7 +566,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script><div class="powered_by">
+<script>document.getElementById('searchbox').style.display = "block"</script><div class="powered_by">
 <p>Powered by:</p>
 <a href="http://cdh.princeton.edu/">
 <img src="https://cdh.princeton.edu/static/img/CDH_logo_01.svg"
@@ -515,7 +581,7 @@
       &copy;2017, CDH @ Princeton.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
