@@ -159,6 +159,19 @@ directory::
 As of v0.7.3, documentation is automatically built with GitHub Actions
 and published using GitHub pages.
 
+Adding license images
+^^^^^^^^^^^^^^^^^^^^^
+
+When adding new license image SVG files to this repo, add ``id="licenseimg"`` to
+the ``<svg>`` element of each. This allows djiffy users to embed the SVG inline
+with a ``<use>`` tag, with its ``href`` attribute pointing to ``#licenseimg``.
+
+If the image will need to be recolored for different backgrounds, as in the
+case of the ``rightsstatement_org/`` SVG icons, you can enable this for up to
+two tones in each SVG. To do this, set ``fill`` attributes on paths to
+``fill="inherit"`` (controlled by the ``fill`` CSS property) or
+``fill="currentColor"`` (controlled by the ``color`` CSS property).
+
 License
 -------
 

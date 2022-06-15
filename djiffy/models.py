@@ -1,12 +1,21 @@
 from collections import OrderedDict
+
 import json
 import os.path
+
 import urllib
+
+# cached property is only available in Python 3.8+
+try:
+    from functools import cached_property
+except ImportError:
+    cached_property = None
 
 from attrdict import AttrMap
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
+from django.templatetags.static import static
 from django.utils.html import format_html
 from jsonfield import JSONField
 from piffle import iiif
@@ -14,6 +23,9 @@ import rdflib
 from rdflib.namespace import DC
 import requests
 from requests.exceptions import ConnectionError
+
+# use cached property if python3.8 or greater; fallback to regular property
+c_property_if38 = cached_property or property
 
 
 def get_iiif_url(url):
@@ -83,29 +95,64 @@ class Manifest(models.Model):
             return self.thumbnail.admin_thumbnail()
     admin_thumbnail.short_description = 'Thumbnail'
 
-    @property
+    @c_property_if38
     def logo(self):
         '''manifest logo, if there is one'''
         return self.extra_data.get('logo', None)
 
-    @property
+    @c_property_if38
     def attribution(self):
         '''manifest attribution, if there is one'''
         return self.extra_data.get('attribution', None)
 
-    @property
+    @c_property_if38
     def license(self):
         '''manifest license, if there is one'''
         return self.extra_data.get('license', None)
 
-    @property
+    @c_property_if38
+    def license_uri(self):
+        '''manifest license as :class:`rdflib.URIRef`, if there is a license'''
+        license = self.license
+        if license:
+            # CC uri is also http rather than https
+            if urllib.parse.urlparse(license).hostname == 'creativecommons.org':
+                # remove language from url if present
+                url_parts = license.rstrip("/").split('/')
+                # url looks like https://creativecommons.org/publicdomain/mark/1.0/deed.de
+                # if the last part is a language code, remove it
+                if url_parts[-1].startswith("deed."):
+                    url_parts = url_parts[:-1]
+                license = "%s/" % '/'.join(url_parts)   # URI requires trailing slash
+            return rdflib.URIRef(license)
+
+    @c_property_if38
     def rights_statement_id(self):
         '''short id for rightstatement.org license'''
-        if self.license and 'rightsstatements.org' in self.license:
+        # rightstatement uri is http, not https
+        if self.license and urllib.parse.urlparse(self.license).hostname == 'rightsstatements.org':
             return self.license.rstrip(' /').split('/')[-2]
+
+    @c_property_if38
+    def creativecommons_id(self):
+        '''short id for creative commons license'''
+        if self.license and urllib.parse.urlparse(self.license).hostname == 'creativecommons.org':
+            if "publicdomain/zero/" in self.license:
+                return "cc-zero"
+            if "publicdomain/mark/" in self.license:
+                return "publicdomain"
+
+    @c_property_if38
+    def license_image(self):
+        '''license image, if we can generate one'''
+        if self.rights_statement_id:
+            return static("img/rightsstatements_org/%s.svg" % self.rights_statement_id)
+        if self.creativecommons_id:
+            return static("img/creativecommons/%s.svg" % self.creativecommons_id)
 
     _rights_graph = None
 
+    # TODO: should use django current language if possible
     def license_label(self, lang='en'):
         '''Get the text label for the rights license.  Uses local
         value from edm rights if available; otherwise uses
@@ -124,10 +171,11 @@ class Manifest(models.Model):
             # if license is defined and a url
             if self.license and urllib.parse.urlparse(self.license).scheme in ['http', 'https']:
                 self._rights_graph = rdflib.Graph()
+                url_hostname = urllib.parse.urlparse(self.license).hostname
                 try:
                     # rights statement org does content-negotiation for json-jd,
                     # but rdflib doesn't handle that automatically
-                    if 'rightsstatements.org' in self.license:
+                    if url_hostname == 'rightsstatements.org':
                         resp = requests.get(self.license,
                                             headers={'Accept': 'application/json'},
                                             allow_redirects=False)
@@ -136,9 +184,9 @@ class Manifest(models.Model):
 
                     # creative commons doesn't support content negotiation,
                     # but you can add rdf to the end of the url
-                    elif 'creativecommons.org' in self.license:
-                        rdf_uri = '/'.join([self.license.rstrip('/'), 'rdf'])
-                        self._rights_graph.parse(rdf_uri)
+                    elif url_hostname == 'creativecommons.org':
+                        # license uri removes language if present and adds trailing slash
+                        self._rights_graph.parse("%srdf" % self.license_uri)
 
                 except Exception:
                     # possible to get an exception when parsing the
@@ -151,7 +199,7 @@ class Manifest(models.Model):
         # get the preferred label for this license in the requested language;
         # returns a list of label, value; use the first value
         if self._rights_graph:
-            license_uri = rdflib.URIRef(self.license)
+            license_uri = self.license_uri
             preflabel = self._rights_graph.preferredLabel(license_uri,
                                                           lang=lang)
             if preflabel:
