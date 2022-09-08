@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.9
+---
+
+* Expand license image logic to handle standard CC licenses
+
 0.8
 ---
 
