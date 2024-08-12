@@ -1,16 +1,13 @@
 Changelog
 =========
 
-0.10
-----
-
-* Updated for compatibility with python 3.9-3.11
-* Updated for compatibility with django 4.2-5.1
-
 0.9
 ---
 
 * Expand license image logic to handle standard CC licenses
+* Updated for compatibility with python 3.9-3.11
+* Updated for compatibility with django 4.2-5.1
+
 
 0.8
 ---

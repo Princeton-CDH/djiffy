@@ -27,7 +27,7 @@ manifests.  This is an *alpha* version and it does *not* yet support
 the full IIIF Presentation specification.
 
 .. Note::
-    djiffy is tested against Django 3.0-3.2.
+    djiffy is tested against Django 4.1-5.2 and Python 3.9-3.11.
 
 .. _Django: https://www.djangoproject.com/
 .. _IIIF Presentation: http://iiif.io/api/presentation/2.1/
