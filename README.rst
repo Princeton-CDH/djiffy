@@ -5,10 +5,12 @@ djiffy
 
 Django application to index and display IIIF Manifests for books
 
-.. image:: https://travis-ci.org/Princeton-CDH/djiffy.svg?branch=develop
-   :target: https://travis-ci.org/Princeton-CDH/djiffy
-   :alt: Build Status
-.. image:: https://codecov.io/gh/Princeton-CDH/djiffy/branch/develop/graph/badge.svg
+[![unit tests](https://github.com/Princeton-CDH/djiffy/actions/workflows/unit_tests.yml/badge.svg)](https://github.com/Princeton-CDH/djiffy/actions/workflows/unit_tests.yml)
+
+.. image:: https://github.com/Princeton-CDH/djiffy/actions/workflows/unit_tests.yml/badge.svg
+   :target: https://github.com/Princeton-CDH/djiffy/actions/workflows/unit_tests.yml
+   :alt: Unit Tests status
+.. image:: https://codecov.io/gh/Princeton-CDH/djiffy/branch/main/graph/badge.svg
    :target: https://codecov.io/gh/Princeton-CDH/djiffy
    :alt: Code Coverage
 .. image:: https://img.shields.io/pypi/pyversions/djiffy
@@ -16,7 +18,7 @@ Django application to index and display IIIF Manifests for books
 .. image:: https://img.shields.io/pypi/djversions/djiffy
    :alt: PyPI - Django Version
 .. image:: https://github.com/Princeton-CDH/djiffy/actions/workflows/sphinx_docs.yml/badge.svg
-    :alt: Sphinx Docs
+   :alt: Sphinx Docs build status
 
 
 **djiffy** is intended to be a reusable `Django`_ application for

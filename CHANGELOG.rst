@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.10
+----
+
+* Updated for compatibility with python 3.9-3.11
+* Updated for compatibility with django 4.2-5.1
+
 0.9
 ---
 
