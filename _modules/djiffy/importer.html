@@ -1,25 +1,23 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>djiffy.importer &#8212; Djiffy 0.8.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/style.css" />
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../../_static/doctools.js"></script>
+    <title>djiffy.importer &#8212; Djiffy 0.9.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=386e93f4" />
+    <script src="../../_static/documentation_options.js?v=39bb1c6d"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   
@@ -32,21 +30,18 @@
           <div class="body" role="main">
             
   <h1>Source code for djiffy.importer</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
-<span class="kn">from</span> <span class="nn">django.conf</span> <span class="k">import</span> <span class="n">settings</span>
+<span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
+<span class="kn">from</span> <span class="nn">piffle.presentation</span> <span class="kn">import</span> <span class="n">IIIFException</span>
 
-<span class="kn">from</span> <span class="nn">djiffy.models</span> <span class="k">import</span> <span class="p">(</span>
-    <span class="n">Manifest</span><span class="p">,</span>
-    <span class="n">Canvas</span><span class="p">,</span>
-    <span class="n">IIIFPresentation</span><span class="p">,</span>
-    <span class="n">IIIFException</span><span class="p">,</span>
-    <span class="n">get_iiif_url</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">djiffy.models</span> <span class="kn">import</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">Canvas</span><span class="p">,</span> <span class="n">get_iiif_url</span><span class="p">,</span> <span class="n">IIIFPresentation</span>
 
 
-<div class="viewcode-block" id="ManifestImporter"><a class="viewcode-back" href="../../codedocs.html#djiffy.importer.ManifestImporter">[docs]</a><span class="k">class</span> <span class="nc">ManifestImporter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Manifest importer.  Intended for use with Django manage commands.</span>
+<div class="viewcode-block" id="ManifestImporter">
+<a class="viewcode-back" href="../../codedocs.html#djiffy.importer.ManifestImporter">[docs]</a>
+<span class="k">class</span> <span class="nc">ManifestImporter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Manifest importer.  Intended for use with Django manage commands.</span>
 
 <span class="sd">    :param stdout: optional stdout, if status output is desired</span>
 <span class="sd">    :param stderr: optional stderr, if error output is desired</span>
@@ -62,28 +57,36 @@
 
     <span class="c1"># TODO: should have better reporting on what was done</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">stdout</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="n">stderr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">=</span> <span class="n">style</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update</span> <span class="o">=</span> <span class="n">update</span>
 
-<div class="viewcode-block" id="ManifestImporter.output"><a class="viewcode-back" href="../../codedocs.html#djiffy.importer.ManifestImporter.output">[docs]</a>    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Output a message if stdout is configured (used to support output</span>
+<div class="viewcode-block" id="ManifestImporter.output">
+<a class="viewcode-back" href="../../codedocs.html#djiffy.importer.ManifestImporter.output">[docs]</a>
+    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Output a message if stdout is configured (used to support output</span>
 <span class="sd">        via manage command)&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ManifestImporter.error_msg"><a class="viewcode-back" href="../../codedocs.html#djiffy.importer.ManifestImporter.error_msg">[docs]</a>    <span class="k">def</span> <span class="nf">error_msg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Output an error message if stderr is configured (used to support output</span>
+
+<div class="viewcode-block" id="ManifestImporter.error_msg">
+<a class="viewcode-back" href="../../codedocs.html#djiffy.importer.ManifestImporter.error_msg">[docs]</a>
+    <span class="k">def</span> <span class="nf">error_msg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Output an error message if stderr is configured (used to support output</span>
 <span class="sd">        via manage command).&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">ERROR</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ManifestImporter.import_paths"><a class="viewcode-back" href="../../codedocs.html#djiffy.importer.ManifestImporter.import_paths">[docs]</a>    <span class="k">def</span> <span class="nf">import_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paths</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Import a list of paths - file or url, collection or manifest.</span>
+
+<div class="viewcode-block" id="ManifestImporter.import_paths">
+<a class="viewcode-back" href="../../codedocs.html#djiffy.importer.ManifestImporter.import_paths">[docs]</a>
+    <span class="k">def</span> <span class="nf">import_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paths</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Import a list of paths - file or url, collection or manifest.</span>
 <span class="sd">        Returns a list of imported manifests (includes previously</span>
 <span class="sd">        imported objects for the requested URIs, if already in the database).&quot;&quot;&quot;</span>
         <span class="n">imported</span> <span class="o">=</span> <span class="p">[]</span>
@@ -105,8 +108,11 @@
                     <span class="n">imported</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">imported_manifest</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">imported</span></div>
 
-<div class="viewcode-block" id="ManifestImporter.import_supported"><a class="viewcode-back" href="../../codedocs.html#djiffy.importer.ManifestImporter.import_supported">[docs]</a>    <span class="k">def</span> <span class="nf">import_supported</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Check if import is supported (currently limited to paged or individuals,</span>
+
+<div class="viewcode-block" id="ManifestImporter.import_supported">
+<a class="viewcode-back" href="../../codedocs.html#djiffy.importer.ManifestImporter.import_supported">[docs]</a>
+    <span class="k">def</span> <span class="nf">import_supported</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if import is supported (currently limited to paged or individuals,</span>
 <span class="sd">        left-to-right content).&quot;&quot;&quot;</span>
 
         <span class="c1"># if import check is disabled, bypass checks and return true</span>
@@ -128,8 +134,11 @@
             <span class="p">)</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="ManifestImporter.import_manifest"><a class="viewcode-back" href="../../codedocs.html#djiffy.importer.ManifestImporter.import_manifest">[docs]</a>    <span class="k">def</span> <span class="nf">import_manifest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Process a single IIIF manifest and create</span>
+
+<div class="viewcode-block" id="ManifestImporter.import_manifest">
+<a class="viewcode-back" href="../../codedocs.html#djiffy.importer.ManifestImporter.import_manifest">[docs]</a>
+    <span class="k">def</span> <span class="nf">import_manifest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process a single IIIF manifest and create</span>
 <span class="sd">        :class:`~djiffy.models.Manifest` and</span>
 <span class="sd">        :class:`~djiffy.models.Canvas` objects.</span>
 
@@ -296,11 +305,14 @@
         <span class="c1"># return the manifest db object that was created</span>
         <span class="k">return</span> <span class="n">db_manifest</span></div>
 
-<div class="viewcode-block" id="ManifestImporter.import_collection"><a class="viewcode-back" href="../../codedocs.html#djiffy.importer.ManifestImporter.import_collection">[docs]</a>    <span class="k">def</span> <span class="nf">import_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Process a single IIIF collection and import</span>
+
+<div class="viewcode-block" id="ManifestImporter.import_collection">
+<a class="viewcode-back" href="../../codedocs.html#djiffy.importer.ManifestImporter.import_collection">[docs]</a>
+    <span class="k">def</span> <span class="nf">import_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process a single IIIF collection and import</span>
 <span class="sd">        all supported manifests referenced in the collection.</span>
 
-<span class="sd">        :gedram manifest: :class:`~djiffy.models.IIIFPresentation`</span>
+<span class="sd">        :param manifest: :class:`~djiffy.models.IIIFPresentation`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">manifest</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;sc:Collection&quot;</span><span class="p">:</span>
@@ -320,7 +332,7 @@
 
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">manifest</span> <span class="o">=</span> <span class="n">IIIFPresentation</span><span class="o">.</span><span class="n">from_file_or_url</span><span class="p">(</span><span class="n">brief_manifest</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-                <span class="k">except</span> <span class="n">IIIFException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="k">except</span> <span class="n">presentation</span><span class="o">.</span><span class="n">IIIFException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
                     <span class="n">manifest</span> <span class="o">=</span> <span class="kc">None</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">error_msg</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
 
@@ -330,18 +342,23 @@
 
             <span class="k">return</span> <span class="n">imported</span></div>
 
-<div class="viewcode-block" id="ManifestImporter.canvas_short_id"><a class="viewcode-back" href="../../codedocs.html#djiffy.importer.ManifestImporter.canvas_short_id">[docs]</a>    <span class="k">def</span> <span class="nf">canvas_short_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">canvas</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Method for generating short id from canvas; default is</span>
-<span class="sd">        :meth:`djiffy.models.IIIFPresentation.short_id`.</span>
+
+<div class="viewcode-block" id="ManifestImporter.canvas_short_id">
+<a class="viewcode-back" href="../../codedocs.html#djiffy.importer.ManifestImporter.canvas_short_id">[docs]</a>
+    <span class="k">def</span> <span class="nf">canvas_short_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">canvas</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Method for generating short id from canvas; default is</span>
+<span class="sd">        :meth:`piffle.presentation.IIIFPresentation.short_id`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">IIIFPresentation</span><span class="o">.</span><span class="n">short_id</span><span class="p">(</span><span class="n">canvas</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">IIIFPresentation</span><span class="o">.</span><span class="n">short_id</span><span class="p">(</span><span class="n">canvas</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div>
+</div>
+
 </pre></div>
 
           </div>
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <h1 class="logo"><a href="../../index.html">Djiffy</a></h1>
 
@@ -393,7 +410,7 @@
 </ul>
 
 
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
@@ -401,7 +418,7 @@
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script><div class="powered_by">
 <p>Powered by:</p>
 <a href="http://cdh.princeton.edu/">
@@ -414,11 +431,11 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2017, CDH @ Princeton.
+      &#169;2017, CDH @ Princeton.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.0.2</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
     </div>
 
