@@ -5,27 +5,19 @@ import os.path
 
 import urllib
 
-# cached property is only available in Python 3.8+
-try:
-    from functools import cached_property
-except ImportError:
-    cached_property = None
+from functools import cached_property
 
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.templatetags.static import static
 from django.utils.html import format_html
-from jsonfield import JSONField
 from piffle import image as iiif
 from piffle import presentation
 import rdflib
 from rdflib.namespace import DC
 import requests
 from requests.exceptions import ConnectionError
-
-# use cached property if python3.8 or greater; fallback to regular property
-c_property_if38 = cached_property or property
 
 
 def get_iiif_url(url):
@@ -62,15 +54,13 @@ class Manifest(models.Model):
     #: URI
     uri = models.URLField()
     #: iiif presentation metadata for display
-    metadata = JSONField(load_kwargs={"object_pairs_hook": OrderedDict})
+    metadata = models.JSONField(default=dict)
     #: date local manifest cache was created
     created = models.DateField(auto_now_add=True)
     #: date local manifest cache was last modified
     last_modified = models.DateField(auto_now=True)
     #: extra data provided via a 'seeAlso' reference
-    extra_data = JSONField(
-        load_kwargs={"object_pairs_hook": OrderedDict}, default=OrderedDict
-    )
+    extra_data = models.JSONField(default=dict)
 
     class Meta:
         verbose_name = "IIIF Manifest"
@@ -100,22 +90,22 @@ class Manifest(models.Model):
 
     admin_thumbnail.short_description = "Thumbnail"
 
-    @c_property_if38
+    @cached_property
     def logo(self):
         """manifest logo, if there is one"""
         return self.extra_data.get("logo", None)
 
-    @c_property_if38
+    @cached_property
     def attribution(self):
         """manifest attribution, if there is one"""
         return self.extra_data.get("attribution", None)
 
-    @c_property_if38
+    @cached_property
     def license(self):
         """manifest license, if there is one"""
         return self.extra_data.get("license", None)
 
-    @c_property_if38
+    @cached_property
     def license_uri(self):
         """manifest license as :class:`rdflib.URIRef`, if there is a license"""
         license = self.license
@@ -131,7 +121,7 @@ class Manifest(models.Model):
                 license = "%s/" % "/".join(url_parts)  # URI requires trailing slash
             return rdflib.URIRef(license)
 
-    @c_property_if38
+    @cached_property
     def rights_statement_id(self):
         """short id for rightstatement.org license"""
         # rightstatement uri is http, not https
@@ -141,7 +131,7 @@ class Manifest(models.Model):
         ):
             return self.license.rstrip(" /").split("/")[-2]
 
-    @c_property_if38
+    @cached_property
     def creativecommons_id(self):
         """short id for creative commons license"""
         if (
@@ -156,7 +146,7 @@ class Manifest(models.Model):
                 # strip last slash then split; last is version, preceding is code
                 return self.license.rstrip("/").split("/")[-2]
 
-    @c_property_if38
+    @cached_property
     def license_image(self):
         """license image, if we can generate one"""
         if self.rights_statement_id:
@@ -288,9 +278,7 @@ class Canvas(models.Model):
     # (for now only stores a single sequence, so just store order on the page)
     # format? size? (ocr text eventually?)
     #: extra data not otherwise given its own field, serialized as json
-    extra_data = JSONField(
-        load_kwargs={"object_pairs_hook": OrderedDict}, default=OrderedDict
-    )
+    extra_data = models.JSONField(default=dict)
 
     class Meta:
         ordering = ["manifest", "order"]
