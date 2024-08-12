@@ -5,10 +5,12 @@ djiffy
 
 Django application to index and display IIIF Manifests for books
 
-.. image:: https://travis-ci.org/Princeton-CDH/djiffy.svg?branch=develop
-   :target: https://travis-ci.org/Princeton-CDH/djiffy
-   :alt: Build Status
-.. image:: https://codecov.io/gh/Princeton-CDH/djiffy/branch/develop/graph/badge.svg
+[![unit tests](https://github.com/Princeton-CDH/djiffy/actions/workflows/unit_tests.yml/badge.svg)](https://github.com/Princeton-CDH/djiffy/actions/workflows/unit_tests.yml)
+
+.. image:: https://github.com/Princeton-CDH/djiffy/actions/workflows/unit_tests.yml/badge.svg
+   :target: https://github.com/Princeton-CDH/djiffy/actions/workflows/unit_tests.yml
+   :alt: Unit Tests status
+.. image:: https://codecov.io/gh/Princeton-CDH/djiffy/branch/main/graph/badge.svg
    :target: https://codecov.io/gh/Princeton-CDH/djiffy
    :alt: Code Coverage
 .. image:: https://img.shields.io/pypi/pyversions/djiffy
@@ -16,16 +18,16 @@ Django application to index and display IIIF Manifests for books
 .. image:: https://img.shields.io/pypi/djversions/djiffy
    :alt: PyPI - Django Version
 .. image:: https://github.com/Princeton-CDH/djiffy/actions/workflows/sphinx_docs.yml/badge.svg
-    :alt: Sphinx Docs
+   :alt: Sphinx Docs build status
 
 
 **djiffy** is intended to be a reusable `Django`_ application for
-working with digitized book content provided via `IIIF Presentation`_
+working with digitized book-like content provided via `IIIF Presentation`_
 manifests.  This is an *alpha* version and it does *not* yet support
 the full IIIF Presentation specification.
 
 .. Note::
-    djiffy is tested against Django 3.0-3.2.
+    djiffy is tested against Django 4.1-5.2 and Python 3.9-3.11.
 
 .. _Django: https://www.djangoproject.com/
 .. _IIIF Presentation: http://iiif.io/api/presentation/2.1/
@@ -111,9 +113,9 @@ This git repository uses `git flow`_ branching conventions.
 
 Initial setup and installation:
 
-- recommended: create and activate a python 3.5 virtualenv::
+- recommended: create and activate a python 3.9 virtualenv::
 
-    virtualenv djiffy -p python3.5
+    virtualenv djiffy -p python3.9
     source djiffy/bin/activate
 
 - pip install the package with its python dependencies::
@@ -177,7 +179,7 @@ License
 
 **djiffy** is distributed under the Apache 2.0 License.
 
-©2019 Trustees of Princeton University.  Permission granted via
+©2024 Trustees of Princeton University.  Permission granted via
 Princeton Docket #20-3618 for distribution online under a standard Open Source
 license.  Ownership rights transferred to Rebecca Koeser provided software
 is distributed online via open source.

@@ -1,0 +1,63 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "djiffy"
+description = "Django app for IIIF Presentation book-like content"
+authors = [
+  {name = "Center for Digital Humanities at Princeton", email = "cdhdevteam@princeton.edu"},
+]
+requires-python = ">=3.8"
+readme = "README.rst"
+license = {text = "Apache-2"}
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Web Environment",
+    "Framework :: Django",
+    "Framework :: Django :: 4.2",
+    "Framework :: Django :: 5.0",
+    "Framework :: Django :: 5.1",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dynamic = ["version"]
+dependencies = [
+  "django>=4.2",
+  "requests",
+  "piffle>=0.6",
+  "django-autocomplete-light<=3.9.7",
+  "rdflib>=7.0",
+]
+
+[project.urls]
+Repository = "https://github.com/Princeton-CDH/djiffy"
+Changelog = "https://github.com/Princeton-CDH/djiffy/blob/main/CHANGELOG.rst"
+
+[tool.hatch.version]
+path = "djiffy/__init__.py"
+
+[project.optional-dependencies]
+test = [
+  "pytest",
+  "pytest-django",
+  "pytest-cov",
+  "psycopg2-binary"
+]
+docs = ["sphinx"]
+dev = ["pre-commit", "djiffy[test]", "djiffy[docs]"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "testsettings"
+# look for tests in standard django test location
+python_files = "**/tests.py"
+addopts = "--cov=djiffy"
+
+
