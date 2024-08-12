@@ -15,7 +15,7 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Web Environment",
     "Framework :: Django",
-    "Framework :: Django :: 3.2",
+    "Framework :: Django :: 4.2",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
@@ -27,11 +27,11 @@ classifiers = [
 ]
 dynamic = ["version"]
 dependencies = [
-  "django>=4.0",
+  "django>=4.2",
   "requests",
   "piffle>=0.5",
   "django-autocomplete-light==3.9.7",
-  "rdflib>6.0.1",
+  "rdflib>7.0",
 ]
 
 [project.urls]

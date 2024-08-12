@@ -15,7 +15,7 @@ from django.utils.html import format_html
 from piffle import image as iiif
 from piffle import presentation
 import rdflib
-from rdflib.namespace import DC
+from rdflib.namespace import DC, SKOS, RDFS
 import requests
 from requests.exceptions import ConnectionError
 
@@ -210,18 +210,17 @@ class Manifest(models.Model):
         # get the preferred label for this license in the requested language;
         # returns a list of label, value; use the first value
         if self._rights_graph:
-            license_uri = self.license_uri
-            preflabel = self._rights_graph.preferredLabel(license_uri, lang=lang)
-            if preflabel:
-                # convert rdflib Literal to string
-                return str(preflabel[0][1])
-            # otherwise, get dc title
-            # iterate over all titles and return one with a matching language code
-            for title in self._rights_graph.objects(
-                subject=license_uri, predicate=DC.title
-            ):
-                if title.language == lang:
-                    return str(title)
+            return preferredLabel(self._rights_graph, self.license_uri, lang=lang)
+
+
+def preferredLabel(graph, uri, lang):
+    """Get label or title from rdf graph for given uri with specified language.
+    Checks for SKOS.prefLabel, RDFS.label, DC.title in that order.
+    """
+    for predicate in [SKOS.prefLabel, RDFS.label, DC.title]:
+        for value in graph.objects(uri, predicate):
+            if value.language is None or value.language == lang:
+                return str(value)
 
 
 class IIIFImage(iiif.IIIFImageClient):
