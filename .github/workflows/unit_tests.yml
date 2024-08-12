@@ -20,8 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: [3.7, 3.8]
-        django: [3.0, 3.1, 3.2]
+        python: ["3.9", "3.10", "3.11", "3.12"]
+        django: [4.2, 5.0, 5.1]
     services:
       postgres:
         image: postgres:12
@@ -33,17 +33,17 @@ jobs:
           - 5432:5432
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
 
       # We base the python cache on the hash of all requirements files, so that
       # if any change, the cache is invalidated.
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: pip-${{ hashFiles('setup.py') }}
@@ -64,10 +64,10 @@ jobs:
           python -c "import uuid; print('SECRET_KEY = \'%s\'' % uuid.uuid4())" >> testsettings.py
 
       - name: Run pytest
-        run: py.test --cov=djiffy --cov-report=xml
+        run: pytest --cov=djiffy --cov-report=xml
 
       - name: Upload test coverage to Codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
 
   # Set the color of the slack message used in the next step based on the
       # status of the build: "danger" for failure, "good" for success,
