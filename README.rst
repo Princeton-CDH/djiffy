@@ -20,7 +20,7 @@ Django application to index and display IIIF Manifests for books
 
 
 **djiffy** is intended to be a reusable `Django`_ application for
-working with digitized book content provided via `IIIF Presentation`_
+working with digitized book-like content provided via `IIIF Presentation`_
 manifests.  This is an *alpha* version and it does *not* yet support
 the full IIIF Presentation specification.
 
@@ -111,9 +111,9 @@ This git repository uses `git flow`_ branching conventions.
 
 Initial setup and installation:
 
-- recommended: create and activate a python 3.5 virtualenv::
+- recommended: create and activate a python 3.9 virtualenv::
 
-    virtualenv djiffy -p python3.5
+    virtualenv djiffy -p python3.9
     source djiffy/bin/activate
 
 - pip install the package with its python dependencies::
@@ -177,7 +177,7 @@ License
 
 **djiffy** is distributed under the Apache 2.0 License.
 
-©2019 Trustees of Princeton University.  Permission granted via
+©2024 Trustees of Princeton University.  Permission granted via
 Princeton Docket #20-3618 for distribution online under a standard Open Source
 license.  Ownership rights transferred to Rebecca Koeser provided software
 is distributed online via open source.
