@@ -57,7 +57,8 @@ jobs:
       # for pull requests, exit with error if documentation coverage is incomplete
       - name: Report on documentation coverage
         if: ${{ github.event_name == 'pull_request' }}
-        run: if [[ $((`wc -l < sphinx-docs/_build/coverage/python.txt`)) -eq 2 ]] ; then echo "Documentation coverage complete"; else cat sphinx-docs/_build/coverage/python.txt && exit 1; fi
+        # grep any line with coverage %; filter out all 100%s and count the rest
+        run: if [[ $((`grep % sphinx-docs/_build/coverage/python.txt | grep -v -e 100.00% | wc -l`)) -eq 0 ]] ; then echo "Documentation coverage complete"; else cat sphinx-docs/_build/coverage/python.txt && exit 1; fi
 
       # when building on push to main, publish the built docs
       - name: Deploy built docs to github pages
