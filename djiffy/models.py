@@ -11,15 +11,14 @@ try:
 except ImportError:
     cached_property = None
 
-from attrdict import AttrMap
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.templatetags.static import static
 from django.utils.html import format_html
 from jsonfield import JSONField
-from piffle import iiif
-from piffle.presentation import IIIFPresentation
+from piffle import image as iiif
+from piffle import presentation
 import rdflib
 from rdflib.namespace import DC
 import requests
@@ -44,10 +43,13 @@ def get_iiif_url(url):
     return requests.get(url, **request_options)
 
 
-class IIIFException(Exception):
-    """Custom exception for IIIF/djiffy specific errors"""
+class IIIFPresentation(presentation.IIIFPresentation):
+    """Extend iiif presentation class to add support for auth tokens
+    when making requests on iiif urls."""
 
-    pass
+    @classmethod
+    def get_iiif_url(cls, url):
+        return get_iiif_url(url)
 
 
 class Manifest(models.Model):

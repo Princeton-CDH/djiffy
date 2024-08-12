@@ -29,8 +29,7 @@ dynamic = ["version"]
 dependencies = [
   "django>=3.0",
   "requests",
-  "piffle",
-  "attrdict",
+  "piffle>=0.5",
   "jsonfield<3.0,>=2.1",
   "django-autocomplete-light>=3.5.1",
   "rdflib>6.0.1",

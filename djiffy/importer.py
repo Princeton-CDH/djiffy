@@ -1,14 +1,9 @@
 from collections import OrderedDict
 
 from django.conf import settings
+from piffle.presentation import IIIFException
 
-from djiffy.models import (
-    Manifest,
-    Canvas,
-    IIIFPresentation,
-    IIIFException,
-    get_iiif_url,
-)
+from djiffy.models import Manifest, Canvas, get_iiif_url, IIIFPresentation
 
 
 class ManifestImporter(object):
@@ -266,7 +261,7 @@ class ManifestImporter(object):
         """Process a single IIIF collection and import
         all supported manifests referenced in the collection.
 
-        :gedram manifest: :class:`~djiffy.models.IIIFPresentation`
+        :param manifest: :class:`~djiffy.models.IIIFPresentation`
         """
 
         if manifest.type == "sc:Collection":
@@ -286,7 +281,7 @@ class ManifestImporter(object):
 
                 try:
                     manifest = IIIFPresentation.from_file_or_url(brief_manifest.id)
-                except IIIFException as err:
+                except presentation.IIIFException as err:
                     manifest = None
                     self.error_msg(str(err))
 
@@ -298,6 +293,6 @@ class ManifestImporter(object):
 
     def canvas_short_id(self, canvas):
         """Method for generating short id from canvas; default is
-        :meth:`djiffy.models.IIIFPresentation.short_id`.
+        :meth:`piffle.presentation.IIIFPresentation.short_id`.
         """
         return IIIFPresentation.short_id(canvas.id)
