@@ -31,7 +31,7 @@ dependencies = [
   "requests",
   "piffle>=0.5",
   "django-autocomplete-light<=3.9.7",
-  "rdflib>7.0",
+  "rdflib>=7.0",
 ]
 
 [project.urls]
