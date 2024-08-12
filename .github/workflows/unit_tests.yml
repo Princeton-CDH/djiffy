@@ -23,9 +23,11 @@ jobs:
         python: ["3.9", "3.10", "3.11", "3.12"]
         django: [4.2, 5.0, 5.1]
         exclude:
-           # django 5.0 requires python 3.10 minimum
+           # django 5.0 and 5.1 require python 3.10 minimum
           - python: "3.9"
-            django: [5.0, 5.1]
+            django: 5.0
+          - python: "3.9"
+            django: 5.1
     services:
       postgres:
         image: postgres:13
