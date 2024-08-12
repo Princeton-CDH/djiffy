@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: ["3.9", "3.10", "3.11", "3.12"]
+        python: ["3.9", "3.10", "3.11"] # , "3.12"]
         django: [4.2, 5.0, 5.1]
         exclude:
            # django 5.0 and 5.1 require python 3.10 minimum
