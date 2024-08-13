@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.9.1
+-----
+
+* Relax minimum django version requirement to 3.2
+  (only tested against 4.2-5.1, but expected to be compatible with 3.2+)
+
+
 0.9
 ---
 
