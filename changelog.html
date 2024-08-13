@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Changelog &#8212; Djiffy 0.9.0 documentation</title>
+    <title>Changelog &#8212; Djiffy 0.9.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/style.css?v=386e93f4" />
-    <script src="_static/documentation_options.js?v=39bb1c6d"></script>
+    <script src="_static/documentation_options.js?v=9dc39874"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -34,15 +34,22 @@
   <section id="changelog">
 <h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading">¶</a></h1>
 <section id="id1">
-<h2>0.9<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<h2>0.9.1<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Relax minimum django version requirement to 3.2
+(only tested against 4.2-5.1, but expected to be compatible with 3.2+)</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>0.9<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Expand license image logic to handle standard CC licenses</p></li>
 <li><p>Updated for compatibility with python 3.9-3.11</p></li>
 <li><p>Updated for compatibility with django 4.2-5.1</p></li>
 </ul>
 </section>
-<section id="id2">
-<h2>0.8<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<section id="id3">
+<h2>0.8<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Manifest dynamic properties for license uris and labels are now cached</p></li>
 <li><p>Manifest license logic now handles CreativeCommons license URIs.</p></li>
@@ -50,8 +57,8 @@
 <li><p>License image path can be generated using the <cite>license_image</cite> property for Manifests with supported licenses</p></li>
 </ul>
 </section>
-<section id="id3">
-<h2>0.7.3<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<section id="id4">
+<h2>0.7.3<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><dl class="simple">
 <dt><cite>ManifestImporter.import_paths</cite> now returns a list of database manifest</dt><dd><p>objects for the requested uris, whether newly imported or already available</p>
@@ -61,20 +68,20 @@
 <li><p>Setup GitHub Actions workflow for sphinx documentation</p></li>
 </ul>
 </section>
-<section id="id4">
-<h2>0.7.2<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<section id="id5">
+<h2>0.7.2<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Include manifest attribution information in <code class="docutils literal notranslate"><span class="pre">extra_data</span></code> on import</p></li>
 </ul>
 </section>
-<section id="id5">
-<h2>0.7.1<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<section id="id6">
+<h2>0.7.1<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Improved error handling for connection errors when importing IIIF manifests</p></li>
 </ul>
 </section>
-<section id="id6">
-<h2>0.7<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
+<section id="id7">
+<h2>0.7<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Now tested against  Django 3.1 and 3.2; dropped support for Django 1.11 and 2.2</p></li>
 <li><p>Now tested on python 3.7, 3.8; dropped support for python 3.5 and 3.6</p></li>
@@ -84,8 +91,8 @@
 <li><p>Canvas data now includes dimensions, with convenience properties <cite>width</cite> and <cite>height</cite></p></li>
 </ul>
 </section>
-<section id="id7">
-<h2>0.6<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h2>
+<section id="id8">
+<h2>0.6<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Now supports Django 1.11 through 3.0; dropped support for Django 1.10</p></li>
 </ul>
@@ -96,26 +103,26 @@
 <li><p>Update for pytest 5.x and mysql change on Travis-CI</p></li>
 </ul>
 </section>
-<section id="id8">
-<h2>0.5.1<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h2>
+<section id="id9">
+<h2>0.5.1<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fix pytest version requirement for failing build on Travis-CI</p></li>
 </ul>
 </section>
-<section id="id9">
-<h2>0.5<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h2>
+<section id="id10">
+<h2>0.5<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>New method on Manifest object to get text label for rights license</p></li>
 </ul>
 </section>
-<section id="id10">
-<h2>0.4.1<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h2>
+<section id="id11">
+<h2>0.4.1<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fix a git merge issue that resulted in some code not being merged into master</p></li>
 </ul>
 </section>
-<section id="id11">
-<h2>0.4<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h2>
+<section id="id12">
+<h2>0.4<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Canvas now has extra_data field to capture additional manifest information
 (currently <cite>rendering</cite>) as part of the import.</p></li>
@@ -123,8 +130,8 @@
 transcription/OCR if available from manifest.</p></li>
 </ul>
 </section>
-<section id="id12">
-<h2>0.3<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h2>
+<section id="id13">
+<h2>0.3<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Import script now supports updating previously imported manifests;
 use <cite>–update</cite> option.</p></li>
@@ -139,8 +146,8 @@ admin, so it will be more meaningful &amp; recognizable to users</p></li>
 <li><p>bugfix: ManifestSelectWidget now handles empty string</p></li>
 </ul>
 </section>
-<section id="id13">
-<h2>0.2<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h2>
+<section id="id14">
+<h2>0.2<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Support for optional configurable per-domain auth tokens, to
 allow retrieving restricted IIIF manifests.  (See documentation
@@ -222,20 +229,21 @@ logic.</p></li>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="codedocs.html">Code Documentation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Change Log</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id1">0.9</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id2">0.8</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">0.7.3</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">0.7.2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">0.7.1</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id6">0.7</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id7">0.6</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">0.9.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">0.9</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">0.8</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">0.7.3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">0.7.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">0.7.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">0.7</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">0.6</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#maintenance-release">0.5.2 Maintenance release</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id8">0.5.1</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id9">0.5</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id10">0.4.1</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id11">0.4</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id12">0.3</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id13">0.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">0.5.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">0.5</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id11">0.4.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id12">0.4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id13">0.3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id14">0.2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#initial-release">0.1 Initial release</a></li>
 </ul>
 </li>
@@ -246,20 +254,21 @@ logic.</p></li>
     <h3><a href="index.html">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">Changelog</a><ul>
-<li><a class="reference internal" href="#id1">0.9</a></li>
-<li><a class="reference internal" href="#id2">0.8</a></li>
-<li><a class="reference internal" href="#id3">0.7.3</a></li>
-<li><a class="reference internal" href="#id4">0.7.2</a></li>
-<li><a class="reference internal" href="#id5">0.7.1</a></li>
-<li><a class="reference internal" href="#id6">0.7</a></li>
-<li><a class="reference internal" href="#id7">0.6</a></li>
+<li><a class="reference internal" href="#id1">0.9.1</a></li>
+<li><a class="reference internal" href="#id2">0.9</a></li>
+<li><a class="reference internal" href="#id3">0.8</a></li>
+<li><a class="reference internal" href="#id4">0.7.3</a></li>
+<li><a class="reference internal" href="#id5">0.7.2</a></li>
+<li><a class="reference internal" href="#id6">0.7.1</a></li>
+<li><a class="reference internal" href="#id7">0.7</a></li>
+<li><a class="reference internal" href="#id8">0.6</a></li>
 <li><a class="reference internal" href="#maintenance-release">0.5.2 Maintenance release</a></li>
-<li><a class="reference internal" href="#id8">0.5.1</a></li>
-<li><a class="reference internal" href="#id9">0.5</a></li>
-<li><a class="reference internal" href="#id10">0.4.1</a></li>
-<li><a class="reference internal" href="#id11">0.4</a></li>
-<li><a class="reference internal" href="#id12">0.3</a></li>
-<li><a class="reference internal" href="#id13">0.2</a></li>
+<li><a class="reference internal" href="#id9">0.5.1</a></li>
+<li><a class="reference internal" href="#id10">0.5</a></li>
+<li><a class="reference internal" href="#id11">0.4.1</a></li>
+<li><a class="reference internal" href="#id12">0.4</a></li>
+<li><a class="reference internal" href="#id13">0.3</a></li>
+<li><a class="reference internal" href="#id14">0.2</a></li>
 <li><a class="reference internal" href="#initial-release">0.1 Initial release</a></li>
 </ul>
 </li>
