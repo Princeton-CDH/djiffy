@@ -15,6 +15,9 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Web Environment",
     "Framework :: Django",
+    "Framework :: Django :: 3.2",
+    "Framework :: Django :: 4.0",
+    "Framework :: Django :: 4.1",
     "Framework :: Django :: 4.2",
     "Framework :: Django :: 5.0",
     "Framework :: Django :: 5.1",
@@ -23,6 +26,7 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -30,7 +34,7 @@ classifiers = [
 ]
 dynamic = ["version"]
 dependencies = [
-  "django>=4.2",
+  "django>=3.2",
   "requests",
   "piffle>=0.6",
   "django-autocomplete-light<=3.9.7",
