@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.9.2
+-----
+
+* bugfix: Restore replaced migrations to resolve migration dependency issues
+
+
 0.9.1
 -----
 
