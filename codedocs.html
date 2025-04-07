@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Code Documentation &#8212; Djiffy 0.9.1 documentation</title>
+    <title>Code Documentation &#8212; Djiffy 0.9.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/style.css?v=386e93f4" />
-    <script src="_static/documentation_options.js?v=9dc39874"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/documentation_options.js?v=aa3b121e"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -40,16 +40,16 @@
 <span id="models"></span><h2>Models<a class="headerlink" href="#module-djiffy.models" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="djiffy.models.Canvas">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">djiffy.models.</span></span><span class="sig-name descname"><span class="pre">Canvas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#Canvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#djiffy.models.Canvas" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">djiffy.models.</span></span><span class="sig-name descname"><span class="pre">Canvas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#Canvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#djiffy.models.Canvas" title="Link to this definition">¶</a></dt>
 <dd><p>Minimal db model representation of a canvas from an IIIF manifest</p>
 <dl class="py exception">
 <dt class="sig sig-object py" id="djiffy.models.Canvas.DoesNotExist">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#djiffy.models.Canvas.DoesNotExist" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#djiffy.models.Canvas.DoesNotExist" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="djiffy.models.Canvas.MultipleObjectsReturned">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#djiffy.models.Canvas.MultipleObjectsReturned" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#djiffy.models.Canvas.MultipleObjectsReturned" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -78,7 +78,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="djiffy.models.Canvas.image">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">image</span></span><a class="headerlink" href="#djiffy.models.Canvas.image" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">image</span></span><a class="headerlink" href="#djiffy.models.Canvas.image" title="Link to this definition">¶</a></dt>
 <dd><p>Associated IIIF image for this canvas as <a class="reference internal" href="#djiffy.models.IIIFImage" title="djiffy.models.IIIFImage"><code class="xref py py-class docutils literal notranslate"><span class="pre">IIIFImage</span></code></a></p>
 </dd></dl>
 
@@ -110,7 +110,7 @@ canvas.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="djiffy.models.Canvas.plain_text_url">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">plain_text_url</span></span><a class="headerlink" href="#djiffy.models.Canvas.plain_text_url" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">plain_text_url</span></span><a class="headerlink" href="#djiffy.models.Canvas.plain_text_url" title="Link to this definition">¶</a></dt>
 <dd><p>Return plain text url for a canvas if one exists</p>
 </dd></dl>
 
@@ -144,7 +144,7 @@ if there is no next canvas.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="djiffy.models.IIIFImage">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">djiffy.models.</span></span><span class="sig-name descname"><span class="pre">IIIFImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_endpoint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#IIIFImage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#djiffy.models.IIIFImage" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">djiffy.models.</span></span><span class="sig-name descname"><span class="pre">IIIFImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_endpoint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#IIIFImage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#djiffy.models.IIIFImage" title="Link to this definition">¶</a></dt>
 <dd><p>Subclass of <code class="xref py py-class docutils literal notranslate"><span class="pre">piffle.iiif.IIIFImageClient</span></code>, for generating
 IIIF Image URIs for manifest canvas images.</p>
 <dl class="py method">
@@ -186,12 +186,12 @@ IIIF Image URIs for manifest canvas images.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="djiffy.models.IIIFPresentation">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">djiffy.models.</span></span><span class="sig-name descname"><span class="pre">IIIFPresentation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#IIIFPresentation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#djiffy.models.IIIFPresentation" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">djiffy.models.</span></span><span class="sig-name descname"><span class="pre">IIIFPresentation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#IIIFPresentation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#djiffy.models.IIIFPresentation" title="Link to this definition">¶</a></dt>
 <dd><p>Extend iiif presentation class to add support for auth tokens
 when making requests on iiif urls.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="djiffy.models.IIIFPresentation.get_iiif_url">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_iiif_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#IIIFPresentation.get_iiif_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#djiffy.models.IIIFPresentation.get_iiif_url" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_iiif_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#IIIFPresentation.get_iiif_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#djiffy.models.IIIFPresentation.get_iiif_url" title="Link to this definition">¶</a></dt>
 <dd><p>Wrapper around <code class="xref py py-meth docutils literal notranslate"><span class="pre">requests.get()</span></code> to support conditionally
 adding an auth tokens or other parameters.</p>
 </dd></dl>
@@ -200,16 +200,16 @@ adding an auth tokens or other parameters.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="djiffy.models.Manifest">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">djiffy.models.</span></span><span class="sig-name descname"><span class="pre">Manifest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#Manifest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#djiffy.models.Manifest" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">djiffy.models.</span></span><span class="sig-name descname"><span class="pre">Manifest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/models.html#Manifest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#djiffy.models.Manifest" title="Link to this definition">¶</a></dt>
 <dd><p>Minimal db model representation of an IIIF presentation manifest</p>
 <dl class="py exception">
 <dt class="sig sig-object py" id="djiffy.models.Manifest.DoesNotExist">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#djiffy.models.Manifest.DoesNotExist" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#djiffy.models.Manifest.DoesNotExist" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="djiffy.models.Manifest.MultipleObjectsReturned">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#djiffy.models.Manifest.MultipleObjectsReturned" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#djiffy.models.Manifest.MultipleObjectsReturned" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -220,7 +220,7 @@ adding an auth tokens or other parameters.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="djiffy.models.Manifest.attribution">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">attribution</span></span><a class="headerlink" href="#djiffy.models.Manifest.attribution" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">attribution</span></span><a class="headerlink" href="#djiffy.models.Manifest.attribution" title="Link to this definition">¶</a></dt>
 <dd><p>manifest attribution, if there is one</p>
 </dd></dl>
 
@@ -232,7 +232,7 @@ adding an auth tokens or other parameters.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="djiffy.models.Manifest.creativecommons_id">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">creativecommons_id</span></span><a class="headerlink" href="#djiffy.models.Manifest.creativecommons_id" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">creativecommons_id</span></span><a class="headerlink" href="#djiffy.models.Manifest.creativecommons_id" title="Link to this definition">¶</a></dt>
 <dd><p>short id for creative commons license</p>
 </dd></dl>
 
@@ -262,13 +262,13 @@ adding an auth tokens or other parameters.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="djiffy.models.Manifest.license">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">license</span></span><a class="headerlink" href="#djiffy.models.Manifest.license" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">license</span></span><a class="headerlink" href="#djiffy.models.Manifest.license" title="Link to this definition">¶</a></dt>
 <dd><p>manifest license, if there is one</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="djiffy.models.Manifest.license_image">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">license_image</span></span><a class="headerlink" href="#djiffy.models.Manifest.license_image" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">license_image</span></span><a class="headerlink" href="#djiffy.models.Manifest.license_image" title="Link to this definition">¶</a></dt>
 <dd><p>license image, if we can generate one</p>
 </dd></dl>
 
@@ -282,13 +282,13 @@ data for the URI to get the preferred label or title.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="djiffy.models.Manifest.license_uri">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">license_uri</span></span><a class="headerlink" href="#djiffy.models.Manifest.license_uri" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">license_uri</span></span><a class="headerlink" href="#djiffy.models.Manifest.license_uri" title="Link to this definition">¶</a></dt>
 <dd><p>manifest license as <code class="xref py py-class docutils literal notranslate"><span class="pre">rdflib.URIRef</span></code>, if there is a license</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="djiffy.models.Manifest.logo">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">logo</span></span><a class="headerlink" href="#djiffy.models.Manifest.logo" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">logo</span></span><a class="headerlink" href="#djiffy.models.Manifest.logo" title="Link to this definition">¶</a></dt>
 <dd><p>manifest logo, if there is one</p>
 </dd></dl>
 
@@ -300,7 +300,7 @@ data for the URI to get the preferred label or title.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="djiffy.models.Manifest.rights_statement_id">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rights_statement_id</span></span><a class="headerlink" href="#djiffy.models.Manifest.rights_statement_id" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rights_statement_id</span></span><a class="headerlink" href="#djiffy.models.Manifest.rights_statement_id" title="Link to this definition">¶</a></dt>
 <dd><p>short id for rightstatement.org license</p>
 </dd></dl>
 
@@ -312,7 +312,7 @@ data for the URI to get the preferred label or title.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="djiffy.models.Manifest.thumbnail">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">thumbnail</span></span><a class="headerlink" href="#djiffy.models.Manifest.thumbnail" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">thumbnail</span></span><a class="headerlink" href="#djiffy.models.Manifest.thumbnail" title="Link to this definition">¶</a></dt>
 <dd><p>thumbnail url for associated canvas</p>
 </dd></dl>
 
@@ -344,7 +344,7 @@ Checks for SKOS.prefLabel, RDFS.label, DC.title in that order.</p>
 <span id="views"></span><h2>Views<a class="headerlink" href="#module-djiffy.views" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="djiffy.views.CanvasAutocomplete">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">djiffy.views.</span></span><span class="sig-name descname"><span class="pre">CanvasAutocomplete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/views.html#CanvasAutocomplete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#djiffy.views.CanvasAutocomplete" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">djiffy.views.</span></span><span class="sig-name descname"><span class="pre">CanvasAutocomplete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/views.html#CanvasAutocomplete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#djiffy.views.CanvasAutocomplete" title="Link to this definition">¶</a></dt>
 <dd><p>Canvas autocomplete view, e.g. for admin interface lookup</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="djiffy.views.CanvasAutocomplete.get_queryset">
@@ -356,7 +356,7 @@ Checks for SKOS.prefLabel, RDFS.label, DC.title in that order.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="djiffy.views.CanvasDetail">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">djiffy.views.</span></span><span class="sig-name descname"><span class="pre">CanvasDetail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/views.html#CanvasDetail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#djiffy.views.CanvasDetail" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">djiffy.views.</span></span><span class="sig-name descname"><span class="pre">CanvasDetail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/views.html#CanvasDetail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#djiffy.views.CanvasDetail" title="Link to this definition">¶</a></dt>
 <dd><p>Detail view for a single <a class="reference internal" href="#djiffy.models.Canvas" title="djiffy.models.Canvas"><code class="xref py py-class docutils literal notranslate"><span class="pre">Canvas</span></code></a>.
 Rendered with  djiffy/canvast_detail.html template.</p>
 <dl class="py method">
@@ -377,7 +377,7 @@ Subclasses can override this to return any object.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="djiffy.views.ManifestDetail">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">djiffy.views.</span></span><span class="sig-name descname"><span class="pre">ManifestDetail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/views.html#ManifestDetail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#djiffy.views.ManifestDetail" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">djiffy.views.</span></span><span class="sig-name descname"><span class="pre">ManifestDetail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/views.html#ManifestDetail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#djiffy.views.ManifestDetail" title="Link to this definition">¶</a></dt>
 <dd><p>Detail view for a single <a class="reference internal" href="#djiffy.models.Manifest" title="djiffy.models.Manifest"><code class="xref py py-class docutils literal notranslate"><span class="pre">Manifest</span></code></a>.
 Rendered with  djiffy/manifest_detail.html template.</p>
 <dl class="py method">
@@ -398,7 +398,7 @@ Subclasses can override this to return any object.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="djiffy.views.ManifestList">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">djiffy.views.</span></span><span class="sig-name descname"><span class="pre">ManifestList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/views.html#ManifestList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#djiffy.views.ManifestList" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">djiffy.views.</span></span><span class="sig-name descname"><span class="pre">ManifestList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/views.html#ManifestList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#djiffy.views.ManifestList" title="Link to this definition">¶</a></dt>
 <dd><p>List view for <a class="reference internal" href="#djiffy.models.Manifest" title="djiffy.models.Manifest"><code class="xref py py-class docutils literal notranslate"><span class="pre">Manifest</span></code></a>.  Rendered with
 djiffy/manifest_list.html template.</p>
 <dl class="py attribute">
@@ -414,7 +414,7 @@ djiffy/manifest_list.html template.</p>
 <span id="import"></span><h2>Import<a class="headerlink" href="#module-djiffy.importer" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="djiffy.importer.ManifestImporter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">djiffy.importer.</span></span><span class="sig-name descname"><span class="pre">ManifestImporter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stderr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/importer.html#ManifestImporter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#djiffy.importer.ManifestImporter" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">djiffy.importer.</span></span><span class="sig-name descname"><span class="pre">ManifestImporter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stderr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/importer.html#ManifestImporter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#djiffy.importer.ManifestImporter" title="Link to this definition">¶</a></dt>
 <dd><p>Manifest importer.  Intended for use with Django manage commands.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -501,7 +501,7 @@ into the database. Supports collections and individual manifests,
 and local file paths as well as URLs.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="djiffy.management.commands.import_manifest.Command">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">djiffy.management.commands.import_manifest.</span></span><span class="sig-name descname"><span class="pre">Command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stderr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/management/commands/import_manifest.html#Command"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#djiffy.management.commands.import_manifest.Command" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">djiffy.management.commands.import_manifest.</span></span><span class="sig-name descname"><span class="pre">Command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stderr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/djiffy/management/commands/import_manifest.html#Command"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#djiffy.management.commands.import_manifest.Command" title="Link to this definition">¶</a></dt>
 <dd><p>Import IIIF Collections or Manifests into the local database.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="djiffy.management.commands.import_manifest.Command.add_arguments">
@@ -723,7 +723,7 @@ this method.</p>
       &#169;2017, CDH @ Princeton.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.0.2</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
