@@ -5,8 +5,6 @@ djiffy
 
 Django application to index and display IIIF Manifests for books
 
-[![unit tests](https://github.com/Princeton-CDH/djiffy/actions/workflows/unit_tests.yml/badge.svg)](https://github.com/Princeton-CDH/djiffy/actions/workflows/unit_tests.yml)
-
 .. image:: https://github.com/Princeton-CDH/djiffy/actions/workflows/unit_tests.yml/badge.svg
    :target: https://github.com/Princeton-CDH/djiffy/actions/workflows/unit_tests.yml
    :alt: Unit Tests status
