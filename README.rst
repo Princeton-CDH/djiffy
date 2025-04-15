@@ -121,6 +121,16 @@ Initial setup and installation:
     pip install -e .
 
 
+Upgrading to v1.0.0
+^^^^^^^^^^^^^^^^^^^^
+
+If you have used any version of ``djiffy`` prior to v1.0.0, then it is required
+to upgrade to v0.9.2 first, and run all migrations on your Django project. The
+Django project must be running Django version 3.2 at this point.
+
+After you have run those migrations, you can upgrade to any Django version 3.2+,
+and install ``djiffy`` v1.0.0.
+
 Unit Testing
 ^^^^^^^^^^^^
 
