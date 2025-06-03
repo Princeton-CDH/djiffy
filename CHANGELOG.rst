@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.0
+---
+
+* Reintroduce updates for django 4.0 and newer versions of python
+  (breaking change for users of djiffy <= 0.9.1; must first upgrade to 0.9.2)
+
+
 0.9.2
 -----
 
