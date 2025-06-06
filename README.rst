@@ -16,6 +16,7 @@ Django application to index and display IIIF Manifests for books
 .. image:: https://img.shields.io/pypi/djversions/djiffy
    :alt: PyPI - Django Version
 .. image:: https://github.com/Princeton-CDH/djiffy/actions/workflows/sphinx_docs.yml/badge.svg
+   :target: https://github.com/Princeton-CDH/djiffy/actions/workflows/sphinx_docs.yml
    :alt: Sphinx Docs build status
 
 
