@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.0.1
+-----
+
+* Relax django-autocomplete-light dependency
+
 1.0
 ---
 
