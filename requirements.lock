@@ -9,7 +9,7 @@ chardet==3.0.4
 charset-normalizer==3.4.1
 coverage==4.5.1
 Django==3.2.25
-django-autocomplete-light==3.9.7
+django-autocomplete-light==3.12.1
 -e git+git@github.com:Princeton-CDH/djiffy.git@8782695e55225099f31dce08bb7fd71d61f16b52#egg=djiffy
 docutils==0.14
 future==0.16.0

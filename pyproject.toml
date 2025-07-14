@@ -37,7 +37,7 @@ dependencies = [
   "django>=3.2",
   "requests",
   "piffle>=0.6",
-  "django-autocomplete-light<=3.9.7",
+  "django-autocomplete-light>=3.9.7",
   "rdflib>=7.0",
 ]
 
