@@ -1,6 +1,7 @@
 from collections import OrderedDict
 
 from django.conf import settings
+from django.db.models import Q
 from piffle.presentation import IIIFException
 
 from djiffy.models import Manifest, Canvas, get_iiif_url, IIIFPresentation
@@ -104,7 +105,14 @@ class ManifestImporter(object):
         update_existing = False
 
         # check if manifest with uri identifier has already been imported
-        db_manifest = Manifest.objects.filter(uri=manifest.id).first()
+        if "http" in manifest.id:
+            # test against both http and https for the same base URI
+            base_uri = str(manifest.id).removeprefix("https://").removeprefix("http://")
+            db_manifest = Manifest.objects.filter(
+                Q(uri=f"http://{base_uri}") | Q(uri=f"https://{base_uri}")
+            ).first()
+        else:
+            db_manifest = Manifest.objects.filter(uri=manifest.id).first()
         if db_manifest:
             # TODO: would be nice to compare last-modified or etag
             # and see if we actually need to update..
@@ -210,7 +218,16 @@ class ManifestImporter(object):
         for order, canvas in enumerate(manifest.sequences[0].canvases):
             # when updating an existing manifest, look for existing canvas
             if update_existing:
-                db_canvas = db_manifest.canvases.filter(uri=canvas.id).first()
+                if "http" in canvas.id:
+                    # test against both http and https for the same base URI
+                    base_uri = (
+                        str(canvas.id).removeprefix("https://").removeprefix("http://")
+                    )
+                    db_canvas = db_manifest.canvases.filter(
+                        Q(uri=f"http://{base_uri}") | Q(uri=f"https://{base_uri}")
+                    ).first()
+                else:
+                    db_canvas = Canvas.objects.filter(uri=canvas.id).first()
             if not update_existing or not db_canvas:
                 # otherwise, create a new canvas (new import or updating
                 # a manifest where this canvas did not previously exist)
@@ -281,7 +298,7 @@ class ManifestImporter(object):
 
                 try:
                     manifest = IIIFPresentation.from_file_or_url(brief_manifest.id)
-                except presentation.IIIFException as err:
+                except IIIFException as err:
                     manifest = None
                     self.error_msg(str(err))
 
