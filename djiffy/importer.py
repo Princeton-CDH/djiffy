@@ -105,7 +105,7 @@ class ManifestImporter(object):
         update_existing = False
 
         # check if manifest with uri identifier has already been imported
-        if "http" in manifest.id:
+        if str(manifest.id).startswith("http"):
             # test against both http and https for the same base URI
             base_uri = str(manifest.id).removeprefix("https://").removeprefix("http://")
             db_manifest = Manifest.objects.filter(
@@ -218,7 +218,7 @@ class ManifestImporter(object):
         for order, canvas in enumerate(manifest.sequences[0].canvases):
             # when updating an existing manifest, look for existing canvas
             if update_existing:
-                if "http" in canvas.id:
+                if str(canvas.id).startswith("http"):
                     # test against both http and https for the same base URI
                     base_uri = (
                         str(canvas.id).removeprefix("https://").removeprefix("http://")
