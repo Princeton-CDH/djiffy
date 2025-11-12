@@ -580,6 +580,18 @@ class TestManifestImporter(TestCase):
         output = self.importer.stdout.getvalue()
         assert "removing %d canvases" % (len(orig_canvases) - 5,) in output
 
+        # modify manifest to change @id from https to http 
+        pres.id = pres.id.replace("https", "http")
+        # same with first canvas
+        pres.sequences[0].canvases[0].id = pres.sequences[0].canvases[0].id.replace("https", "http")
+        self.importer.update = True
+        http_db_manifest = self.importer.import_manifest(pres, self.test_manifest)
+        # should still match the same existing DB manifest
+        assert isinstance(http_db_manifest, Manifest)
+        assert http_db_manifest.pk == db_manifest.pk
+        # should still match the same existing DB canvas
+        assert http_db_manifest.canvases.first().pk == db_manifest.canvases.first().pk
+
     @patch("djiffy.models.get_iiif_url")
     def test_import_collection(self, mock_getiiifurl):
         pres = IIIFPresentation.from_file(self.test_manifest)
