@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.0.2
+-----
+
+* Gracefully handle protocol mismatch on existing manifest/canvas lookup
+
+
 1.0.1
 -----
 
