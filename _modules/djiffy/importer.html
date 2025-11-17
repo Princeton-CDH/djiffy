@@ -4,10 +4,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>djiffy.importer &#8212; Djiffy 1.0.1 documentation</title>
+    <title>djiffy.importer &#8212; Djiffy 1.0.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=386e93f4" />
-    <script src="../../_static/documentation_options.js?v=292eb321"></script>
+    <script src="../../_static/documentation_options.js?v=1ed6394b"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -33,6 +33,7 @@
 <span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
 <span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
+<span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">Q</span>
 <span class="kn">from</span> <span class="nn">piffle.presentation</span> <span class="kn">import</span> <span class="n">IIIFException</span>
 
 <span class="kn">from</span> <span class="nn">djiffy.models</span> <span class="kn">import</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">Canvas</span><span class="p">,</span> <span class="n">get_iiif_url</span><span class="p">,</span> <span class="n">IIIFPresentation</span>
@@ -152,7 +153,14 @@
         <span class="n">update_existing</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="c1"># check if manifest with uri identifier has already been imported</span>
-        <span class="n">db_manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">manifest</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;http&quot;</span><span class="p">):</span>
+            <span class="c1"># test against both http and https for the same base URI</span>
+            <span class="n">base_uri</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">removeprefix</span><span class="p">(</span><span class="s2">&quot;https://&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">removeprefix</span><span class="p">(</span><span class="s2">&quot;http://&quot;</span><span class="p">)</span>
+            <span class="n">db_manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">Q</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;http://</span><span class="si">{</span><span class="n">base_uri</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="n">Q</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;https://</span><span class="si">{</span><span class="n">base_uri</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">db_manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">manifest</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">db_manifest</span><span class="p">:</span>
             <span class="c1"># TODO: would be nice to compare last-modified or etag</span>
             <span class="c1"># and see if we actually need to update..</span>
@@ -258,7 +266,16 @@
         <span class="k">for</span> <span class="n">order</span><span class="p">,</span> <span class="n">canvas</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">sequences</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">canvases</span><span class="p">):</span>
             <span class="c1"># when updating an existing manifest, look for existing canvas</span>
             <span class="k">if</span> <span class="n">update_existing</span><span class="p">:</span>
-                <span class="n">db_canvas</span> <span class="o">=</span> <span class="n">db_manifest</span><span class="o">.</span><span class="n">canvases</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">canvas</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">canvas</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;http&quot;</span><span class="p">):</span>
+                    <span class="c1"># test against both http and https for the same base URI</span>
+                    <span class="n">base_uri</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">canvas</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">removeprefix</span><span class="p">(</span><span class="s2">&quot;https://&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">removeprefix</span><span class="p">(</span><span class="s2">&quot;http://&quot;</span><span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="n">db_canvas</span> <span class="o">=</span> <span class="n">db_manifest</span><span class="o">.</span><span class="n">canvases</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                        <span class="n">Q</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;http://</span><span class="si">{</span><span class="n">base_uri</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="n">Q</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;https://</span><span class="si">{</span><span class="n">base_uri</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">db_canvas</span> <span class="o">=</span> <span class="n">Canvas</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">canvas</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">update_existing</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">db_canvas</span><span class="p">:</span>
                 <span class="c1"># otherwise, create a new canvas (new import or updating</span>
                 <span class="c1"># a manifest where this canvas did not previously exist)</span>
@@ -332,7 +349,7 @@
 
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">manifest</span> <span class="o">=</span> <span class="n">IIIFPresentation</span><span class="o">.</span><span class="n">from_file_or_url</span><span class="p">(</span><span class="n">brief_manifest</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-                <span class="k">except</span> <span class="n">presentation</span><span class="o">.</span><span class="n">IIIFException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="k">except</span> <span class="n">IIIFException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
                     <span class="n">manifest</span> <span class="o">=</span> <span class="kc">None</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">error_msg</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
 
