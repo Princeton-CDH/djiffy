@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.0.3
+-----
+
+* Allow IIIF 2.1 manifests with license as a list or object
+
 1.0.2
 -----
 

@@ -100,10 +100,24 @@ class Manifest(models.Model):
         """manifest attribution, if there is one"""
         return self.extra_data.get("attribution", None)
 
+    #: license hosts with known URIs, used to choose from multiple licenses
+    known_license_hosts = ["rightsstatements.org", "creativecommons.org"]
+
     @cached_property
     def license(self):
-        """manifest license, if there is one"""
-        return self.extra_data.get("license", None)
+        """manifest license URI, if there is one"""
+        # spec allows a single license or a list, with each element allowed as
+        # a bare URI or an object with an @id.
+        license = self.extra_data.get("license", None)
+        licenses = license if isinstance(license, list) else [license]
+        uris = [lic.get("@id") if isinstance(lic, dict) else lic for lic in licenses]
+        uris = [uri for uri in uris if uri]
+        # if there are multiple, use the first one from a known license hostname
+        for uri in uris:
+            if urllib.parse.urlparse(uri).hostname in self.known_license_hosts:
+                return uri
+        # fall back to the first in the list
+        return uris[0] if uris else None
 
     @cached_property
     def license_uri(self):

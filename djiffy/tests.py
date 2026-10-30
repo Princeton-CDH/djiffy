@@ -84,6 +84,59 @@ class TestManifest(TestCase):
         book.extra_data["license"] = "http://rightsstatements.org/vocab/InC/1.0/"
         assert book.license == book.extra_data["license"]
 
+    def test_license_list(self):
+        # single item list: use that item
+        book = Manifest(short_id="bk123")
+        book.extra_data["license"] = ["https://example.com/terms-of-use"]
+        assert book.license == "https://example.com/terms-of-use"
+
+        # multiple items: prefer a known license host
+        book = Manifest(short_id="bk123")
+        book.extra_data["license"] = [
+            "https://example.com/terms-of-use",
+            "http://rightsstatements.org/vocab/InC/1.0/",
+        ]
+        assert book.license == "http://rightsstatements.org/vocab/InC/1.0/"
+        assert book.rights_statement_id == "InC"
+
+        # multiple items, none known: use the first
+        book = Manifest(short_id="bk123")
+        book.extra_data["license"] = [
+            "https://example.com/terms-of-use",
+            "https://example.com/other-terms",
+        ]
+        assert book.license == "https://example.com/terms-of-use"
+        assert book.license_uri == rdflib.URIRef("https://example.com/terms-of-use")
+
+        # empty list: no license
+        book = Manifest(short_id="bk123")
+        book.extra_data["license"] = []
+        assert book.license is None
+        assert book.license_uri is None
+
+    def test_license_object(self):
+        # single object with @id
+        book = Manifest(short_id="bk123")
+        book.extra_data["license"] = {
+            "@id": "http://rightsstatements.org/vocab/InC/1.0/"
+        }
+        assert book.license == "http://rightsstatements.org/vocab/InC/1.0/"
+        assert book.rights_statement_id == "InC"
+
+        # list mixing strings and objects
+        book = Manifest(short_id="bk123")
+        book.extra_data["license"] = [
+            "https://example.com/terms-of-use",
+            {"@id": "https://creativecommons.org/licenses/by-nc/4.0/"},
+        ]
+        assert book.license == "https://creativecommons.org/licenses/by-nc/4.0/"
+        assert book.creativecommons_id == "by-nc"
+
+        # object without @id: no license
+        book = Manifest(short_id="bk123")
+        book.extra_data["license"] = {"format": "text/html"}
+        assert book.license is None
+
     def test_license_uri(self):
         book = Manifest(short_id="bk123")
         assert book.license_uri is None
