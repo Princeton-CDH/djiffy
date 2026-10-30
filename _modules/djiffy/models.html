@@ -4,12 +4,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>djiffy.models &#8212; Djiffy 1.0.2 documentation</title>
+    <title>djiffy.models &#8212; Djiffy 1.0.3 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=386e93f4" />
-    <script src="../../_static/documentation_options.js?v=1ed6394b"></script>
-    <script src="../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/documentation_options.js?v=baaebd52"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -149,10 +149,24 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;manifest attribution, if there is one&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;attribution&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
+    <span class="c1">#: license hosts with known URIs, used to choose from multiple licenses</span>
+    <span class="n">known_license_hosts</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;rightsstatements.org&quot;</span><span class="p">,</span> <span class="s2">&quot;creativecommons.org&quot;</span><span class="p">]</span>
+
     <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">license</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;manifest license, if there is one&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;license&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;manifest license URI, if there is one&quot;&quot;&quot;</span>
+        <span class="c1"># spec allows a single license or a list, with each element allowed as</span>
+        <span class="c1"># a bare URI or an object with an @id.</span>
+        <span class="n">license</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;license&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">licenses</span> <span class="o">=</span> <span class="n">license</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">license</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="p">[</span><span class="n">license</span><span class="p">]</span>
+        <span class="n">uris</span> <span class="o">=</span> <span class="p">[</span><span class="n">lic</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;@id&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lic</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="n">lic</span> <span class="k">for</span> <span class="n">lic</span> <span class="ow">in</span> <span class="n">licenses</span><span class="p">]</span>
+        <span class="n">uris</span> <span class="o">=</span> <span class="p">[</span><span class="n">uri</span> <span class="k">for</span> <span class="n">uri</span> <span class="ow">in</span> <span class="n">uris</span> <span class="k">if</span> <span class="n">uri</span><span class="p">]</span>
+        <span class="c1"># if there are multiple, use the first one from a known license hostname</span>
+        <span class="k">for</span> <span class="n">uri</span> <span class="ow">in</span> <span class="n">uris</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span><span class="o">.</span><span class="n">hostname</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">known_license_hosts</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">uri</span>
+        <span class="c1"># fall back to the first in the list</span>
+        <span class="k">return</span> <span class="n">uris</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">uris</span> <span class="k">else</span> <span class="kc">None</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">license_uri</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -523,7 +537,7 @@
       &#169;2017, CDH @ Princeton.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.1</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
     </div>
