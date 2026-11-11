@@ -4,6 +4,7 @@ import json
 from unittest.mock import patch, Mock
 
 from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TestCase, override_settings
 from django.urls import reverse
 import pytest
@@ -848,3 +849,21 @@ class TestImportManifest(TestCase):
             assert expected_arg in importer_call_kwargs
 
         mockmanifestimporter.return_value.import_paths.assert_called_with(uris)
+
+    def test_command_all(self, mockmanifestimporter):
+        uris = ["http://so.me/manifest1", "http://so.me/manifest2"]
+        for i, uri in enumerate(uris):
+            Manifest.objects.create(short_id="m%d" % i, uri=uri)
+        call_command("import_manifest", "--all")
+        assert mockmanifestimporter.call_args[1]["update"] is True
+        called_paths = mockmanifestimporter.return_value.import_paths.call_args[0][0]
+        assert sorted(called_paths) == uris
+
+    def test_command_args_validation(self, mockmanifestimporter):
+        # neither paths nor --all
+        with pytest.raises(CommandError):
+            call_command("import_manifest")
+        # both paths and --all
+        with pytest.raises(CommandError):
+            call_command("import_manifest", "manifest1.json", "--all")
+        mockmanifestimporter.assert_not_called()
