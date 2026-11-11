@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.1
+---
+
+* The `import_manifests` manage command has a new option `--all` to update all existing manifests in the database.
+
 1.0.3
 -----
 
